@@ -1,0 +1,40 @@
+**DAY 6**
+
+Successfully modelled for temperature and pressure.
+The model shows a strong correlation between temperature and pressure changes over time.
+->
+    PRESSURE:
+
+    The r2 values stay consistently above 0.94 across both validation and test sets. There is no major gap between
+    training
+    and
+    validation performance, indicating a clean fit without overfitting.
+    Error Bounds: The Mean Absolute Error (MAE) stays right around 0.94 to 1.05 hPa. Given that atmospheric pressure
+    scales
+    are typically around 1013 hPa, an average error of ~1 hPa shows highly precise tracking from 1-day lag features.
+
+    TEMPERATURE:
+
+    Generalization: The model generalizes incredibly well. An R2 Value
+    consistently above 0.95 on both the validation and test sets shows excellent variance capture without severe
+    overfitting.
+    Error Bounds: Your average absolute error (MAE) sits comfortably under
+                  across the board, proving that added lag and rolling average features are doing heavy lifting for
+                  consistency.
+
+WIND MODELLING:
+WIND MODELS REACHED A CEILING OF R2=0.65 FOR VALIDATION AND TEST SETS VS 0.85 FOR TRAINING SETS.
+Despite addition of lattitude , longitude , elevation,city id , year , day of week , motnh sin , month cos , day sin,
+day cos, shortwave radiation , temperature ,pressure , temp lags , pressure lags , wind speed , direction lags ,
+later also tried adding moisture and dew points lags ,rather no improvement .
+Upon reading research papers on wind modelling , it seems that wind is a highly chaotic variable and is not easily
+predictable with the features mentioned . It depends on pressure gradient of cities , in 100 km radius rather than local
+temperature , synoptic low pressure systems like western disturbances , monsoon troughs that may happen
+even away from region , terrain roughness , valley channeling , slope etc
+
+
+Considering this , more such features were explored and modelling a bit modified to hybrid rather than purely
+ML predicting ->
+
+SLIGHTLY MODIFIED MODELLING APPROACH:->Strategy2.txt
+

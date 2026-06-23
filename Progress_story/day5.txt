@@ -1,0 +1,27 @@
+**DAY 5**
+
+Tried Modelling for day 4 , however an issue occurs that
+except for temp max , temp min , most of the
+predicted features are not in the same range as real data.
+
+Multiple Mathematical transformations were tried to bring the predicted features in the same range as real data but
+none of them worked.
+The input parameters are currently -> **Input only features -> year,month_sin,month_cos,day,day_of_week,city_id,
+temp_max_predicted,temp_min_predicted,wind_direction_predicted,wind_speed_max_predicted,rain_or_not_predicted,
+precip_sum_predicted,precip_hours_predicted
+
+Upon reading further it can be realised that lack of features like humidity, dew point, cloud cover, visibility etc.
+are causing the predicted features to be in a different range than real data.
+
+As a result , data will be improved ,adding features like
+ , latitude , longitude
+weather code, mean temperature , max temp , min temp, precipitation sum,precipitation hours,
+maximum wind speed,dominant wind direction,mean cloud cover,dew point , mean sea pressure,
+mean relative humidity , maximum sea pressure , minimum sea pressure , maximum relative humidity
+minimum relative humidity,shortwave radiation sum , wind gusts , sunshine duration
+
+in units of celsius , wind speed km/h , precipitation in mm and pressure in hPa, timeformat IST
+Modelling strategy currently remains similar to the one mentioned in day 3 but with the addition of new features and
+also the predicted features will be used as input features for the next model only if they are in the same range as real data otherwise only real data will be used as input features for all models. The evaluation metrics will also be same as mentioned in day 3.
+
+Data ingestion ,processing , EDA  similar to day 1 and 2,3

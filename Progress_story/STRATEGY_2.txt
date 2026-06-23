@@ -1,0 +1,181 @@
+ Hybrid Weather Engine Architecture
+
+The proposed Weather Engine follows a hybrid Directed Acyclic Graph (DAG) architecture, combining internally predicted
+atmospheric variables with externally sourced variables that are difficult to model accurately using local
+meteorological observations alone.
+
+Tier 0: Deterministic Base Layer
+
+The foundation of the engine consists of variables that are known at inference time and require no prediction.
+These include:
+
+* Latitude
+* Longitude
+* Elevation
+* City ID
+* Year
+* Day of Year
+* Day of Week
+* Month (encoded as month_sin and month_cos)
+* Day of Year (encoded as day_sin and day_cos)
+* Shortwave Radiation Sum
+* Daylight Duration
+
+Additionally, historical lag features from the previous day are supplied, including temperature, pressure,
+humidity, cloud cover, precipitation and wind observations.
+
+---
+
+### Tier 1: Thermodynamics
+
+Two independent multi-output regression models are trained.
+
+**Model_Temp**
+
+Predicts
+
+* Maximum Temperature (temp_max_c)
+* Minimum Temperature (temp_min_c)
+
+using Tier 0 variables along with temperature lag features.
+
+**Model_Pressure**
+
+Predicts
+
+* Maximum Mean Sea Level Pressure (pressure_msl_max_hpa)
+* Minimum Mean Sea Level Pressure (pressure_msl_min_hpa)
+
+using Tier 0 variables together with pressure lag features.
+
+These predictions are then used to compute several derived thermodynamic variables:
+
+* Mean Temperature
+
+  temp_mean_c = (temp_max_c + temp_min_c) / 2
+
+* Temperature Range
+
+  temp_range_c = temp_max_c - temp_min_c
+
+* Mean Pressure
+
+  pressure_msl_mean_hpa = (pressure_msl_max_hpa + pressure_msl_min_hpa) / 2
+
+* Pressure Range
+
+  pressure_range_hpa = pressure_msl_max_hpa - pressure_msl_min_hpa
+
+---
+
+### Tier 2: Moisture, Wind and Cloud
+
+Surface wind variables were found to exhibit limited predictability using local observations alone,
+with validation and test R² scores saturating around 0.60–0.65 despite extensive feature engineering.
+Consequently, wind variables are supplied externally at inference time.
+
+These externally sourced variables include:
+
+* Wind Speed Maximum
+* Wind Gust Maximum
+* Wind Direction Sine Component
+* Wind Direction Cosine Component
+
+along with their corresponding lagged values.
+
+**Model_Moisture**
+
+Predicts
+
+* Dew Point Mean Temperature (dew_point_mean_c)
+* Relative Humidity Mean Percentage (relative_humidity_mean_pct)
+
+using
+
+* Predicted temperature variables
+* Predicted pressure variables
+* Derived thermodynamic features
+* External wind variables
+* Moisture lag features
+* Tier 0 deterministic inputs
+
+A derived moisture quantity is subsequently computed:
+
+dew_point_depression = temp_mean_c - dew_point_mean_c
+
+**Model_Cloud**
+
+Cloud cover is initially modeled using machine learning.
+
+If predictive performance is satisfactory, the internally predicted cloud cover is retained.
+
+Otherwise, cloud cover is sourced externally.
+
+---
+
+### Tier 3: Weather Resultants
+
+**Model_RainOccurrence**
+
+A binary classification model predicts the probability of precipitation occurrence using
+
+* Predicted temperature variables
+* Predicted pressure variables
+* Predicted moisture variables
+* Wind information
+* Cloud cover
+* Historical precipitation information
+
+Output:
+
+* Rain Probability
+
+**Model_RainAmount**
+
+A Tweedie regression model predicts
+
+* Precipitation Sum (precipitation_sum_mm)
+
+If the machine learning model demonstrates acceptable predictive capability, its predictions are utilized.
+
+Otherwise, precipitation forecasts are obtained from an external numerical weather prediction source.
+
+**Model_WeatherCode**
+
+A multiclass classification model predicts the final weather condition code using all previously
+predicted atmospheric variables, including
+
+* Temperature
+* Pressure
+* Moisture
+* Wind
+* Cloud Cover
+* Rain Probability
+* Rain Amount
+
+---
+
+### Final Forecast Vector
+
+The final output produced for day (t+1) consists of
+
+* Maximum Temperature
+* Minimum Temperature
+* Mean Temperature
+* Maximum Pressure
+* Minimum Pressure
+* Mean Pressure
+* Dew Point
+* Relative Humidity
+* Dew Point Depression
+* Wind Speed
+* Wind Gust
+* Wind Direction
+* Cloud Cover
+* Rain Probability
+* Precipitation Amount
+* Weather Code
+
+This hybrid architecture preserves a fully operational machine learning weather engine while allowing
+variables that are inherently difficult to model, such as wind, cloud cover and precipitation amount,
+to be replaced by higher-quality external forecasts whenever available.

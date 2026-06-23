@@ -1,0 +1,31 @@
+DAY 1 PROGRESS
+
+Setup directory structure
+
+Setup city JSON - The purpose of which is to start with 5 cities and then add more as we go along.
+
+    The city JSON will contain the name of the city, city id,latitude , longitude that will help us to fetch the weather
+    data for that city.
+
+    Initial Cities->Delhi , Bombay , Pilani, Nagpur,Bengaluru
+
+Ingested 15 years historic data from openmeteo API:
+    The data is stored in a CSV file with the following columns:
+        date,city_id,weather_code,temp_max,temp_min,wind_speed_max,wind_dir_dominant,precip_sum,precip_hours,data_type
+        The data is stored in a directory called "data" within a folder raw data
+    The data is stored in a Postgres database with the same columns as mentioned above.
+
+Created a Python script to ingest the data from the CSV file and store it in a Postgres database
+    The script reads the CSV file, processes the data, and inserts it into a table called "weather_data" in the Postgres database.
+    The table has the same columns as the CSV file.
+
+Created a python script to now take two data -> one of day gone
+(say today is 17 and script is planned to run at 10 pm then it will get data of 17 and 18)
+The data of day gone is added to the postgre database and the forecast is saved in a json file in the data directory with
+the name "latest_forecast.json"
+    The forecast data is obtained from the openmeteo API and contains the same columns as the CSV file of historic data.
+
+CHALLENGES FACED:Initial data that was ingested had values as per UTC timezone causing conflict with the
+local time of the cities. This was resolved by
+fixing the timezone issue in the data ingestion script and rewriting the pre filled values and adjusting parameters in api request for future values.
+

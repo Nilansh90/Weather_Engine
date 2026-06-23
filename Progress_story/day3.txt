@@ -1,0 +1,56 @@
+DAY 3
+
+Stepped to modelling part of the project. The processed data is ready and the next step is to train the models
+using LightGBM.
+
+WEIRD DAY THO !! ClASSICAL EROR T_T(realised at EOD)
+
+**When you process data and convert columns to categorical
+and save it as a csv , they get saved as str, int etc. and have
+to be reconverted to categorical when we read the csv for modelling.
+This was a step I missed and hence the model training was giving an error as the data types
+were not correct.
+
+The correction has been noted and modelling , will be done on next day ,
+, silver lining tho -> I got to learn about a new error and its solution which will be helpful in future and
+still discovered the flow for modelling the next day.
+
+Flow of modelling ->
+1)Read the processed data from the csv file and convert the necessary columns to categorical data types.
+2)As per model strategy the city wise train , test and validation set will be combined into unified train , unified
+validation and unified test set for training the model.
+3)Model setup will be done using LightGBM.
+4)Train as per light gbm 7 PARAMS , 7 models , add input only features and target features.
+
+**Input only features -> year,month_sin,month_cos,day,day_of_week,city_id
+**Target features -> temp_max,temp_min,wind_speed_max,wind_dir_dominant,precip_sum,precip_hours,weather_code
+
+However , since weather factors depend on one another it is better to add
+predicted features as input features for the next model. Hence , the flow will be as follows ->
+**FOR TRAINING PURPOSES USE REAL DATAS FOR VAL AND TEST USE PREDICTED QUANITIES- IF HEIRARCHIAL STRUCTURE
+0)In relevant feautres add rolling averages and lag features to capture the temporal dependencies in the data. This w
+ill help the model to learn the patterns and trends in the data better and improve the performance of the model.
+1) Train model for temp_max using input only features and predict temp_max for validation and test
+(Evaluation metric-> RMSE,MAPE,MAE,R2,MSE
+2) Train model for temp_min using input only features + predicted temp_max and predict temp_min for validation and test
+(Evaluation metric-> RMSE,MAPE,MAE,R2,MSE
+3) Train model for wind_direction using input only features + predicted temp_max and temp_min and predict wind_direction
+for validation and test(do not use strict accuracy for wind direction , rather use +-45deg and +-90deg as metric- if model
+does poorly on exact accuracy but does well on +-45 and +-90 then it is still a good model as predicting exact wind d
+irection is hard and even if the model predicts a close direction it is still useful for the users)
+4) Train model for wind_speed_max using input only features + predicted temp_max , temp_min and wind_direction .
+(Evaluation metric-> MAE,R2
+
+5)Create a new prediction metric , will rain or not - bi category using only
+    a)Strategy 1 -> input only features
+    b)Strategy 2 -> input only features + predicted temp_max , temp_min , wind_direction and wind_speed_max
+(Evaluation metric -> Recall -> false negatives more expensive(predicted no rain but rained)
+6) Train model for precip_sum using input only features + predicted temp_max , temp_min , wind_direction , wind_speed_max a
+nd rain or not metric.(Evaluation metric-> RMSE,MAE,R2,MSE)
+7) Train model for precip_hours using input only features + predicted temp_max , temp_min , wind_direction ,
+wind_speed_max and rain or not metric.(Evaluation metric-> RMSE,MAE,R2,MSE)
+8) Train model for weather_code using input only features + predicted temp_max , temp_min , wind_direction ,
+wind_speed_max , rain or not metric and precip_sum and precip_hours.(Evaluation metric -> TBA)
+
+
+

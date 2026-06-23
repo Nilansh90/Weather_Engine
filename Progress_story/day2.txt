@@ -1,0 +1,61 @@
+DAY 2 PROGRESS
+
+1)EDA and data processing on the raw csv data using pandas and matplotlib in jupyter notebook
+2)Going through the steps , discovered a bug that due to faulty script , the date had only the date of day exactly 15 years ago and
+not the range it was supposed to be. So had to fix the script and re-run the data ingestion steps again.
+3) After fixing the script, re-ingested the data and performed EDA again to ensure the data was correct and complete.
+4)Performed EDA and understood about various fields -> date,city_id,weather_code,temp_max,temp_min,wind_speed_max,
+wind_dir_dominant,precip_sum,precip_hours,data_type
+5)Read the relation between numeric weather codes and their interpretation from the documentation
+ and created a mapping dictionary to convert the numeric weather codes into their corresponding weather descriptions.
+6)Visualized temperature,wind speed trends over time and also categorical features like weather code and wind direction
+7)Read about LightGBM and its advantages over other algorithms. Decided to use LightGBM for the model training.
+8)Started data preparing for LIghtGBM model training as follows:
+a)Split date(str) into year,month,day and day of week and created new columns for each of them
+b)Dropped data type column - one constant value
+c)converted month into sin and cosine values to capture the cyclical nature of months and added it as a column.
+d)Removed the month column after creating the sin and cosine columns.
+e)Converted wind direction to 8 categories as per this function ->
+  -> def bin_wind_direction(degrees):
+        deg = degrees % 360
+        bins = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+        return bins[int((deg + 22.5) % 360 / 45)]
+f)Added a new column for wind direction category using the above function and removed the original wind direction column.
+g)Created train/validation/test split of the data using 70/15/15 ratio and saved them as separate csv files for model training in root/data/processed...folder
+h)Saved the mapping dictionary for weather codes and wind directions to weather descriptions as a json file in root/data/processed...folder
+i)Saved the final processed data as a csv file in root/data/processed...folder for model training.
+
+j)Strategised for Light GBM model ->
+General strategy and motifs ->
+
+1)The model is a full weather engine and hence the model should be able to predict all the
+weather parameters given the date and city_id. Hence, the model will be trained on all the features and will predict all
+ the features. The model will be trained on the train set and validated on the validation set. The test set will be used
+ for final evaluation of the model.
+2)We train one model for each feature to be predicted. Hence, we will have 7 models in total for the 7 features to be predicted.
+3)The features to be predicted are -> temp_max,temp_min,wind_speed_max,wind_dir_dominant,precip_sum,precip_hours,weather_code
+4)The features to be used for prediction are -> year,month_sin,month_cos,day,day_of_week,city_id
+
+Processed data format->
+ #   Column          Non-Null Count  Dtype
+---  ------          --------------  -----
+ 0   city_id         3833 non-null   category
+ 1   weather_code    3833 non-null   category
+ 2   temp_max        3833 non-null   float64
+ 3   temp_min        3833 non-null   float64
+ 4   wind_speed_max  3833 non-null   float64
+ 5   precip_sum      3833 non-null   float64
+ 6   precip_hours    3833 non-null   float64
+ 7   year            3833 non-null   int64
+ 8   day             3833 non-null   int64
+ 9   dayofweek       3833 non-null   category
+ 10  month_sin       3833 non-null   float64
+ 11  month_cos       3833 non-null   float64
+ 12  wind_dir_label  3833 non-null   category
+
+Modelling will be done in a different notebook and will be documented in a separate progress file. The model training
+will be done using LightGBM and the models will be saved for future use. The final evaluation of the models will be
+done on the test set and the results will be documented in the progress file.
+
+Added to a private git repo so as to keep track of the progress and changes made to the code and data. The repo will be
+used for version control and backup.

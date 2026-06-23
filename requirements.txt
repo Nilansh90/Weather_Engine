@@ -1,0 +1,23 @@
+# Data Processing & Analysis
+numpy==2.4.4
+pandas==2.2.3
+matplotlib==3.10.9
+seaborn==0.13.2
+
+# Machine Learning
+scikit-learn==1.6.1
+
+# Database & Infrastructure
+sqlalchemy==2.0.38
+psycopg2-binary==2.9.10
+python-dotenv==1.0.1
+
+# Web & API
+requests==2.32.3
+flask==3.1.0
+httpx==0.28.1
+
+# CLI & Utilities
+typer==0.20.0
+tqdm==4.67.1
+rich==13.9.4

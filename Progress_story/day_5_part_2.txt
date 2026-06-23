@@ -1,0 +1,42 @@
+**DAY 5 PART 2**
+
+Rectified the prev err as mentioned in day 5
+then
+a)Set up fetch historical weather.py
+b)Cleared the existing database and made new database with the new features mentioned in day 5
+c)Performed EDA and data processing to make train , validation and test set
+
+d)->Format
+Data columns (total 30 columns):
+ #   Column                         Non-Null Count  Dtype
+---  ------                         --------------  -----
+ 0   latitude                       19165 non-null  float64
+ 1   longitude                      19165 non-null  float64
+ 2   city_id                        19165 non-null  category
+ 3   weather_code                   19165 non-null  category
+ 4   temp_mean_c                    19165 non-null  float64
+ 5   temp_max_c                     19165 non-null  float64
+ 6   temp_min_c                     19165 non-null  float64
+ 7   wind_speed_max_kmh             19165 non-null  float64
+ 8   wind_gusts_max_kmh             19165 non-null  float64
+ 9   shortwave_radiation_sum_mj_m2  19165 non-null  float64
+ 10  daylight_duration_s            19165 non-null  float64
+ 11  precipitation_sum_mm           19165 non-null  float64
+ 12  cloud_cover_mean_pct           19165 non-null  float64
+ 13  dew_point_mean_c               19165 non-null  float64
+ 14  dew_point_max_c                19165 non-null  float64
+ 15  dew_point_min_c                19165 non-null  float64
+ 16  relative_humidity_mean_pct     19165 non-null  float64
+ 17  relative_humidity_max_pct      19165 non-null  float64
+ 18  relative_humidity_min_pct      19165 non-null  float64
+ 19  pressure_msl_mean_hpa          19165 non-null  float64
+ 20  pressure_msl_max_hpa           19165 non-null  float64
+ 21  pressure_msl_min_hpa           19165 non-null  float64
+ 22  year                           19165 non-null  int32
+ 23  day_of_week                    19165 non-null  int32
+ 24  wind_dir_sin                   19165 non-null  float64
+ 25  wind_dir_cos                   19165 non-null  float64
+ 26  month_sin                      19165 non-null  float64
+ 27  month_cos                      19165 non-null  float64
+ 28  day_sin                        19165 non-null  float64
+ 29  day_cos                        19165 non-null  float64

@@ -1,0 +1,16 @@
+## DAY 4##
+
+Performed the modelling part of the project.As per the flow mentioned in day 3 , the models were trained and evaluated
+for each of the target features.
+
+TEMP MAX MIN,WIND DIRECTION,WIND SPEED MODELS DONE AND SAVED IN
+Project Root/Models folder.
+
+Temp max and min -> Regression models
+Wind direction -> Classification model (multi class)
+Wind speed -> Tweedie model
+
+For day 5 , the plan is to train the models for precip_sum and precip_hours and then train the model for weather_code.
+**Potential errors-> Data conversion** like day 3 , need to ensure that the data types are correct before training the
+models. Also , need to ensure that the
+predicted features are used as input features for the next model and not the real data except for training sets.

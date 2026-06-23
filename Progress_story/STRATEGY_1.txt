@@ -1,0 +1,117 @@
+FULL WEATHER FORECASTING ENGINE STRATEGY
+
+ARCHITECTURE
+The Weather Engine follows a four-tier Directed Acyclic Graph (DAG) architecture designed to emulate the physical
+dependencies present within the atmosphere while minimizing error propagation. Rather than predicting every meteorological variable independently, variables are grouped into tiers where predictions from lower tiers act as inputs for higher tiers.
+
+The objective is to forecast the complete atmospheric state of day (t+1) using observations from day (t),
+geographical information, temporal encodings, solar forcing variables, and lagged atmospheric states.
+The entire engine is implemented using LightGBM or XGBoost models.
+
+DATA SCHEMA AND TYPING
+
+Categorical Variables:
+  city_id
+  weather_code (Target)
+
+Integer Variables:
+  year
+  day_of_week
+
+Continuous Variables (Floats):
+  latitude, longitude, elevation
+  shortwave_radiation_sum_mj_m2, daylight_duration_s
+  All temperature, pressure, humidity, dew point, wind, and precipitation variables.
+  All trigonometric encodings.
+
+FEATURE ENGINEERING
+
+Cyclic Transformations:
+Wind direction, month, and day are transformed into cyclic representations using sine and cosine encodings.
+The original angular and integer representations are discarded after transformation.
+----------
+Derived Physical Variables (Computed during inference):
+  temp_range_c = temp_max_c - temp_min_c
+  pressure_range_hpa = pressure_msl_max_hpa - pressure_msl_min_hpa
+  dew_point_depression = temp_mean_c - dew_point_mean_c
+
+Lag Features:
+Lag features (representing yesterday's data) are created for all dynamic atmospheric variables.
+Examples include: temp_max_lag1, temp_min_lag1, pressure_mean_lag1, humidity_mean_lag1, dew_point_mean_lag1, wind_speed_max_lag1, precipitation_sum_lag1, and cloud_cover_mean_lag1.
+
+THE DAG TIERS
+
+Tier 0: Deterministic Base Layer
+-----------------------------------------------------------------
+This layer contains variables that require no machine learning model. These variables are known at inference time
+and provide the foundation for all subsequent predictions.(And are taken from sources)
+  Variables: latitude, longitude, city_id, year, day_of_week, month_sin, month_cos, day_sin, day_cos,
+   shortwave_radiation_sum_mj_m2, daylight_duration_s
+
+Tier 1: Thermodynamics
+------------------------------------------------------------------
+This layer predicts the thermal and pressure characteristics of the atmosphere.
+
+  Inputs: Tier 0 variables, Yesterday's temperature lags, Yesterday's pressure lags.
+
+  Model_Temp: Predicts temp_max_c and temp_min_c.
+  Model_Pressure: Predicts pressure_msl_max_hpa and pressure_msl_min_hpa.
+
+  Derived Variables Calculated Here:
+    temp_mean_c = (temp_max_c + temp_min_c) / 2
+    pressure_msl_mean_hpa = (pressure_msl_max_hpa + pressure_msl_min_hpa) / 2
+    temp_range_c
+    pressure_range_hpa
+
+Tier 2: Kinematics and Moisture
+----------------------------------
+This layer predicts atmospheric motion and moisture content.
+  Inputs: Tier 0 variables, Predicted Tier 1 variables, Yesterday's wind lags, Yesterday's moisture lags.
+  Model_Wind: Predicts wind_speed_max_kmh, wind_gusts_max_kmh, wind_dir_sin, and wind_dir_cos.
+  Model_Moisture: Predicts dew_point_mean_c and relative_humidity_mean_pct.
+  Model_Cloud: Predicts cloud_cover_mean_pct.
+  Derived Variable Calculated Here:
+    dew_point_depression = temp_mean_c - dew_point_mean_c
+
+Tier 3: Weather Resultants
+-------------------------------------------
+This layer predicts observable weather phenomena.
+  Inputs: Tier 0 variables, Predicted Tier 1 variables, Predicted Tier 2 variables,
+  Yesterday's precipitation lags, Yesterday's cloud cover lags.
+  Model_RainOccurrence (Binary Classifier): Predicts Rain Probability.
+  Model_RainAmount (Tweedie Regressor): Predicts precipitation_sum_mm.
+  Model_WeatherCode (Multiclass Classifier): Predicts weather_code.
+---------------------------------------------------------------------------
+
+MODEL COMPRESSION STRATEGY
+
+Instead of managing numerous independent models,
+related variables are grouped into shared multi-output models. The engine consists of eight macro-models:
+
+  1. Model_Temp: Outputs temp_max_c, temp_min_c
+  2. Model_Pressure: Outputs pressure_msl_max_hpa, pressure_msl_min_hpa
+  3. Model_Wind: Outputs wind_speed_max_kmh, wind_gusts_max_kmh, wind_dir_sin, wind_dir_cos
+  4. Model_Moisture: Outputs dew_point_mean_c, relative_humidity_mean_pct
+  5. Model_Cloud: Outputs cloud_cover_mean_pct
+  6. Model_RainOccurrence: Outputs rain_probability
+  7. Model_RainAmount: Outputs precipitation_sum_mm
+  8. Model_WeatherCode: Outputs weather_code
+
+INFERENCE EXECUTION PIPELINE
+
+  1. Gather Tier 0 variables and yesterday's observed atmospheric state.
+  2. Run Model_Temp and Model_Pressure.
+  3. Calculate temp_mean_c, pressure_msl_mean_hpa, temp_range_c, and pressure_range_hpa.
+  4. Run Model_Wind, Model_Moisture, and Model_Cloud.
+  5. Calculate dew_point_depression.
+  6. Run Model_RainOccurrence.
+  7. Run Model_RainAmount.
+  8. Run Model_WeatherCode.
+  9. Return the complete forecast vector containing:
+       temp_max_c, temp_min_c, temp_mean_c
+       pressure_msl_max_hpa, pressure_msl_min_hpa, pressure_msl_mean_hpa
+       dew_point_mean_c, relative_humidity_mean_pct
+       wind_speed_max_kmh, wind_gusts_max_kmh, wind_direction
+       cloud_cover_mean_pct
+       rain_probability, precipitation_sum_mm
+       weather_code
