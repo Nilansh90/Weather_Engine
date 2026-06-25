@@ -1,0 +1,178 @@
+#DAY 7#
+
+MODELLING STAGE DONE YAY:)
+
+AS PER STRATEGY_2, MODEL_2.png
+
+MODELS SAVED IN PROJECT_ROOT/MODEL folder
+for
+
+a)Temperature (max and min)->
+
+into one as a single model using multi model approach(sklearn)
+INPUT PARAMETERS->
+
+['latitude', 'longitude', 'city_id', 'year', 'day_of_week', 'month_sin', 'month_cos', 'day_sin',
+'day_cos', 'shortwave_radiation_sum_mj_m2', 'daylight_duration_s', 'temp_max_lag1', 'temp_min_lag1', 'temp_max_roll3',
+'temp_min_roll3']
+
+METRICS (TEST SET) -> temp max->r2->0.954,mae->0.85,mse->1.37,rmse->1.17
+temp min->r2->0.96,mae->0.7787,mse->1.14 rmse->1.07
+
+b)PRESSURE MODEL(max and min)->
+
+into one as a single model using multi model approach(sklearn)
+INPUT PARAMETERS->
+['latitude', 'longitude', 'city_id', 'year', 'day_of_week', 'month_sin', 'month_cos', 'day_sin', 'day_cos',
+'shortwave_radiation_sum_mj_m2', 'daylight_duration_s', 'temp_max_lag1', 'temp_min_lag1', 'temp_max_roll3',
+'temp_min_roll3']
+
+METRICS(TEST SET) ->
+pressure max-> r2->0.9532,mae->0.947 ,mse 1.5238, rmse->1.234
+pressure min -> r2->0.9429,mae->1.0539,mse->1.86,rmse->1.364
+
+c)WIND ->
+WIND MODELS REACHED A CEILING OF R2=0.65 FOR VALIDATION AND TEST SETS VS 0.85 FOR TRAINING SETS.
+Despite addition of lattitude , longitude , elevation,city id , year , day of week , motnh sin , month cos , day sin,
+day cos, shortwave radiation , temperature ,pressure , temp lags , pressure lags , wind speed , direction lags ,
+later also tried adding moisture and dew points lags ,rather no improvement .
+Upon reading research papers on wind modelling , it seems that wind is a highly chaotic variable and is not easily
+predictable with the features mentioned . It depends on pressure gradient of cities , in 100 km radius rather than local
+temperature , synoptic low pressure systems like western disturbances , monsoon troughs that may happen
+even away from region , terrain roughness , valley channeling , slope etc
+
+d)MOISTURE MODEL(DEW POINT MAX , MIN , RELATIVE HUMIDITY MAX , RELATIVE HUMIDITY MIN )
+
+into one as a single model using multi model approach(sklearn)
+
+INPUT PARAMETERS->
+['latitude', 'longitude', 'city_id', 'year', 'day_of_week', 'month_sin', 'month_cos', 'day_sin', 'day_cos',
+'shortwave_radiation_sum_mj_m2', 'daylight_duration_s', 'temp_max_lag1', 'temp_min_lag1', 'temp_max_roll3',
+'temp_min_roll3']
+
+METRICS(TEST SET)->
+dew_point_max_c->r2->0.92,mae->0.99,mse->2.19
+dew_point_min_c->r2->0.92,mae->1.39,mse->4.22
+relative humidity max->r2->0.85,mae->4.74,mse->46.56
+relative humidity min -> r2->0.93,mae->3.97,mse->28.218
+
+e)CLOUD COVER->SIMILAR TO WIND - SHIFT TO EXTERNAL SUPPLY ->
+1. IMMUNITY TO RECURSIVE ERROR CASCADING
+   Our internal model relies heavily on yesterday's cloud cover to predict today. When forecasting multiple days out,
+   a tiny mistake on Day 1 snowballs into a massive error by Day 5. External weather APIs use physics equations on
+   supercomputers that do not rely on recursive lags, making them mathematically immune to this compounding error.
+
+2. GLOBAL VS. LOCAL BLINDSPOT
+   An internal model only looks at local city data. It cannot see a massive storm front forming 1,000 kilometers away.
+   External weather supplies track atmospheric movements globally using satellites, allowing them to predict incoming
+   weather systems days before they alter local surface pressure.
+
+3. HIGH-ALTITUDE ACCURACY
+   Low-level clouds are driven by surface humidity, which our model can track. High-altitude clouds
+   (like cirrus clouds at 30,000 feet) are completely detached from ground-level moisture. External supplies
+   detect these high-altitude cloud formations via satellite, whereas an internal ground-data model is blind to them.
+
+4. DRASTIC REDUCTION IN PRODUCTION DEBT
+   Running an autoregressive machine learning pipeline in a live environment is fragile. If a data sensor fails to
+   record yesterday's cloud cover, our 'lag1' feature becomes null, and the entire engine crashes. An external API is
+   stateless, highly available, and significantly lowers our server maintenance overhead.
+
+f)RAIN OR NOT(BINARY CLASSIFICATION AND TELLS PROBABILITY OF ITS CONFIDENCE)
+NOTE ->
+The model’s performance on the test set, using a sensitivity-optimized threshold of 0.30(TO OPTIMISE FOR RECALL)
+
+INPUT PARAMETERS->
+['latitude', 'longitude', 'city_id', 'year', 'day_of_week', 'month_sin', 'month_cos', 'day_sin', 'day_cos',
+'shortwave_radiation_sum_mj_m2', 'daylight_duration_s', 'temp_max_c', 'temp_min_c', 'pressure_msl_max_hpa',
+'pressure_msl_min_hpa', 'wind_speed_max_kmh', 'wind_dir_sin', 'wind_dir_cos', 'dew_point_max_c', 'dew_point_min_c',
+'cloud_cover_mean_pct']
+
+EVALUATION METRICS(TEST SET)->
+
+Metric	   No Rain (0)	  Rain (1)
+Precision	0.92	       0.83
+Recall	    0.87	       0.89
+F1-Score	0.90	       0.86
+
+This indicates that out of all actual rainy days, the model successfully identifies 89% of them.
+This is the primary metric for safety, ensuring that missed "storm events" are minimized.
+
+REASON TO OPTIMISE FOR RECALL -> FALSE NEGATIVES(PREDICTED NO RAIN BUT IT RAINED) MORE EXPENSIVE
+ALSO GIVES PROBABILITY OF ITS CONFIDENCE
+
+g)RAIN AMOUNT->SHIFTED TO EXTERNAL NWP
+
+1. LIMITATIONS OF TWEEDIE REGRESSORS ON EXTREME EVENTS
+   Machine learning models struggle to predict "black swan" weather events (e.g., flash floods or record-breaking
+   rainfall). A Tweedie Regressor can predict average rainfall patterns accurately, but it often significantly
+   under-predicts extreme precipitation because the training data rarely contains enough historical examples of such
+   rare, high-magnitude events.
+
+2. COMPLEXITY OF MULTI-SCALE ATMOSPHERIC PHYSICS
+   Rainfall is not just a surface-level event; it is the result of vertical atmospheric columns, mid-level
+   moisture transport, and complex aerosol interactions. Numerical Weather Prediction (NWP) models calculate these 3D
+   dynamics using global observational data, providing a physically grounded prediction that surface-level tabular ML
+   cannot capture.
+
+3. ELIMINATION OF "ZERO-INFLATED" BIAS
+   Rainfall data is highly "zero-inflated"—most days have zero rain, making it mathematically difficult for models
+   to distinguish between "dry" and "light drizzle." NWP models use grid-point physics to simulate cloud-microphysics
+   directly, which is more reliable than learning probabilistic thresholds from historical tabular datasets.
+
+4. SYSTEMIC CONSISTENCY AND FORECAST HORIZON
+   By using the same NWP provider for Wind, Cloud, and Rain Amount, we ensure physical consistency across t
+   he forecast (e.g., the model won't predict heavy rain without the cloud cover to support it). Furthermore,
+   NWP models maintain accuracy over 5–7 day horizons, whereas internal ML models degrade rapidly due to recursive
+   error propagation beyond 48 hours.
+
+h)WEATHER CODE->(SKY CONDITION)
+
+INPUT PARAMS ->
+['latitude', 'longitude', 'city_id', 'year', 'day_of_week', 'month_sin', 'month_cos', 'day_sin', 'day_cos',
+'shortwave_radiation_sum_mj_m2', 'daylight_duration_s', 'temp_max_c', 'temp_min_c', 'pressure_msl_max_hpa',
+'pressure_msl_min_hpa', 'wind_speed_max_kmh', 'wind_dir_sin', 'wind_dir_cos', 'dew_point_max_c', 'dew_point_min_c',
+'relative_humidity_max_pct', 'cloud_cover_mean_pct', 'precipitation_sum_mm']
+
+Performance Summary
+
+The model achieved an overall accuracy of 73.58 percent. Below is the detailed classification report:
+
+0 (Clear Sky): Precision 0.96, Recall 0.93, F1-Score 0.94 (Support: 720)
+1 (Mainly Clear): Precision 0.58, Recall 0.82, F1-Score 0.68 (Support: 325)
+2 (Partly Cloudy): Precision 0.29, Recall 0.46, F1-Score 0.35 (Support: 226)
+3 (Overcast): Precision 0.98, Recall 0.76, F1-Score 0.86 (Support: 1119)
+51 (Light Drizzle): Precision 0.88, Recall 0.84, F1-Score 0.86 (Support: 557)
+53 (Moderate Drizzle): Precision 0.52, Recall 0.64, F1-Score 0.58 (Support: 278)
+55 (Dense Drizzle): Precision 0.27, Recall 0.22, F1-Score 0.24 (Support: 101)
+61 (Slight Rain): Precision 0.42, Recall 0.51, F1-Score 0.46 (Support: 226)
+63 (Moderate Rain): Precision 0.72, Recall 0.67, F1-Score 0.70 (Support: 430)
+65 (Heavy Rain): Precision 0.67, Recall 0.47, F1-Score 0.55 (Support: 128)
+Overall Accuracy: 0.74 (Total Support: 4110)
+
+Strategy Logic: ML Model vs. External NWP
+
+The strategy behind this implementation addresses data sparsity issues encountered when training on a limited set of
+cities that did not historically experience every weather code.
+
+The Consensus Filter Approach
+
+Because the training data was geographically restricted, the model's ability to predict rare weather codes
+(like 55 or 65) is limited by its training exposure. The strategy to handle this is as follows:
+
+Model-NWP Cross-Verification: The ML model is treated as a local expert, and the external Numerical Weather Prediction
+(NWP) API is treated as a global observer.
+
+Logic:
+Alignment: If the ML model’s prediction matches the NWP output, or falls within a high-probability neighbor category,
+the prediction is considered validated and the result is outputted.
+Conflict Handling: If the ML model predicts a code it is historically weak at—such as code 55 with its 0.24 F1-score—and
+it conflicts significantly with the NWP data, the system defaults to the NWP's physics-based forecast.
+
+Why this works: This strategy mitigates the risk of the model hallucinating weather codes it rarely saw during training.
+It creates a robust system where the ML model provides real-time adjustments based on local sensor data, while the
+NWP serves as a safety rail to ensure physical plausibility.
+
+This hybrid approach ensures that even for cities with missing historical weather codes, the final forecast remains
+anchored in physically consistent, reliable data.
+
+HEADING TOWARDS SCRIPTING NEXT DAY ONW :)
