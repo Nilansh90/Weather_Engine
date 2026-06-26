@@ -1,0 +1,61 @@
+app/external/nwp_client.py
+
+Overview of the NWPClient Class
+
+This Python code defines a class named NWPClient (Numerical Weather Prediction Client).
+Its primary function is to intelligently fetch weather forecast data from the Open-Meteo API for a specific location
+and date. To optimize efficiency and avoid exceeding API rate limits,
+it utilizes a PostgreSQL database to "cache" (store) previously downloaded data.
+
+Here is the step-by-step breakdown of how the code operates:
+
+1. Class Initialization
+
+Method: **init**(self, db, sleep_seconds=0.3)
+Action: Upon the instantiation of an NWPClient object, a database connection and an
+optional sleep timer (defaulting to 0.3 seconds) are provided as arguments.
+The method also stores the official base URL for the Open-Meteo API, establishing the endpoint for future data requests.
+
+2. The Smart Fetching Logic
+
+Method: fetch(self, latitude, longitude, target_date)
+Action: This is the primary function invoked to retrieve weather data. It acts as a traffic controller to
+minimize unnecessary internet requests.
+
+Database Check: First, it queries the database using get_cached_nwp to verify if the weather data for
+the exact location and date has already been downloaded.
+
+Return Cached Data: If the data exists in the database, i
+t is returned immediately. This improves execution speed and prevents duplicate API calls.
+
+Download New Data: If the data is absent from the database, the method triggers the internal
+_download function to retrieve it directly from the Open-Meteo API.
+
+Save and Pause: After acquiring fresh data from the internet,
+the method saves it to the database using save_nwp_cache for future local access.
+It then pauses the script execution for a fraction of a second (dictated by sleep_seconds)
+ to prevent overloading the API server, before finally returning the result.
+
+3. The Internet Download and Formatting Logic
+
+Method: _download(self, latitude, longitude, target_date)
+Action: This is a private helper function responsible for handling the actual internet communication and
+ preparing the data for subsequent machine learning models.
+
+API Parameters: It constructs a dictionary of parameters requesting specific daily metrics
+from the API: weather code, precipitation, cloud cover, wind speed, wind gusts, and wind direction.
+By setting both the start and end dates to the target date, it restricts the data retrieval to exactly one day.
+
+Making the Call: It utilizes the requests library to send the GET request to the API,
+implementing a 10-second timeout to ensure the script does not hang indefinitely in the event of a network failure.
+
+Math Transformation: Upon receiving the data, the function extracts the wind direction (provided in degrees).
+It then uses numpy to calculate both the sine and cosine of that angle.
+This is a standard mathematical transformation for machine learning, allowing the model to correctly
+ interpret cyclical continuous variables (recognizing that 359 degrees and 1 degree are physically adjacent
+ rather than numerically distant).
+
+Data Packaging: Finally, it parses the raw JSON response, extracts the single daily values
+ (using index [0] since the API returns data in array format even for a single day), and structures e
+ verything into a standardized dictionary. This formatted dictionary is then ready to be saved to
+ the database and integrated into the broader data pipeline.

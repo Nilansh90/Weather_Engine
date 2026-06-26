@@ -1,0 +1,45 @@
+Overview of the Email Reporter Class
+
+This Python code defines a class named EmailReporter.
+Its primary function is to automatically generate and send a formatted daily email report summarizing the
+performance and predictions of a weather forecasting machine learning pipeline. It utilizes standard Python email
+libraries to construct an HTML message and sends it via an SMTP server.
+
+Here is the step by step breakdown of how the code operates:
+
+1. Class Initialization
+Method: init
+Action: Upon instantiation, the object loads environment variables to retrieve the sender email address,
+the sender email password, and the designated recipient email address. This keeps sensitive credentials secure and
+out of the source code.
+
+2. Generating HTML Sections
+Methods: forecast section, nwp section, actual section, error section, pipeline section
+
+Action: These are private helper methods designed to format specific dictionaries of data into individual HTML tables.
+The forecast section displays the machine learning model predictions, including temperature, pressure, rain probability,
+and wind metrics, formatting them to two decimal places where appropriate.
+
+The nwp section displays the global numerical weather prediction baseline data fetched from OpenMeteo.
+The actual section displays the real observed weather metrics for comparison against the forecasts.
+The error section displays calculated accuracy metrics, such as Mean Absolute Error for temperature and whether
+the rain prediction was correct.
+The pipeline section displays operational metrics, such as how many cities were processed, cache hit rates, and
+overall execution status.
+
+3. Assembling the Full HTML Document
+Method: build html
+Action: This method takes all the individual data dictionaries as arguments.
+It generates a current timestamp to indicate when the report was created and constructs a complete
+HTML document. It inserts a main header, the timestamp, and sequentially calls all the helper methods to stack the
+HTML tables on top of each other, separated by horizontal lines.
+
+4. Sending the Email
+Method: send daily report
+Action: This is the main execution method.
+First, it calls the build html method to generate the complete email body.
+Next, it creates a structured MIME message object, assigning the sender, recipient, and subject line.
+It attaches the generated HTML content to this message.
+Finally, it establishes a secure connection to the Gmail SMTP server using port 587,
+initiates TLS encryption, logs in with the stored credentials, transmits the constructed email string,
+and prints a confirmation message to the console.

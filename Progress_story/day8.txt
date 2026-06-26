@@ -1,0 +1,32 @@
+**DAY 8**
+
+
+SHIFTED TO SCRIPTING/Setting up app
+
+0)Created 0.py since , data for last 15 years was added to postgres , 5 days ago , the script , refills the values
+of last 16 days into the database as per the table structure and skips for duplicated already existing values ,
+
+1)SET UP Project_root/app section fully except flask_app , that acts as the engine ->
+
+OOP is implemented for core engine so as preven variable bloat and make debugging easier.
+SMART Apps DUMB scripts
+
+app/ has classes that have methods and attributes , while scripts/just implement it
+
+SETUPS IN app/ML-> as explain in Working_Explained/App_Working
+
+a)features.py->Since DB has only basic features and we need features like lag, averages etc.
+it works on to create them,
+
+
+b)app/external/nwp_client.py ->Explained in Working_Explained directory
+
+c)app/ML/fallback.py
+
+d)app/ML/predictor.py->Explained in working_explained directory
+
+e)app/database/db_manager.py ->Explained in working_explained directory
+
+f)app/email/mailer.py-> explained in working_explained directory
+
+UPNEXT ->Working on scripts next day onw

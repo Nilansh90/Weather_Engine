@@ -1,0 +1,32 @@
+Overview of the Consensus Filter Code
+
+This script acts as a decision-making filter to choose the most accurate weather condition code by comparing p
+redictions from two sources: a local Machine Learning model and a global Numerical Weather Prediction model.
+
+1. The Neighbors Dictionary
+The code defines a dictionary named NEIGHBOURS. This dictionary maps specific weather codes to a
+list of closely related weather codes.
+For instance, code 0 is linked to code 1, and code 1 is linked to codes 0 and 2.
+This structure allows the system to recognize when two formally different codes actually represent very similar
+meteorological conditions, such as clear skies versus partly cloudy skies.
+
+2. The Evaluation Function
+The function evaluate weather code takes two inputs: the weather code predicted by the Machine Learning model and the w
+eather code predicted by the global Numerical Weather Prediction model.
+It then evaluates these inputs using a three-step logical sequence to decide which code to output.
+
+First Step: Exact Agreement
+The function first checks if both models predicted the exact same weather code.
+If they are identical, it returns the Machine Learning code.
+
+Second Step: Meteorologically Close
+If the codes are not identical, the function checks the
+NEIGHBOURS dictionary. It looks to see if the global prediction code is listed as a valid neighbor for the local
+Machine Learning code. If they are neighbors, the system considers the predictions to
+be close enough. It decides to trust the local expert and returns the Machine Learning code.
+
+Third Step: Disagreement
+If the two codes are not identical and are not listed as neighbors,
+ the system considers this a significant disagreement. In this scenario,
+ the system overrides the local model and defaults to the broader global observer,
+ returning the Numerical Weather Prediction code.

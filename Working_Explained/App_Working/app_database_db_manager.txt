@@ -1,0 +1,72 @@
+Overview of the Database Manager Class
+
+This Python code defines a class named DatabaseManager. I
+ts primary function is to act as a central repository for all database interactions within the application.
+By burying the raw SQL queries inside Python methods, it provides a clean and simple interface for other
+ components, such as machine learning pipelines and user dashboards, to
+ seamlessly read and write weather data using the PostgreSQL database.
+
+Here is the step by step breakdown of how the code operates:
+
+1. Class Initialization
+Method: init
+Action: Upon instantiation, the object loads environment variables to locate the database URL.
+ If the URL is missing, it raises an error to halt execution. It then uses the SQLAlchemy library to
+ create a database engine, which establishes and manages the core connection pool for all subsequent database queries.
+
+2. Retrieving City Information
+Method: get city
+Action: This method fetches the geographic coordinates and name associated with a specific city ID.
+ It executes a SQL query to find the first distinct matching record in the weather data table. T
+ he result is parsed using the Pandas library and returned as a standard dictionary.
+
+3. Fetching Daily Observations
+Method: get day
+Action: This method retrieves
+the complete set of recorded historical weather metrics for a specific city on an exact date.
+ It runs a SQL query filtering by both the city ID and the target date.
+  If no data exists for that specific combination, it throws an error. Otherwise,
+  it returns the single requested row of data.
+
+4. Fetching Historical Windows
+Method: get last n days
+Action: This method is designed to retrieve a rolling window of historical data.
+ It queries the database for records belonging to a specific city that occurred on or before a given end date.
+ It orders the results in descending chronological order and limits the output to the requested number of days. T
+ his is primarily used to calculate rolling averages or lagged features for machine learning.
+5. Listing All Cities
+Method: get all city ids
+Action: This function queries the database to extract a unique list of all city IDs
+currently present in the weather data table. It converts the resulting Pandas column into
+a standard Python list and returns it.
+
+6. Fetching Data Ranges
+Method: get between dates
+Action: This method extracts a chronological block of data for analysis or display.
+It queries the weather data table for a specific city, strictly filtering for records that fall between
+a designated start date and end date. The returned dataset is ordered chronologically by date.
+
+7. Finding the Latest Record
+Method: latest date
+Action: This method queries the database using an aggregation function to find the absolute
+maximum, meaning the most recent, date currently stored anywhere in the weather data table.
+It returns this single date value.
+
+8. Connection Management
+Method: close
+Action: This is a utility cleanup method. It calls the dispose function on the SQLAlchemy engine, which safely closes
+all active connections to the PostgreSQL database and frees up system resources.
+
+9. Retrieving Cached Forecasts
+Method: get cached nwp
+Action: This method interacts with a secondary database table dedicated to numerical weather prediction caching.
+It searches for existing forecast data that matches a specific latitude, longitude, and date. If a match is found,
+it converts the row into a dictionary and returns it. If the cache is empty for those parameters, it simply returns None.
+
+10. Saving Forecasts to Cache
+Method: save nwp cache
+Action: This method takes newly downloaded numerical weather prediction data and inserts it into the cache table.
+It maps the Python dictionary values to the corresponding SQL columns and records the current timestamp.
+It employs a SQL conflict resolution command to silently ignore the insertion if a record with the exact
+same latitude, longitude, and forecast date already exists, thereby preventing database errors caused by
+duplicate entries.

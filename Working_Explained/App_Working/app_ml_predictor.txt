@@ -1,0 +1,67 @@
+Overview of the Inference Orchestrator Class
+
+This Python code defines a class named InferenceOrchestrator.
+Its primary function is to manage and execute a multi step machine learning pipeline for weather forecasting.
+It loads pre trained machine learning models, generates features, fetches external weather data, and runs predictions
+in a specific sequence to produce a final comprehensive weather forecast.
+
+Here is the step by step breakdown of how the code operates:
+
+1. Class Initialization
+Method: init
+Action: Upon instantiation, the object is provided with a feature pipeline and a numerical weather
+prediction client. The method calculates the root directory path and navigates to the model folder.
+ It then uses the joblib library to load five distinct pre trained machine learning models into memory:
+ temperature, pressure, moisture, rain classification, and multiclass weather code models.
+
+
+2. Tier 1 Predictions: Temperature, Pressure, and Moisture
+Methods: predict temperature, predict pressure, predict moisture
+Action: These three separate methods take the foundational Tier 1 dataset as input.
+They feed this data into their respective machine learning models to generate base meteorological predictions.
+Each method extracts the resulting array values and packages them into a formatted dictionary containing the
+maximum and minimum forecasted values for temperature, pressure, dew point, and relative humidity.
+
+3. Rain Prediction Logic
+Method: predict rain
+Action: This method takes a specifically formatted dataset for rain prediction.
+It feeds the data into the rain classification model to calculate the probability of precipitation.
+If the predicted probability is greater than or equal to thirty percent, it flags the prediction as raining.
+It returns both the exact probability and the boolean flag.
+
+4. Weather Code Prediction
+Method: predict weathercode
+Action: This method takes a fully assembled dataset and feeds it into the multiclass weather model.
+It returns a single integer representing the specific weather condition code predicted by the machine learning algorithm.
+
+5. Full Directed Acyclic Graph Execution
+Method: run full dag
+Action: This is the master function that coordinates the entire forecasting pipeline for a specific city and target
+date.
+
+Step A: Data Gathering
+It uses the feature pipeline to generate the foundational Tier 1 features. It also retrieves the city coordinates
+from the database and uses them to fetch the global numerical weather prediction data via the client.
+
+Step B: Initial Inferences
+It runs the temperature, pressure, and moisture prediction methods using the Tier 1 features.
+
+Step C: Rain Inference
+It commands the feature pipeline to assemble the specific rain features by combining the Tier 1 data,
+the newly predicted temperature, pressure, and moisture values, and the numerical weather prediction data. T
+his new dataset is then passed to the rain prediction method.
+
+Step D: Weather Code Inference
+It commands the feature pipeline to assemble the final weather code dataset by
+adding the moisture predictions and numerical weather prediction precipitation data to the rain dataset. T
+his is passed to the weather code prediction method to get the local machine learning prediction.
+
+Step E: Consensus Filtering
+The local machine learning weather code and the global numerical weather prediction weather code are sent to
+an external evaluation function. This function acts as a consensus filter to determine the final,
+most accurate weather code.
+
+Step F: Output Generation
+Finally, the method compiles all the generated predictions,
+the numerical weather prediction wind and cloud data, and the filtered weather code into one
+comprehensive dictionary. This dictionary represents the complete final forecast for the requested city and date.
