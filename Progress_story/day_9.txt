@@ -1,0 +1,81 @@
+DAY_9
+
+Today was primarily focused on completing the end-to-end inference pipeline, integrating all trained models into
+production, cleaning up the feature engineering pipeline, finalizing automation scripts, and ensuring the entire weather
+ forecasting engine can run as a single workflow.
+
+Started by refactoring the inference architecture. Instead of using a single generic Tier-1 feature builder for every
+model, the feature pipeline was redesigned to construct model-specific feature sets. Separate builders were
+implemented for temperature and pressure, ensuring each model receives exactly the features it was trained on.
+This eliminated unnecessary feature sharing between models and aligned inference with the original training pipelines.
+
+The predictor orchestration logic was then updated to accommodate these new builders. The inference DAG was modified
+so that temperature, pressure and moisture models now receive their respective feature DataFrames instead of sharing a
+common Tier-1 DataFrame. Rain and weather code feature assembly was updated to consume the predicted outputs from
+previous stages while maintaining the Directed Acyclic Graph dependency structure.
+
+A detailed feature verification phase followed. The exact feature names expected by every trained LightGBM model
+were extracted directly from the saved boosters. Feature lists for Temperature, Pressure, Moisture, Rain and
+ Weather Code models were printed and compared against the generated inference features. This
+ revealed several mismatches in lag feature names and required inputs which were subsequently corrected. Moisture,
+ Rain and Weather feature builders were rewritten to perfectly mirror the feature ordering and naming used during
+ training.
+
+The FeaturePipeline class was significantly expanded. Dedicated builders were
+added for temperature, pressure, rain and weather code features. Feature engineering logic now reconstructs all
+required lag variables, rolling statistics, temporal encodings, geographical features and predicted intermediate
+variables before passing them downstream. Category handling for city_id was also preserved to remain compatible with
+ LightGBM categorical training.
+
+Several rounds of debugging were carried out to resolve inference failures. Issues involving incorrect
+feature names, missing DataFrame columns, obsolete helper functions, incorrect builder calls and inconsistent
+function signatures were identified and fixed. The predictor was migrated away from the older assemble_*
+helper methods in favour of the new build_* methods, bringing the inference code in line with the new architecture.
+
+The prediction pipeline was then validated across all configured cities. After the fixes, the complete
+inference DAG successfully generated forecasts for every city without errors, confirming that all trained models
+were correctly integrated into the production pipeline.
+
+Attention then shifted towards automation scripts.
+
+The update_actuals workflow was reviewed. After examining the existing data ingestion architecture, it became
+clear that the historical recharge script already refreshes historical observations directly into the weather_data
+table while avoiding duplicate inserts. Since recharge_actual_data.py already performs the responsibility that
+update_actuals.py was intended to serve, maintaining a separate update_actuals pipeline was determined to be unnecessary.
+
+The calculate_errors script was completed and integrated into the overall workflow. Database retrieval logic was
+connected to predictions and historical observations, error calculations were implemented, and database storage of
+computed metrics was finalized. Minor issues involving filenames and script references were corrected before the
+script executed successfully.
+
+The email reporting system underwent several improvements. The mailer was modified to support multiple
+recipients instead of a single email address by introducing the RECIPIENT_EMAILS environment variable.
+SMTP authentication was fixed using a Gmail App Password. Error handling for missing configuration variables
+was improved and HTML email generation was verified. The reporting script was connected to forecasts,
+cached NWP forecasts, historical observations, calculated error metrics and pipeline statistics to generate
+comprehensive daily reports. A delay between consecutive emails was also introduced to avoid sending multiple
+emails too rapidly.
+
+Several environment configuration issues were debugged during this process.
+Problems related to .env loading paths were identified, environment variable names were standardized and receiver
+parsing logic was corrected to support comma-separated recipient lists.
+
+Automation of the complete project was then implemented through a master pipeline script. Instead of scheduling
+every individual script, a single master_script.py was created to sequentially execute the entire workflow consisting
+of recharge_actual_data.py, fetch_weather.py, predict.py, calculate_errors.py and mail_script.py.
+Logging support was added so that outputs and failures from every stage are written into a central daily pipeline log.
+Error handling was designed such that the pipeline stops immediately if any stage fails, simplifying debugging and making future scheduling significantly cleaner.
+
+During testing, the master pipeline exposed a typo in the calculate_errors filename which prevented execution.
+After correcting the filename mismatch, the overall orchestration became fully operational.
+
+Finally, deployment planning was discussed. Rather than introducing scheduling complexity during active
+development, the decision was made to continue manually executing the master pipeline once per day until the
+Flask application is complete. Once the web application is finished, the entire system will be deployed and the
+ master pipeline will be scheduled automatically using a server-side scheduler rather than relying on the local
+ machine being powered on.
+
+At the end of today's work, the backend weather forecasting engine reached a near-production state.
+The complete machine learning inference pipeline, database integration, error calculation, email reporting and workflow
+automation are all functional. The remaining major components of the project are the Flask web application,
+deployment infrastructure and final documentation.
