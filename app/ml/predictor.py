@@ -7,13 +7,13 @@ from app.ml.fallback import evaluate_weather_code
 
 class InferenceOrchestrator:
 
-
-    def __init__(self,
-                 feature_pipeline,
-                 nwp_client):
+    def __init__(
+            self,
+            feature_pipeline
+    ):
 
         self.fp = feature_pipeline
-        self.nwp = nwp_client
+
 
 
         ROOT = Path(__file__).resolve().parents[2]
@@ -55,8 +55,11 @@ class InferenceOrchestrator:
 
     def predict_temperature(self,
                             tier1):
-
-
+        # print("\nTier1 dtypes")
+        # print(tier1.dtypes)
+        #
+        # print("\nTier1 values")
+        # print(tier1)
         pred = self.temp_model.predict(
             tier1
         )[0]
@@ -78,8 +81,9 @@ class InferenceOrchestrator:
 
     def predict_pressure(self,
                          tier1):
-
-
+        # print(
+        #     self.pressure_model.estimators_[0].booster_.feature_name()
+        # )
         pred = self.pressure_model.predict(
             tier1
         )[0]
@@ -101,104 +105,42 @@ class InferenceOrchestrator:
 
     #######################################################
 
-    def predict_moisture(self,
-                         tier1):
-
-
+    def predict_moisture(self, moisture_features):
         pred = self.moisture_model.predict(
-            tier1
+            moisture_features
         )[0]
 
+        return {
+
+            "dew_point_max_c": float(pred[0]),
+
+            "dew_point_min_c": float(pred[1]),
+
+            "relative_humidity_max_pct": float(pred[2]),
+
+            "relative_humidity_min_pct": float(pred[3])
+
+        }
+    #######################################################
+
+    def predict_rain(self, rain_x):
+        probability = float(self.rain_model.predict_proba(
+            rain_x
+        )[0][1])
 
         return {
 
+            "rain_probability": float(probability),
 
-
-            'dew_point_max_c':
-                float(pred[0]),
-
-
-
-            'dew_point_min_c':
-                float(pred[1]),
-
-
-
-            'relative_humidity_max_pct':
-                float(pred[2]),
-
-
-
-            'relative_humidity_min_pct':
-                float(pred[3])
-
+            "will_rain": bool(probability >= 0.30)
 
         }
-
-
-
     #######################################################
 
-
-    def predict_rain(self,
-                     rain_x):
-
-
-
-        probability = (
-
-
-            self.rain_model
-
-
-            .predict_proba(
-
-                rain_x
-
-            )
-
-
-        )[0][1]
-
-
-
-        rain = probability >= 0.30
-
-
-
-        return {
-
-
-            'rain_probability':
-
-                float(probability),
-
-
-
-
-            'rain':
-
-                bool(rain)
-
-        }
-
-
-
-    #######################################################
-
-
-    def predict_weathercode(self,
-                            weather_x):
-
-
-
+    def predict_weathercode(self, weather_x):
         pred = self.weather_model.predict(
-
-                    weather_x
-
-                )[0]
-
-
+            weather_x
+        )[0]
 
         return int(pred)
 
@@ -206,205 +148,57 @@ class InferenceOrchestrator:
 
     #######################################################
 
-
-    def run_full_dag(self,
-                     city_id,
-                     target_date):
-
-
-
-        tier1 = (
-
-            self.fp
-
-            .build_tier1_features(
-
-                city_id,
-
-                target_date
-
-            )
-
+    def run_full_dag(
+            self,
+            city_id,
+            target_date,
+            nwp
+    ):
+        temp_features = self.fp.build_temperature_features(
+            city_id,
+            target_date
         )
 
-
-
-        city = (
-
-            self.fp
-
-            .db
-
-            .get_city(
-
-                city_id
-
-            )
-
+        pressure_features = self.fp.build_pressure_features(
+            city_id,
+            target_date
         )
 
-
-
-        nwp = (
-
-            self.nwp.fetch(
-
-
-                city['latitude'],
-
-
-                city['longitude'],
-
-
-                target_date
-
-
-            )
-
+        # Temporary until moisture builder is added
+        moisture_features = self.fp.build_moisture_features(
+            city_id,
+            target_date,
+            nwp
         )
-
-
-
-        ######################################
 
         temp = self.predict_temperature(
-
-                    tier1
-
-                )
-
-
+            temp_features
+        )
 
         pressure = self.predict_pressure(
-
-                        tier1
-
-                    )
-
-
+            pressure_features
+        )
 
         moisture = self.predict_moisture(
-
-                        tier1
-
-                    )
+            moisture_features
+        )
 
 
         ######################################
 
+        rain_x = self.fp.build_rain_features(
 
+            temp_features,
 
-        rain_x = (
+            temp,
 
+            pressure,
 
-            self.fp
+            moisture,
 
-
-            .assemble_rain_features(
-
-
-
-                    tier1,
-
-
-
-                    [
-
-
-                        temp[
-
-                            'temp_max_c'
-
-                        ],
-
-
-
-                        temp[
-
-                            'temp_min_c'
-
-                        ]
-
-
-
-                    ],
-
-
-
-
-                    [
-
-
-                        pressure[
-
-                            'pressure_msl_max_hpa'
-
-                        ],
-
-
-
-
-                        pressure[
-
-                            'pressure_msl_min_hpa'
-
-                        ]
-
-                    ],
-
-
-
-
-
-                    [
-
-
-                        moisture[
-
-                            'dew_point_max_c'
-
-                        ],
-
-
-
-
-                        moisture[
-
-                            'dew_point_min_c'
-
-                        ],
-
-
-
-
-                        moisture[
-
-                            'relative_humidity_max_pct'
-
-                        ],
-
-
-
-
-                        moisture[
-
-                            'relative_humidity_min_pct'
-
-                        ]
-
-
-                    ],
-
-
-
-
-                    nwp
-
-
-            )
+            nwp
 
         )
-
 
 
         rain = (
@@ -421,75 +215,15 @@ class InferenceOrchestrator:
 
         ######################################
 
+        weather_x = self.fp.build_weathercode_features(
 
+            rain_x,
 
-        weather_x = (
+            moisture,
 
-
-            self.fp
-
-
-            .assemble_weathercode_features(
-
-
-                    rain_x,
-
-
-
-                    [
-
-
-                        moisture[
-
-                            'dew_point_max_c'
-
-                        ],
-
-
-
-
-                        moisture[
-
-                            'dew_point_min_c'
-
-                        ],
-
-
-
-
-                        moisture[
-
-                            'relative_humidity_max_pct'
-
-                        ],
-
-
-
-
-                        moisture[
-
-                            'relative_humidity_min_pct'
-
-                        ]
-
-
-                    ],
-
-
-
-
-                    nwp[
-
-                        'precipitation_sum_mm'
-
-                    ]
-
-
-
-            )
+            nwp
 
         )
-
 
 
         ml_code = (
@@ -632,3 +366,29 @@ class InferenceOrchestrator:
 
 
         return forecast
+
+    def debug_feature_names(self):
+        print("\nTemperature")
+        print(
+            self.temp_model.estimators_[0].booster_.feature_name()
+        )
+
+        print("\nPressure")
+        print(
+            self.pressure_model.estimators_[0].booster_.feature_name()
+        )
+
+        print("\nMoisture")
+        print(
+            self.moisture_model.estimators_[0].booster_.feature_name()
+        )
+
+        print("\nRain")
+        print(
+            self.rain_model.booster_.feature_name()
+        )
+
+        print("\nWeather")
+        print(
+            self.weather_model.booster_.feature_name()
+        )

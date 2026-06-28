@@ -9,6 +9,33 @@ import sys
 import time
 from typing import Any, Dict, List, Optional
 
+
+
+from pathlib import Path
+
+
+def parse_args():
+
+    project_root = Path(__file__).resolve().parents[1]
+
+    default_cities = project_root / "cities.json"
+
+    p = argparse.ArgumentParser()
+
+    p.add_argument(
+        "--cities",
+        default=str(default_cities),
+        help="Path to cities.json"
+    )
+
+    p.add_argument(
+        "--days",
+        type=int,
+        default=16,
+        help="Number of days to fetch"
+    )
+
+    return p.parse_args()
 try:
     import requests
     import psycopg2
@@ -20,16 +47,12 @@ except ImportError:
 # Load environment variables
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
-
+##ALREADY OPEN SOURCED API , NO ISSUE WITH DECLARATION
 API_URL = "https://api.open-meteo.com/v1/forecast"
 TIMEZONE = "Asia/Kolkata"
 
 
-def parse_args():
-    p = argparse.ArgumentParser()
-    p.add_argument("--cities", default="cities.json", help="Path to cities.json")
-    p.add_argument("--days", type=int, default=16, help="Number of days to fetch")
-    return p.parse_args()
+
 
 
 def iso_date(d: dt.date) -> str:
@@ -276,11 +299,13 @@ def main():
     args = parse_args()
 
     # 1. Read cities.json
-    if not os.path.exists(args.cities):
-        print(f"Error: The file {args.cities} was not found in this directory.")
+    cities_path = Path(args.cities)
+
+    if not cities_path.exists():
+        print(f"Error: {cities_path} not found.")
         sys.exit(1)
 
-    with open(args.cities, "r", encoding="utf-8") as fh:
+    with open(cities_path, "r", encoding="utf-8") as fh:
         raw_data = json.load(fh)
 
     # Handle if the JSON is an object containing a "cities" array
@@ -293,8 +318,7 @@ def main():
         print("Error: cities.json must contain a JSON array of objects.")
         sys.exit(1)
 
-    print(f"Found {len(cities)} cities in {args.cities}.")
-
+    print(f"Found {len(cities)} cities in {cities_path}.")
     # 2. Setup dates and DB
     start_date, end_date, dates = start_end_dates(args.days)
     if not DATABASE_URL:

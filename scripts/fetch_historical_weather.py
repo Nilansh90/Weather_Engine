@@ -1,4 +1,5 @@
-﻿import json
+﻿#WORKS TO GET 15 YEARS DATA
+import json
 import openmeteo_requests
 import requests_cache
 import pandas as pd
@@ -197,3 +198,4 @@ if __name__ == "__main__":
     time.sleep(15)
 
     run_ingestion()
+

@@ -15,7 +15,17 @@ class EmailReporter:
 
         self.sender = os.getenv("EMAIL_ADDRESS")
         self.password = os.getenv("EMAIL_PASSWORD")
-        self.receiver = os.getenv("RECIPIENT_EMAIL")
+        receivers = os.getenv("RECIPIENT_EMAILS", "")
+
+        self.receivers = [
+
+            email.strip()
+
+            for email in receivers.split(",")
+
+            if email.strip()
+
+        ]
 
     ########################################################
 
@@ -275,7 +285,7 @@ class EmailReporter:
 
         message["From"] = self.sender
 
-        message["To"] = self.receiver
+        message["To"] = ", ".join(self.receivers)
 
         message["Subject"] = (
 
@@ -322,7 +332,7 @@ class EmailReporter:
 
                 self.sender,
 
-                self.receiver,
+                self.receivers,
 
                 message.as_string()
 

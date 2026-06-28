@@ -197,15 +197,8 @@ class NWPClient:
 
 
 
-            "start_date":
-
-                target_date,
-
-
-
-            "end_date":
-
-                target_date,
+            "start_date": target_date.isoformat(),
+            "end_date": target_date.isoformat(),
 
 
 
@@ -320,36 +313,8 @@ class NWPClient:
 
 
 
-            "wind_dir_sin":
-
-
-
-                np.sin(
-
-                    np.deg2rad(
-
-                        direction
-
-                    )
-
-                ),
-
-
-
-
-            "wind_dir_cos":
-
-
-
-                np.cos(
-
-                    np.deg2rad(
-
-                        direction
-
-                    )
-
-                ),
+            "wind_dir_sin": float(np.sin(np.deg2rad(direction))),
+            "wind_dir_cos": float(np.cos(np.deg2rad(direction))),
 
 
 
