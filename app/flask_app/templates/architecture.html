@@ -1,0 +1,597 @@
+{% extends "base.html" %}
+
+{% block title %}
+Weather Engine | System Architecture
+{% endblock %}
+
+{% block content %}
+
+<header class="section-title" aria-labelledby="architecture-title">
+
+    <div>
+
+        <span class="badge mb-2">
+            <i class="bi bi-hdd-network"></i>
+            Production-Oriented ML Platform
+        </span>
+
+        <h1 id="architecture-title">System Architecture</h1>
+
+        <p>
+            A complete overview of the engineering, machine learning and
+            automation architecture powering the Weather Engine.
+        </p>
+
+    </div>
+
+</header>
+
+{% macro arch_block(icon, title, description, footer='') %}
+<article class="arch-box glass arch-flow-card">
+
+    <div class="arch-icon">
+        <i class="bi bi-{{ icon }}"></i>
+    </div>
+
+    <h3>{{ title }}</h3>
+
+    <p>{{ description }}</p>
+
+    {% if footer %}
+    <footer class="arch-footer">{{ footer }}</footer>
+    {% endif %}
+
+</article>
+{% endmacro %}
+
+{% macro dag_node(node, node_class) %}
+<article class="card glass dag-node {{ node_class }}">
+
+    <div class="metric-icon">
+        <i class="bi bi-{{ node.icon }}"></i>
+    </div>
+
+    <h4>{{ node.name }}</h4>
+
+    <p class="card-subtitle">{{ node.purpose }}</p>
+
+    <div class="dag-node-meta">
+        <small>Algorithm</small>
+        <strong>{{ node.algorithm }}</strong>
+    </div>
+
+    <span class="badge badge-success">Loaded</span>
+
+    <p>{{ node.description }}</p>
+
+</article>
+{% endmacro %}
+
+<section class="mt-4 mb-4" aria-labelledby="system-overview-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="system-overview-title">System Overview</h2>
+            <p>End-to-end architecture diagram from external data to operational monitoring.</p>
+        </div>
+
+    </header>
+
+    {% set system_blocks = [
+        {'icon': 'cloud-download', 'title': 'Open-Meteo API', 'description': 'External historical observations and numerical weather prediction.'},
+        {'icon': 'arrow-repeat', 'title': 'Historical Data Recharge', 'description': 'Scheduled refresh of monitored city observations.'},
+        {'icon': 'database', 'title': 'PostgreSQL Database', 'description': 'Relational storage for cities, observations and forecast records.'},
+        {'icon': 'sliders', 'title': 'Feature Engineering', 'description': 'Transforms raw atmospheric data into model-ready signals.'},
+        {'icon': 'diagram-3', 'title': 'Hierarchical ML Engine', 'description': 'Executes dependency-aware LightGBM inference.'},
+        {'icon': 'intersect', 'title': 'Consensus Filter', 'description': 'Reconciles local ML predictions with NWP guidance.'},
+        {'icon': 'database-check', 'title': 'Prediction Database', 'description': 'Persists final forecasts and inference metadata.'},
+        {'icon': 'clipboard-data', 'title': 'Evaluation Engine', 'description': 'Compares predictions against observed outcomes.'},
+        {'icon': 'envelope-check', 'title': 'Email Reporting', 'description': 'Distributes automated forecast and performance summaries.'},
+        {'icon': 'speedometer2', 'title': 'Flask Dashboard', 'description': 'Internal interface for monitoring forecasts and system health.'}
+    ] %}
+
+    <div class="architecture-flow" role="list" aria-label="Weather Engine system architecture">
+
+        {% for block in system_blocks %}
+
+        {{ arch_block(block.icon, block.title, block.description) }}
+
+        {% if not loop.last %}
+        <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
+        {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="philosophy-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="philosophy-title">Engineering Philosophy</h2>
+            <p>The architecture follows atmospheric dependency rather than isolated prediction.</p>
+        </div>
+
+    </header>
+
+    <div class="dashboard-grid">
+
+        <article class="card glass">
+
+            <h3 class="card-title">Dependency-Aware Forecasting</h3>
+
+            <p>
+                Weather variables do not exist independently. Temperature
+                influences pressure, pressure influences moisture, moisture
+                influences rainfall, and rainfall influences sky conditions.
+                The system models these atmospheric dependencies as a structured
+                hierarchy instead of treating each variable as an isolated target.
+            </p>
+
+        </article>
+
+        <aside class="card glass" aria-label="Layered atmospheric dependency illustration">
+
+            <div class="run-list">
+                <div class="run-item">
+                    <div class="run-left"><i class="bi bi-thermometer-half"></i><small>Temperature</small></div>
+                    <div class="run-right"><span class="badge">Layer 1</span></div>
+                </div>
+                <div class="run-item">
+                    <div class="run-left"><i class="bi bi-speedometer2"></i><small>Pressure</small></div>
+                    <div class="run-right"><span class="badge">Layer 1</span></div>
+                </div>
+                <div class="run-item">
+                    <div class="run-left"><i class="bi bi-droplet"></i><small>Moisture</small></div>
+                    <div class="run-right"><span class="badge">Layer 2</span></div>
+                </div>
+                <div class="run-item">
+                    <div class="run-left"><i class="bi bi-cloud-rain"></i><small>Rainfall</small></div>
+                    <div class="run-right"><span class="badge">Layer 3</span></div>
+                </div>
+                <div class="run-item">
+                    <div class="run-left"><i class="bi bi-cloud-sun"></i><small>Sky Conditions</small></div>
+                    <div class="run-right"><span class="badge badge-success">Output</span></div>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="data-pipeline-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="data-pipeline-title">Data Pipeline</h2>
+            <p>Vertical execution flow from city configuration to Flask presentation.</p>
+        </div>
+
+    </header>
+
+    {% set pipeline_steps = [
+        {'icon': 'filetype-json', 'title': 'Load cities.json', 'description': 'Read monitored city identifiers, names and coordinates.'},
+        {'icon': 'cloud-download', 'title': 'Request Historical Weather', 'description': 'Fetch observations from the external weather provider.'},
+        {'icon': 'calendar2-week', 'title': 'Aggregate Daily Observations', 'description': 'Convert hourly data into daily model-ready records.'},
+        {'icon': 'shield-check', 'title': 'Validate Records', 'description': 'Check completeness, ranges and required atmospheric fields.'},
+        {'icon': 'copy', 'title': 'Prevent Duplicates', 'description': 'Avoid duplicate inserts for city and date combinations.'},
+        {'icon': 'database', 'title': 'Store in PostgreSQL', 'description': 'Persist clean observations in relational storage.'},
+        {'icon': 'sliders', 'title': 'Generate Features', 'description': 'Build temporal, lag, astronomical and NWP-derived features.'},
+        {'icon': 'cpu', 'title': 'Run Hierarchical Inference', 'description': 'Execute the dependency-aware model sequence.'},
+        {'icon': 'database-check', 'title': 'Store Predictions', 'description': 'Write final forecast objects and metadata.'},
+        {'icon': 'clipboard-data', 'title': "Evaluate Yesterday's Forecast", 'description': 'Compare predictions with actual observations.'},
+        {'icon': 'envelope-check', 'title': 'Generate Email Report', 'description': 'Prepare automated forecast and performance summary.'},
+        {'icon': 'window-sidebar', 'title': 'Display in Flask', 'description': 'Expose system state through the internal web interface.'}
+    ] %}
+
+    <article class="card glass">
+
+        <div class="timeline" role="list" aria-label="Weather Engine data pipeline">
+
+            {% for step in pipeline_steps %}
+
+            <div class="timeline-item" role="listitem">
+                <h3 class="timeline-title">
+                    <i class="bi bi-{{ step.icon }}"></i>
+                    {{ step.title }}
+                </h3>
+                <p>{{ step.description }}</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="database-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="database-title">Database Architecture</h2>
+            <p>Relational storage model for observations, forecasts and evaluation metrics.</p>
+        </div>
+
+    </header>
+
+    <div class="dashboard-grid">
+
+        <article class="card glass">
+
+            <div class="architecture-flow" aria-label="Relational database diagram">
+                {{ arch_block('buildings', 'Cities', 'Monitored locations and metadata.', 'Primary table') }}
+                <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
+                {{ arch_block('cloud-sun', 'Historical Weather', 'Approximately fifteen years of observations.', 'city_id') }}
+                <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
+                {{ arch_block('cloud-download', 'NWP Cache', 'External numerical weather prediction snapshots.', 'city_id') }}
+            </div>
+
+            <div class="architecture-flow mt-3" aria-label="Prediction relationship diagram">
+                {{ arch_block('database-check', 'Predictions', 'Generated forecasts and model outputs.', 'city_id') }}
+                <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
+                {{ arch_block('clipboard-data', 'Prediction Errors', 'Evaluation metrics from actual observations.', 'prediction_id') }}
+            </div>
+
+        </article>
+
+        <aside class="card glass">
+
+            <h3 class="card-title">Storage Responsibilities</h3>
+
+            <ul class="arch-list">
+                <li><i class="bi bi-check2"></i>Cities stores monitored locations.</li>
+                <li><i class="bi bi-check2"></i>Historical Weather stores approximately fifteen years of observations.</li>
+                <li><i class="bi bi-check2"></i>NWP Cache stores external numerical weather prediction.</li>
+                <li><i class="bi bi-check2"></i>Predictions stores generated forecasts.</li>
+                <li><i class="bi bi-check2"></i>Prediction Errors stores evaluation metrics.</li>
+            </ul>
+
+            <div class="hr"></div>
+
+            <h3 class="card-title">Why PostgreSQL</h3>
+
+            <p>
+                PostgreSQL was selected for ACID compliance, reliable relational
+                storage, efficient indexing, strong Python ecosystem support and
+                a direct path toward future scalability.
+            </p>
+
+        </aside>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="features-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="features-title">Feature Engineering</h2>
+            <p>Raw atmospheric observations are transformed into structured machine learning inputs.</p>
+        </div>
+
+    </header>
+
+    {% set feature_groups = [
+        {'icon': 'calendar3', 'title': 'Temporal Features', 'items': ['Year', 'Month', 'Day', 'Day of Week']},
+        {'icon': 'record-circle', 'title': 'Cyclical Features', 'items': ['Month Sin', 'Month Cos', 'Day Sin', 'Day Cos']},
+        {'icon': 'sun', 'title': 'Astronomical Features', 'items': ['Daylight Duration', 'Shortwave Radiation']},
+        {'icon': 'clock-history', 'title': 'Historical Features', 'items': ['Lag 1', 'Rolling Mean']},
+        {'icon': 'cloud-download', 'title': 'External Features', 'items': ['Wind', 'Cloud Cover', 'Rain Amount', 'Weather Code']},
+        {'icon': 'diagram-3', 'title': 'Hierarchical Features', 'items': ['Temperature Output', 'Pressure Output', 'Moisture Output']}
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Feature engineering groups">
+
+        {% for group in feature_groups %}
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-{{ group.icon }}"></i>
+            </div>
+            <h3 class="card-title">{{ group.title }}</h3>
+            <ul class="arch-list">
+                {% for item in group.items %}
+                <li><i class="bi bi-check2"></i>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    <article class="dag-note" aria-label="Feature engineering note">
+        <p>
+            Feature engineering converts raw observations, external forecasts and
+            earlier model outputs into a consistent input layer for hierarchical
+            inference.
+        </p>
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="hierarchical-ml-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="hierarchical-ml-title">Hierarchical Machine Learning</h2>
+            <p>A dependency-aware DAG where lower atmospheric predictions become inputs for higher tiers.</p>
+        </div>
+
+    </header>
+
+    {% set ml_nodes = {
+        'historical': {'icon': 'database', 'name': 'Historical Weather', 'purpose': 'Observation source', 'algorithm': 'PostgreSQL', 'description': 'Provides clean daily records for model input construction.'},
+        'features': {'icon': 'sliders', 'name': 'Feature Engineering', 'purpose': 'Input construction', 'algorithm': 'Python', 'description': 'Builds temporal, astronomical, historical and external predictors.'},
+        'temperature': {'icon': 'thermometer-half', 'name': 'Temperature Model', 'purpose': 'Temperature prediction', 'algorithm': 'LightGBM', 'description': 'Generates the first atmospheric output used by downstream tiers.'},
+        'pressure': {'icon': 'speedometer2', 'name': 'Pressure Model', 'purpose': 'Pressure prediction', 'algorithm': 'LightGBM', 'description': 'Predicts pressure alongside temperature as the first model tier.'},
+        'moisture': {'icon': 'droplet', 'name': 'Moisture Model', 'purpose': 'Humidity and dew point', 'algorithm': 'LightGBM', 'description': 'Consumes feature inputs plus first-tier atmospheric predictions.'},
+        'rain': {'icon': 'cloud-rain', 'name': 'Rain Probability Model', 'purpose': 'Rain classification', 'algorithm': 'LightGBM', 'description': 'Estimates precipitation likelihood from moisture-aware inputs.'},
+        'weather': {'icon': 'cloud-sun', 'name': 'Weather Code Classifier', 'purpose': 'Sky condition classification', 'algorithm': 'LightGBM', 'description': 'Produces local weather code predictions before validation.'},
+        'consensus': {'icon': 'intersect', 'name': 'Consensus Filter', 'purpose': 'Prediction validation', 'algorithm': 'Rule layer', 'description': 'Reconciles ML output with external NWP guidance.'},
+        'forecast': {'icon': 'clipboard-data', 'name': 'Final Forecast', 'purpose': 'Stored output', 'algorithm': 'Forecast object', 'description': 'Combines all model outputs into a persisted prediction record.'}
+    } %}
+
+    <div class="dag-layout">
+
+        <div class="dag-canvas" aria-label="Hierarchical machine learning DAG">
+
+            {{ dag_node(ml_nodes.historical, 'node-historical') }}
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            {{ dag_node(ml_nodes.features, 'node-features') }}
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            <span class="dag-tier-label">Tier 1</span>
+
+            <div class="dag-tier dag-tier-split">
+                {{ dag_node(ml_nodes.temperature, 'node-temperature') }}
+                {{ dag_node(ml_nodes.pressure, 'node-pressure') }}
+            </div>
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            <span class="dag-tier-label">Tier 2</span>
+            {{ dag_node(ml_nodes.moisture, 'node-moisture') }}
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            <span class="dag-tier-label">Tier 3</span>
+            {{ dag_node(ml_nodes.rain, 'node-rain') }}
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            <span class="dag-tier-label">Tier 4</span>
+            {{ dag_node(ml_nodes.weather, 'node-weather') }}
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            {{ dag_node(ml_nodes.consensus, 'node-consensus') }}
+
+            <div class="dag-arrow" aria-hidden="true"><div class="dag-arrow-line"></div><i class="bi bi-arrow-down"></i></div>
+
+            {{ dag_node(ml_nodes.forecast, 'node-forecast') }}
+
+        </div>
+
+        <aside class="dag-summary card glass" aria-label="Machine learning summary">
+            <h3 class="card-title">Inference Contract</h3>
+            <ul class="dag-summary-list">
+                <li class="dag-summary-item"><i class="bi bi-check2-circle"></i>Every node owns one explicit responsibility.</li>
+                <li class="dag-summary-item"><i class="bi bi-diagram-3"></i>Predictions are reused as downstream features.</li>
+                <li class="dag-summary-item"><i class="bi bi-shield-check"></i>Final classification passes through consensus validation.</li>
+            </ul>
+        </aside>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="automation-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="automation-title">Automation Pipeline</h2>
+            <p>Coordinated execution path for daily production forecasts.</p>
+        </div>
+
+    </header>
+
+    {% set automation_steps = [
+        {'icon': 'terminal', 'title': 'Master Script', 'description': 'Coordinates the complete production run.'},
+        {'icon': 'arrow-repeat', 'title': 'Recharge Historical Weather', 'description': 'Refreshes local observation storage.'},
+        {'icon': 'cloud-download', 'title': 'Fetch NWP Forecast', 'description': 'Loads external forward-looking atmospheric guidance.'},
+        {'icon': 'sliders', 'title': 'Generate Features', 'description': 'Builds model-ready feature matrices.'},
+        {'icon': 'cpu', 'title': 'Run ML Models', 'description': 'Executes hierarchical inference.'},
+        {'icon': 'database-check', 'title': 'Store Predictions', 'description': 'Persists final forecasts.'},
+        {'icon': 'clipboard-data', 'title': 'Evaluate Yesterday', 'description': 'Measures previous forecast quality.'},
+        {'icon': 'envelope-check', 'title': 'Generate Email Reports', 'description': 'Creates automated reporting output.'},
+        {'icon': 'check2-circle', 'title': 'Pipeline Complete', 'description': 'Marks the run as complete.'}
+    ] %}
+
+    <div class="dashboard-grid">
+
+        <article class="card glass">
+            <div class="timeline" role="list" aria-label="Automation pipeline">
+                {% for step in automation_steps %}
+                <div class="timeline-item" role="listitem">
+                    <h3 class="timeline-title">
+                        <i class="bi bi-{{ step.icon }}"></i>
+                        {{ step.title }}
+                    </h3>
+                    <p>{{ step.description }}</p>
+                    <span class="badge badge-success">Operational</span>
+                </div>
+                {% endfor %}
+            </div>
+        </article>
+
+        <aside class="card glass">
+            <h3 class="card-title">Execution Design</h3>
+            <p>
+                The automation layer is intentionally modular. Each responsibility
+                is isolated into an independent script. The master pipeline
+                coordinates execution, captures failures, logs output and stops
+                immediately if any critical stage fails.
+            </p>
+        </aside>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="stack-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="stack-title">Technology Stack</h2>
+            <p>Runtime, storage, interface and model infrastructure.</p>
+        </div>
+
+    </header>
+
+    {% set stack = [
+        {'icon': 'code-slash', 'name': 'Python', 'role': 'Core language.', 'description': 'Coordinates data processing, model execution and automation.'},
+        {'icon': 'window-sidebar', 'name': 'Flask', 'role': 'Presentation layer.', 'description': 'Serves internal engineering views and platform routes.'},
+        {'icon': 'database', 'name': 'PostgreSQL', 'role': 'Persistent storage.', 'description': 'Stores cities, observations, predictions and evaluation metrics.'},
+        {'icon': 'cpu', 'name': 'LightGBM', 'role': 'Machine learning.', 'description': 'Powers regression and classification models.'},
+        {'icon': 'cloud-download', 'name': 'Open-Meteo', 'role': 'Historical observations and NWP.', 'description': 'Provides external atmospheric data inputs.'},
+        {'icon': 'bootstrap', 'name': 'Bootstrap', 'role': 'Responsive interface.', 'description': 'Provides interface primitives and Bootstrap Icons.'},
+        {'icon': 'bar-chart-line', 'name': 'Plotly', 'role': 'Analytics.', 'description': 'Supports interactive model and forecast visualizations.'},
+        {'icon': 'box-seam', 'name': 'Joblib', 'role': 'Model persistence.', 'description': 'Loads trained model artifacts for inference.'}
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Technology stack">
+        {% for item in stack %}
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon"><i class="bi bi-{{ item.icon }}"></i></div>
+            <h3 class="card-title">{{ item.name }}</h3>
+            <strong>{{ item.role }}</strong>
+            <p>{{ item.description }}</p>
+        </article>
+        {% endfor %}
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="limitations-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="limitations-title">Current Limitations</h2>
+            <p>Known scope boundaries accepted for production robustness.</p>
+        </div>
+
+    </header>
+
+    <div class="grid grid-4" role="list" aria-label="Current platform limitations">
+        <article class="card glass" role="listitem">
+            <h3 class="card-title">Training Dataset</h3>
+            <p>Five monitored cities.</p>
+        </article>
+        <article class="card glass" role="listitem">
+            <h3 class="card-title">Temporal Resolution</h3>
+            <p>Daily forecasting.</p>
+        </article>
+        <article class="card glass" role="listitem">
+            <h3 class="card-title">External Dependencies</h3>
+            <p>Wind, cloud cover and rainfall amount supplied through Numerical Weather Prediction.</p>
+        </article>
+        <article class="card glass" role="listitem">
+            <h3 class="card-title">Geographical Coverage</h3>
+            <p>Currently optimised for selected Indian cities.</p>
+        </article>
+    </div>
+
+    <article class="dag-note" aria-label="Limitations note">
+        <p>
+            These limitations were accepted deliberately to maximise production
+            robustness and provide a strong foundation for future expansion.
+        </p>
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="roadmap-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="roadmap-title">Future Roadmap</h2>
+            <p>Planned extensions for scale, serving and model sophistication.</p>
+        </div>
+
+    </header>
+
+    {% set roadmap = [
+        {'icon': 'buildings', 'title': 'More Cities', 'description': 'Expand monitored locations and regional coverage.'},
+        {'icon': 'clock', 'title': 'Hourly Forecasting', 'description': 'Introduce finer temporal resolution.'},
+        {'icon': 'cloud-haze2', 'title': 'Additional Atmospheric Variables', 'description': 'Model more weather and atmospheric signals.'},
+        {'icon': 'braces', 'title': 'REST API', 'description': 'Expose forecasts through service endpoints.'},
+        {'icon': 'cloud-arrow-up', 'title': 'Cloud Deployment', 'description': 'Move scheduled execution to managed infrastructure.'},
+        {'icon': 'arrow-repeat', 'title': 'Continuous Retraining', 'description': 'Refresh models from new evaluated observations.'},
+        {'icon': 'boxes', 'title': 'Model Ensembles', 'description': 'Combine multiple learners for stronger forecasts.'},
+        {'icon': 'share', 'title': 'Graph Neural Networks', 'description': 'Explore spatial relationships between monitored locations.'}
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Future roadmap">
+        {% for item in roadmap %}
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon"><i class="bi bi-{{ item.icon }}"></i></div>
+            <h3 class="card-title">{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+            <span class="badge">Planned</span>
+        </article>
+        {% endfor %}
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="closing-title">
+
+    <article class="card glass text-center">
+
+        <h2 id="closing-title">Engineering Through Hierarchical Intelligence</h2>
+
+        <p>
+            Weather Engine was designed as a modular forecasting platform where
+            data engineering, feature engineering, hierarchical machine learning,
+            automation and continuous evaluation work together to generate
+            physically consistent weather forecasts. Every subsystem is
+            independently maintainable while contributing to a unified
+            forecasting pipeline.
+        </p>
+
+        <div class="chips mt-3" aria-label="Technology pills">
+            <span class="chip">Python</span>
+            <span class="chip">Flask</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">LightGBM</span>
+            <span class="chip">Bootstrap</span>
+            <span class="chip">Plotly</span>
+            <span class="chip">Open-Meteo</span>
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}

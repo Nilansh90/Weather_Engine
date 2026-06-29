@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}
+Weather Engine | About
+{% endblock %}
+
+{% block content %}
+
+<header class="section-title" aria-labelledby="about-title">
+
+    <div>
+
+        <span class="badge mb-2">
+            <i class="bi bi-info-circle"></i>
+            Version 1.0
+        </span>
+
+        <h1 id="about-title">About Weather Engine</h1>
+
+        <p>
+            A production-oriented machine learning platform designed to forecast
+            tomorrow's atmospheric conditions through hierarchical inference,
+            feature engineering and automation.
+        </p>
+
+    </div>
+
+</header>
+
+<section class="mt-4 mb-4" aria-labelledby="vision-title">
+
+    <article class="card glass">
+
+        <header class="section-title">
+
+            <div>
+                <h2 id="vision-title">Why Weather Engine Exists</h2>
+                <p>Project vision and engineering motivation.</p>
+            </div>
+
+        </header>
+
+        <p>
+            Traditional weather applications present forecasts without explaining
+            how they are produced.
+        </p>
+
+        <p>
+            Weather Engine was developed to explore whether structured historical
+            observations, engineered features and hierarchical machine learning
+            could be combined into a production-style forecasting platform
+            capable of generating explainable, automated and continuously
+            evaluated weather predictions.
+        </p>
+
+        <p>
+            This project focuses equally on machine learning, software
+            engineering, automation and data engineering rather than treating
+            forecasting as a single regression problem.
+        </p>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="goals-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="goals-title">Project Goals</h2>
+            <p>Core objectives that shaped the platform architecture.</p>
+        </div>
+
+    </header>
+
+    {% set goals = [
+        {'icon': 'diagram-3', 'title': 'Hierarchical Forecasting', 'description': 'Use atmospheric dependencies instead of isolated prediction.'},
+        {'icon': 'arrow-repeat', 'title': 'Automation', 'description': 'Build a fully automated daily forecasting pipeline.'},
+        {'icon': 'clipboard-data', 'title': 'Continuous Evaluation', 'description': 'Measure forecast quality against observed weather.'},
+        {'icon': 'puzzle', 'title': 'Engineering', 'description': 'Design a modular and maintainable forecasting platform.'}
+    ] %}
+
+    <div class="grid grid-4" role="list" aria-label="Project goals">
+
+        {% for goal in goals %}
+
+        <article class="card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-{{ goal.icon }}"></i>
+            </div>
+            <h3 class="card-title">{{ goal.title }}</h3>
+            <p>{{ goal.description }}</p>
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="journey-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="journey-title">Development Journey</h2>
+            <p>Milestones from data acquisition to an operational Flask interface.</p>
+        </div>
+
+    </header>
+
+    {% set milestones = [
+        {'icon': 'database', 'title': 'Historical Data Collection', 'description': 'Collected long-range observations for monitored cities.'},
+        {'icon': 'sliders', 'title': 'Feature Engineering', 'description': 'Created temporal, lag, rolling and astronomical inputs.'},
+        {'icon': 'cpu', 'title': 'Model Development', 'description': 'Trained regression and classification models for atmospheric targets.'},
+        {'icon': 'diagram-3', 'title': 'Hierarchical DAG', 'description': 'Connected model outputs into a dependency-aware inference graph.'},
+        {'icon': 'arrow-repeat', 'title': 'Automation Pipeline', 'description': 'Coordinated recharge, inference, storage and evaluation scripts.'},
+        {'icon': 'database-check', 'title': 'Database Integration', 'description': 'Persisted observations, forecasts and evaluation records.'},
+        {'icon': 'envelope-check', 'title': 'Email Reporting', 'description': 'Generated automated operational reports.'},
+        {'icon': 'speedometer2', 'title': 'Flask Dashboard', 'description': 'Exposed platform state through internal engineering views.'},
+        {'icon': 'rocket-takeoff', 'title': 'Deployment Ready', 'description': 'Structured the project as a maintainable production-style system.'}
+    ] %}
+
+    <article class="card glass">
+
+        <div class="timeline" role="list" aria-label="Development journey">
+
+            {% for milestone in milestones %}
+
+            <div class="timeline-item" role="listitem">
+                <h3 class="timeline-title">
+                    <i class="bi bi-{{ milestone.icon }}"></i>
+                    {{ milestone.title }}
+                </h3>
+                <p>{{ milestone.description }}</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="stack-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="stack-title">Technology Stack</h2>
+            <p>Technologies used across data, modeling, persistence and presentation.</p>
+        </div>
+
+    </header>
+
+    {% set technologies = [
+        {'icon': 'code-slash', 'name': 'Python', 'role': 'Core language for data processing, automation and inference.'},
+        {'icon': 'cpu', 'name': 'LightGBM', 'role': 'Regression and classification model training.'},
+        {'icon': 'window-sidebar', 'name': 'Flask', 'role': 'Presentation layer for engineering views.'},
+        {'icon': 'database', 'name': 'PostgreSQL', 'role': 'Relational storage for observations and forecasts.'},
+        {'icon': 'bootstrap', 'name': 'Bootstrap', 'role': 'Responsive interface primitives and icons.'},
+        {'icon': 'bar-chart-line', 'name': 'Plotly', 'role': 'Forecast analytics and performance visualization.'},
+        {'icon': 'box-seam', 'name': 'Joblib', 'role': 'Model artifact persistence and loading.'},
+        {'icon': 'cloud-download', 'name': 'Open-Meteo', 'role': 'Historical weather and numerical prediction source.'},
+        {'icon': 'table', 'name': 'Pandas', 'role': 'Tabular data transformation and feature construction.'},
+        {'icon': '123', 'name': 'NumPy', 'role': 'Numerical computation for engineered signals.'}
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Technology stack">
+
+        {% for tech in technologies %}
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-{{ tech.icon }}"></i>
+            </div>
+            <h3 class="card-title">{{ tech.name }}</h3>
+            <p>{{ tech.role }}</p>
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="highlights-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="highlights-title">Project Highlights</h2>
+            <p>Summary of the platform scale and engineering structure.</p>
+        </div>
+
+    </header>
+
+    {% set highlights = [
+        {'icon': 'database', 'value': '15+', 'label': 'Years of Historical Weather'},
+        {'icon': 'cpu', 'value': '5', 'label': 'Machine Learning Models'},
+        {'icon': 'sliders', 'value': '70+', 'label': 'Engineered Features'},
+        {'icon': 'geo-alt', 'value': '5', 'label': 'Indian Cities'},
+        {'icon': 'arrow-repeat', 'value': 'Daily', 'label': 'Automated Forecast Pipeline'},
+        {'icon': 'puzzle', 'value': 'Production', 'label': 'Modular Architecture'}
+    ] %}
+
+    <div class="kpi-row kpi-row-6" role="list" aria-label="Project highlights">
+
+        {% for item in highlights %}
+
+        <article class="kpi glass performance-kpi" role="listitem">
+            <div class="performance-kpi-header">
+                <div class="performance-kpi-icon">
+                    <i class="bi bi-{{ item.icon }}"></i>
+                </div>
+            </div>
+            <div class="kpi-value">{{ item.value }}</div>
+            <div class="kpi-label">{{ item.label }}</div>
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="capabilities-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="capabilities-title">Core Capabilities</h2>
+            <p>The platform combines data engineering and machine learning into one workflow.</p>
+        </div>
+
+    </header>
+
+    <div class="dashboard-grid">
+
+        <article class="card glass">
+            <h3 class="card-title">Data Engineering</h3>
+            <ul class="arch-list">
+                <li><i class="bi bi-check2"></i>Historical observations</li>
+                <li><i class="bi bi-check2"></i>Feature generation</li>
+                <li><i class="bi bi-check2"></i>Lag creation</li>
+                <li><i class="bi bi-check2"></i>Rolling statistics</li>
+                <li><i class="bi bi-check2"></i>Astronomical features</li>
+                <li><i class="bi bi-check2"></i>Database management</li>
+            </ul>
+        </article>
+
+        <article class="card glass">
+            <h3 class="card-title">Machine Learning</h3>
+            <ul class="arch-list">
+                <li><i class="bi bi-check2"></i>Hierarchical inference</li>
+                <li><i class="bi bi-check2"></i>Regression</li>
+                <li><i class="bi bi-check2"></i>Classification</li>
+                <li><i class="bi bi-check2"></i>Consensus filtering</li>
+                <li><i class="bi bi-check2"></i>Evaluation</li>
+                <li><i class="bi bi-check2"></i>Automation</li>
+            </ul>
+        </article>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="scope-title">
+
+    <article class="card glass">
+
+        <header class="section-title">
+
+            <div>
+                <h2 id="scope-title">Current Scope</h2>
+                <p>Operational boundary of the current implementation.</p>
+            </div>
+
+        </header>
+
+        <p>
+            Current implementation focuses on five representative Indian cities
+            selected to capture diverse climatic conditions including arid,
+            coastal, metropolitan and heat-belt environments.
+        </p>
+
+        <p>
+            The forecasting pipeline operates at daily resolution using
+            approximately fifteen years of historical observations and integrates
+            Numerical Weather Prediction where atmospheric physics exceeds the
+            practical limits of tabular machine learning.
+        </p>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="roadmap-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="roadmap-title">Future Roadmap</h2>
+            <p>Planned platform extensions and model-serving capabilities.</p>
+        </div>
+
+    </header>
+
+    {% set roadmap = [
+        {'icon': 'buildings', 'title': 'Expand City Coverage', 'description': 'Increase monitored locations across additional climate regions.'},
+        {'icon': 'clock', 'title': 'Hourly Forecasting', 'description': 'Move beyond daily resolution for finer forecast granularity.'},
+        {'icon': 'cloud-arrow-up', 'title': 'Cloud Deployment', 'description': 'Run scheduled automation on managed infrastructure.'},
+        {'icon': 'braces', 'title': 'REST API', 'description': 'Expose forecasts and metrics through service endpoints.'},
+        {'icon': 'arrow-repeat', 'title': 'Continuous Retraining', 'description': 'Refresh models as new evaluated observations accumulate.'},
+        {'icon': 'boxes', 'title': 'Model Ensembles', 'description': 'Combine learners for stronger forecast stability.'},
+        {'icon': 'share', 'title': 'Graph Neural Networks', 'description': 'Explore spatial relationships between monitored cities.'},
+        {'icon': 'cloud-sun', 'title': 'Interactive Forecast APIs', 'description': 'Provide queryable forecast access for applications.'}
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Future roadmap">
+
+        {% for item in roadmap %}
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-{{ item.icon }}"></i>
+            </div>
+            <h3 class="card-title">{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+            <span class="badge">Planned</span>
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="statistics-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="statistics-title">Project Statistics</h2>
+            <p>Runtime counters and current operating state.</p>
+        </div>
+
+    </header>
+
+    <div class="kpi-row" role="list" aria-label="Project statistics">
+
+        <article class="kpi glass performance-kpi" role="listitem">
+            <div class="kpi-label">Historical Records</div>
+            <div class="kpi-value">{{ stats.historical_records }}</div>
+        </article>
+
+        <article class="kpi glass performance-kpi" role="listitem">
+            <div class="kpi-label">Predictions Generated</div>
+            <div class="kpi-value">{{ stats.predictions_generated }}</div>
+        </article>
+
+        <article class="kpi glass performance-kpi" role="listitem">
+            <div class="kpi-label">Forecast Accuracy</div>
+            <div class="kpi-value">{{ stats.forecast_accuracy }}</div>
+        </article>
+
+        <article class="kpi glass performance-kpi" role="listitem">
+            <div class="kpi-label">Pipeline Status</div>
+            <div class="kpi-value">Operational</div>
+            <span class="badge badge-success mt-2">Healthy</span>
+        </article>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="closing-title">
+
+    <article class="card glass text-center">
+
+        <h2 id="closing-title">Beyond Weather Prediction</h2>
+
+        <p>
+            Weather Engine demonstrates how machine learning, feature
+            engineering, relational databases, automation, hierarchical inference
+            and modern web technologies can be integrated into a single
+            production-style forecasting platform.
+        </p>
+
+        <p>
+            Rather than being designed as a standalone predictive model, the
+            platform was engineered as an end-to-end machine learning system
+            where every component contributes to reliable, explainable and
+            continuously evaluated forecasts.
+        </p>
+
+        <div class="chips mt-3" aria-label="Technology pills">
+            <span class="chip">Python</span>
+            <span class="chip">Flask</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">LightGBM</span>
+            <span class="chip">Bootstrap</span>
+            <span class="chip">Plotly</span>
+            <span class="chip">Open-Meteo</span>
+            <span class="chip">Joblib</span>
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}

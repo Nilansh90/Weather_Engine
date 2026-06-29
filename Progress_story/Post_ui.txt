@@ -1,0 +1,682 @@
+This is actually the fun part now.
+
+The project has entered a completely different phase.
+
+Up until today you were building **an ML system**.
+
+From tomorrow you'll be building **a product around that ML system**.
+
+The important thing is that **we should never lose the engineering quality you've built in the backend**. The frontend should feel just as structured.
+
+If I were managing this project at a company, this is exactly how I'd plan the remaining work.
+
+---
+
+# CURRENT STATUS
+
+## Phase A — ML Engine
+
+Completed
+
+* Historical data ingestion
+* Feature engineering
+* Hierarchical DAG
+* Multiple ML models
+* Consensus filter
+* Database
+* Automation
+* Error calculation
+* Email reporting
+* Scheduler pipeline
+
+Essentially finished.
+
+---
+
+## Phase B — Product Planning
+
+Completed
+
+* UI concept
+* Product positioning
+* Page hierarchy
+* UI specification
+* Visual identity
+
+Also finished.
+
+---
+
+Everything from tomorrow onwards belongs to
+
+# Phase C — Product Engineering
+
+---
+
+# STEP 1
+
+## Create Flask Skeleton
+
+Not styling.
+
+Not SQL.
+
+Just structure.
+
+By the end of this phase your project should look like
+
+```text
+app/
+
+    flask_app/
+
+        server.py
+
+        templates/
+
+            base.html
+
+            home.html
+
+            dashboard.html
+
+            history.html
+
+            models.html
+
+            engine.html
+
+            architecture.html
+
+            about.html
+
+        static/
+
+            css/
+
+            js/
+
+            images/
+
+            icons/
+```
+
+Goal
+
+All pages open.
+
+Nothing beautiful.
+
+---
+
+# STEP 2
+
+## Build Base Layout
+
+Probably the single most important frontend task.
+
+You'll create
+
+base.html
+
+Everything inherits from it.
+
+Contains
+
+Sidebar
+
+Top Navbar
+
+Main Content Area
+
+Footer
+
+Dark Theme
+
+Fonts
+
+Icons
+
+Nothing else.
+
+Once this exists
+
+Every page becomes
+
+```text
+{% extends "base.html" %}
+```
+
+This saves enormous effort later.
+
+---
+
+# STEP 3
+
+## Create Design System
+
+This is where professional projects differ from student projects.
+
+Instead of writing CSS for pages
+
+write CSS for
+
+Cards
+
+Buttons
+
+Tables
+
+Badges
+
+Headings
+
+Grid
+
+Containers
+
+Charts
+
+Spacing
+
+Animation
+
+After this
+
+pages become combinations of components.
+
+---
+
+# STEP 4
+
+## Homepage Components
+
+Don't build Home.
+
+Build components.
+
+Order
+
+Hero
+
+↓
+
+Stats Card
+
+↓
+
+City Card
+
+↓
+
+Pipeline Card
+
+↓
+
+Metric Card
+
+↓
+
+Architecture Card
+
+↓
+
+Footer
+
+Each component should look perfect before moving on.
+
+---
+
+# STEP 5
+
+## Assemble Homepage
+
+Now you finally make
+
+Home.
+
+Initially
+
+Everything is dummy data.
+
+Don't connect SQL yet.
+
+This phase is purely visual.
+
+Compare constantly against the mockup.
+
+Pixel level.
+
+---
+
+# STEP 6
+
+## Connect Backend
+
+This becomes surprisingly easy.
+
+Replace
+
+```text
+38°
+```
+
+with
+
+prediction.temp_max
+
+Replace
+
+Yesterday MAE
+
+with
+
+database value.
+
+No redesign.
+
+Only data replacement.
+
+---
+
+# STEP 7
+
+## Dashboard
+
+Probably second biggest page.
+
+Contains
+
+Rolling Errors
+
+Rolling Accuracy
+
+Rain Accuracy
+
+Weather Accuracy
+
+Latency
+
+Prediction Counts
+
+Charts
+
+Recent Runs
+
+Tables
+
+---
+
+# STEP 8
+
+## Engine Page
+
+Probably easiest.
+
+Mostly static.
+
+Explain
+
+Historical Weather
+
+↓
+
+Feature Engineering
+
+↓
+
+Temperature
+
+↓
+
+Pressure
+
+↓
+
+Moisture
+
+↓
+
+Rain
+
+↓
+
+Weather Code
+
+↓
+
+Evaluation
+
+Use small animations.
+
+Hover explanations.
+
+---
+
+# STEP 9
+
+## Models Page
+
+Every model gets
+
+Purpose
+
+Inputs
+
+Outputs
+
+Features
+
+Metrics
+
+Feature Importance
+
+Training Strategy
+
+Dependencies
+
+This is where your ML work shines.
+
+---
+
+# STEP 10
+
+## History Page
+
+This becomes your database explorer.
+
+Filters
+
+City
+
+Date
+
+Prediction
+
+Actual
+
+Error
+
+Probably downloadable later.
+
+---
+
+# STEP 11
+
+## Architecture Page
+
+Don't explain ML.
+
+Explain software.
+
+Show
+
+OpenMeteo
+
+↓
+
+Scripts
+
+↓
+
+Postgres
+
+↓
+
+Feature Engineering
+
+↓
+
+Models
+
+↓
+
+Predictions
+
+↓
+
+Evaluation
+
+↓
+
+Email
+
+↓
+
+Flask
+
+Recruiters love this page.
+
+---
+
+# STEP 12
+
+## About
+
+Almost static.
+
+Timeline
+
+Motivation
+
+Technology Stack
+
+Lessons Learned
+
+Future Work
+
+---
+
+# STEP 13
+
+## Polish
+
+Animations
+
+Hover
+
+Transitions
+
+Loading states
+
+Skeleton cards
+
+Empty states
+
+Responsive fixes
+
+Dark mode refinement
+
+---
+
+# STEP 14
+
+## Deployment
+
+This is another mini project.
+
+Move PostgreSQL
+
+↓
+
+Deploy Flask
+
+↓
+
+Move environment variables
+
+↓
+
+Configure production
+
+↓
+
+Domain
+
+↓
+
+HTTPS
+
+↓
+
+Test
+
+---
+
+# STEP 15
+
+## Documentation
+
+This matters more than people think.
+
+README
+
+Architecture
+
+Pipeline
+
+Database
+
+Models
+
+Deployment
+
+Future Work
+
+Screenshots
+
+GIFs
+
+This alone can make your GitHub look far more professional.
+
+---
+
+# STEP 16
+
+## Resume Optimization
+
+Only after deployment.
+
+Add
+
+GitHub
+
+Live Demo
+
+Architecture Diagram
+
+Dashboard Screenshot
+
+Then rewrite the project description.
+
+---
+
+# AI Strategy
+
+This is exactly how I'd use AI.
+
+## ChatGPT
+
+Architecture
+
+Planning
+
+Backend
+
+Flask
+
+Deployment
+
+Engineering decisions
+
+UI critique
+
+Project storytelling
+
+---
+
+## Cursor
+
+Writing HTML
+
+CSS
+
+JavaScript
+
+Fixing frontend bugs
+
+Refactoring
+
+---
+
+## Claude
+
+Large HTML files
+
+Tailwind layouts
+
+Component generation
+
+Responsive improvements
+
+---
+
+## Figma / Design
+
+Only for checking spacing
+
+Not designing anymore.
+
+Design is frozen.
+
+---
+
+# The biggest rule from tomorrow
+
+Never build an entire page in one sitting.
+
+Instead
+
+Day example
+
+Morning
+
+Sidebar
+
+Afternoon
+
+Navbar
+
+Evening
+
+Hero
+
+Next day
+
+Stats Card
+
+Next
+
+City Card
+
+Next
+
+Pipeline Card
+
+Eventually
+
+Home appears naturally.
+
+---
+
+# Final Milestones
+
+When we finish, your project won't be judged as "a weather forecasting app." It will read as a complete machine learning systems project. A recruiter should be able to recognize, in order:
+
+1. A production-style ML inference engine with hierarchical models.
+2. Automated data ingestion, feature engineering, evaluation, and reporting.
+3. A polished engineering dashboard that exposes the system's internals rather than hiding them.
+4. Strong software engineering practices through architecture, reusable components, automation, and deployment.
+5. An end-to-end product that demonstrates data engineering, ML engineering, backend development, frontend development, databases, visualization, and operational thinking.
+
+At that point, the website itself becomes evidence of your engineering ability, not just a wrapper around your models. That's the standard I'd aim for with the remaining work.

@@ -1,0 +1,1396 @@
+{% extends "base.html" %}
+
+{% block title %}
+Weather Engine | Home
+{% endblock %}
+
+{% block content %}
+
+<section class="hero fade-in" aria-labelledby="hero-title">
+
+    <div class="hero-content slide-left">
+
+        <span class="badge mb-2">
+            <i class="bi bi-layers"></i>
+            Production ML Platform
+        </span>
+
+        <h1 id="hero-title">Weather Engine</h1>
+
+        <h2 class="gradient-text mb-2">
+            Hierarchical ML Weather Forecasting
+        </h2>
+
+        <p>
+            An automated machine learning forecasting engine built on
+            hierarchical models, engineered features, and DAG-based inference.
+            Continuous evaluation tracks prediction quality across every
+            automated pipeline run.
+        </p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                <i class="bi bi-graph-up"></i>
+                Explore Dashboard
+            </a>
+            <a href="{{ url_for('architecture') }}" class="btn btn-secondary">
+                <i class="bi bi-diagram-3"></i>
+                View Architecture
+            </a>
+        </div>
+
+        <ul class="grid grid-3 mt-3" aria-label="Engine statistics">
+
+            <li class="text-center">
+                <div class="flex-center">
+                    <div class="metric-icon">
+                        <i class="bi bi-box"></i>
+                    </div>
+                </div>
+                <div class="metric-number">5</div>
+                <div class="metric-label">Models</div>
+            </li>
+
+            <li class="text-center">
+                <div class="flex-center">
+                    <div class="metric-icon">
+                        <i class="bi bi-sliders"></i>
+                    </div>
+                </div>
+                <div class="metric-number">70+</div>
+                <div class="metric-label">Features</div>
+            </li>
+
+            <li class="text-center">
+                <div class="flex-center">
+                    <div class="metric-icon">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                </div>
+                <div class="metric-number">Daily</div>
+                <div class="metric-label">Automation</div>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <aside class="hero-visual slide-right" aria-label="Engine overview">
+
+        <article class="card glass glow w-100">
+
+            <header class="flex-between mb-2">
+                <h3 class="card-title">Engine Overview</h3>
+                <span class="card-subtitle">
+                    <i class="bi bi-hdd-network"></i>
+                    System
+                </span>
+            </header>
+
+            <div class="run-list mb-2">
+
+                <div class="run-item">
+                    <div class="run-left">
+                        <small>Engine Status</small>
+                    </div>
+                    <div class="run-right">
+                        <span class="badge badge-success">
+                            <i class="bi bi-circle-fill"></i>
+                            Operational
+                        </span>
+                    </div>
+                </div>
+
+                <div class="run-item">
+                    <div class="run-left">
+                        <small>Pipeline</small>
+                    </div>
+                    <div class="run-right">
+                        <span class="text-success">Healthy</span>
+                    </div>
+                </div>
+
+                <div class="run-item">
+                    <div class="run-left">
+                        <small>Models Loaded</small>
+                    </div>
+                    <div class="run-right">
+                        <strong>5 / 5</strong>
+                    </div>
+                </div>
+
+                <div class="run-item">
+                    <div class="run-left">
+                        <small>Inference</small>
+                    </div>
+                    <div class="run-right">
+                        <span>Hierarchical DAG</span>
+                    </div>
+                </div>
+
+                <div class="run-item">
+                    <div class="run-left">
+                        <small>Automation</small>
+                    </div>
+                    <div class="run-right">
+                        <span class="text-success">Enabled</span>
+                    </div>
+                </div>
+
+                <div class="run-item">
+                    <div class="run-left">
+                        <small>Database</small>
+                    </div>
+                    <div class="run-right">
+                        <span class="text-success">Connected</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="hr"></div>
+
+            <h4 class="card-subtitle mb-2">Inference Pipeline</h4>
+
+            <nav class="flex-column flex-center text-center"
+                 aria-label="Hierarchical inference pipeline">
+
+                <small>
+                    <i class="bi bi-clock-history"></i>
+                    Historical Data
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-sliders"></i>
+                    Feature Engineering
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-thermometer-half"></i>
+                    Temperature
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-speedometer2"></i>
+                    Pressure
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-droplet"></i>
+                    Moisture
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-cloud-rain"></i>
+                    Rain
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-cloud-sun"></i>
+                    Weather Code
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-check2-circle"></i>
+                    Evaluation
+                </small>
+
+                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
+                   aria-hidden="true"></i>
+
+                <small>
+                    <i class="bi bi-graph-up-arrow"></i>
+                    Prediction
+                </small>
+
+            </nav>
+
+        </article>
+
+    </aside>
+
+</section>
+
+<section class="mt-4 mb-4"
+         aria-labelledby="platform-overview-title">
+
+    <header class="section-title">
+
+        <div>
+
+            <h2 id="platform-overview-title">
+                Platform Overview
+            </h2>
+
+            <p>
+                An overview of the forecasting platform and engineering pipeline.
+            </p>
+
+        </div>
+
+    </header>
+
+    <div class="metric-grid">
+
+        <article class="metric-card glass">
+
+            <div class="metric-icon">
+                <i class="bi bi-cpu"></i>
+            </div>
+
+            <div class="metric-number">5</div>
+
+            <div class="metric-label">Hierarchical Models</div>
+
+            <p>
+                Temperature, Pressure, Moisture, Rain and Weather Code inference.
+            </p>
+
+        </article>
+
+        <article class="metric-card glass">
+
+            <div class="metric-icon">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+
+            <div class="metric-number">70+</div>
+
+            <div class="metric-label">Engineered Features</div>
+
+            <p>
+                Temporal, astronomical, lag and numerical weather prediction features.
+            </p>
+
+        </article>
+
+        <article class="metric-card glass">
+
+            <div class="metric-icon">
+                <i class="bi bi-database"></i>
+            </div>
+
+            <div class="metric-number">15+</div>
+
+            <div class="metric-label">Historical Years</div>
+
+            <p>
+                Historical weather observations powering supervised learning.
+            </p>
+
+        </article>
+
+        <article class="metric-card glass">
+
+            <div class="metric-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+
+            <div class="metric-number">Daily</div>
+
+            <div class="metric-label">Automation</div>
+
+            <p>
+                Recharge, NWP caching, inference, evaluation and reporting
+                executed automatically.
+            </p>
+
+        </article>
+
+        <article class="metric-card glass">
+
+            <div class="metric-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+
+            <div class="metric-number">Continuous</div>
+
+            <div class="metric-label">Evaluation</div>
+
+            <p>
+                Predictions are compared against actual observations to measure
+                model performance.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4"
+         aria-labelledby="forecast-title">
+
+    <header class="section-title">
+
+        <div>
+
+            <h2 id="forecast-title">
+                Tomorrow's Forecast
+            </h2>
+
+            <p>
+                Machine learning predictions generated by the hierarchical
+                forecasting engine for the next 24 hours.
+            </p>
+
+
+        </div>
+
+    </header>
+
+    <div class="forecast-grid">
+
+        {% for city in cities %}
+
+        {% set prediction = city.prediction %}
+        {% set performance = city.performance %}
+
+        <article class="card city-card glass">
+
+            <header class="city-header">
+
+                <h3 class="city-name">{{ city.city_name }}</h3>
+
+                <div class="city-header-meta">
+
+                    <i class="bi bi-{{ prediction.weather_icon }} weather-icon"
+                       aria-hidden="true"></i>
+
+                    <span class="badge badge-success confidence-badge">
+                        {{ prediction.confidence }}%
+                    </span>
+
+                </div>
+
+            </header>
+
+            <div class="temperature">{{ prediction.temperature }}°</div>
+
+            <p class="weather-description">
+                {{ prediction.weather_summary }}
+            </p>
+
+            <div class="city-stats">
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-thermometer-high"></i>
+                        Maximum Temperature
+                    </small>
+                    <strong>{{ prediction.temp_max }}°</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-thermometer-low"></i>
+                        Minimum Temperature
+                    </small>
+                    <strong>{{ prediction.temp_min }}°</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-droplet"></i>
+                        Humidity
+                    </small>
+                    <strong>{{ prediction.humidity }}%</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-cloud-rain"></i>
+                        Rain Probability
+                    </small>
+                    <strong>{{ prediction.rain_probability }}%</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-wind"></i>
+                        Wind Speed
+                    </small>
+                    <strong>{{ prediction.wind_speed }} km/h</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-speedometer2"></i>
+                        Pressure
+                    </small>
+                    <strong>{{ prediction.pressure }} hPa</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-cloud"></i>
+                        Cloud Cover
+                    </small>
+                    <strong>{{ prediction.cloud_cover }}%</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>
+                        <i class="bi bi-cloud-sun"></i>
+                        Weather Code
+                    </small>
+                    <strong>{{ prediction.weather_code }}</strong>
+                </div>
+
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="city-performance">
+
+                <h4 class="card-subtitle">
+                    Yesterday Model Performance
+                </h4>
+
+                <div class="city-stats">
+
+                    <div class="city-stat">
+                        <small>Temperature MAE</small>
+                        <strong class="{{ performance.temp_mae_class }}">
+                            <i class="bi bi-circle-fill"></i>
+                            {{ performance.temp_mae }}°
+                        </strong>
+                    </div>
+
+                    <div class="city-stat">
+                        <small>Pressure MAE</small>
+                        <strong class="{{ performance.pressure_mae_class }}">
+                            <i class="bi bi-circle-fill"></i>
+                            {{ performance.pressure_mae }} hPa
+                        </strong>
+                    </div>
+
+                    <div class="city-stat">
+                        <small>Weather Accuracy</small>
+                        <strong class="{{ performance.weather_accuracy_class }}">
+                            <i class="bi bi-circle-fill"></i>
+                            {{ performance.weather_accuracy }}%
+                        </strong>
+                    </div>
+
+                    <div class="city-stat">
+                        <small>Rain Correct</small>
+                        <strong class="{{ performance.rain_correct_class }}">
+                            <i class="bi bi-circle-fill"></i>
+                            {{ performance.rain_correct }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <footer class="city-footer">
+
+                <small>
+                    <i class="bi bi-clock"></i>
+                    Prediction Generated {{ prediction.generated_time }}
+                </small>
+
+            </footer>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4"
+         aria-labelledby="pipeline-status-title">
+
+    <header class="section-title">
+
+        <div>
+
+            <h2 id="pipeline-status-title">
+                Pipeline Status
+            </h2>
+
+            <p>
+                Daily automated forecasting pipeline responsible for collecting
+                weather data, generating predictions, evaluating results and
+                maintaining the forecasting engine.
+            </p>
+
+        </div>
+
+    </header>
+
+    {% set pipeline_stages = [
+        {
+            'title': 'Historical Data',
+            'icon': 'database',
+            'description': 'Recharge historical observations.',
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.recharge_time
+        },
+        {
+            'title': 'NWP Cache',
+            'icon': 'cloud-download',
+            'description': "Retrieve tomorrow's numerical weather prediction.",
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.cache_time
+        },
+        {
+            'title': 'Feature Engineering',
+            'icon': 'sliders',
+            'description': 'Generate temporal, astronomical and lag features.',
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.feature_time
+        },
+        {
+            'title': 'Hierarchical Inference',
+            'icon': 'cpu',
+            'description': 'Execute Temperature → Pressure → Moisture → Rain → Weather Code.',
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.inference_time
+        },
+        {
+            'title': 'Prediction Storage',
+            'icon': 'database-check',
+            'description': 'Store forecasts in PostgreSQL.',
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.storage_time
+        },
+        {
+            'title': 'Evaluation',
+            'icon': 'clipboard-data',
+            'description': 'Compare predictions against actual observations.',
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.evaluation_time
+        },
+        {
+            'title': 'Email Reports',
+            'icon': 'envelope-check',
+            'description': 'Generate automated daily reports.',
+            'status': 'Completed',
+            'badge': 'badge-success',
+            'time': pipeline.email_time
+        },
+        {
+            'title': 'System Health',
+            'icon': 'shield-check',
+            'description': 'Pipeline integrity verified.',
+            'status': 'Healthy',
+            'badge': 'badge-success',
+            'time': pipeline.health_time
+        }
+    ] %}
+
+    <div class="pipeline-status"
+         role="list"
+         aria-label="Forecasting pipeline stages">
+
+        {% for stage in pipeline_stages %}
+
+        <article class="card glass pipeline-status-card"
+                 role="listitem">
+
+            <div class="pipeline-circle">
+                <i class="bi bi-{{ stage.icon }}"></i>
+            </div>
+
+            <h4>{{ stage.title }}</h4>
+
+            <p>{{ stage.description }}</p>
+
+            <span class="badge {{ stage.badge }}">
+                {{ stage.status }}
+            </span>
+
+            <small class="text-muted">{{ stage.time }}</small>
+
+        </article>
+
+        {% if not loop.last %}
+
+        <i class="bi bi-arrow-right pipeline-connector"
+           aria-hidden="true"></i>
+
+        {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+    <div class="kpi-row pipeline-kpi">
+
+        <div class="kpi glass">
+
+            <div class="kpi-label">
+                <i class="bi bi-geo-alt"></i>
+                Cities Processed
+            </div>
+
+            <div class="kpi-value">{{ pipeline.cities_processed }}</div>
+
+        </div>
+
+        <div class="kpi glass">
+
+            <div class="kpi-label">
+                <i class="bi bi-graph-up"></i>
+                Forecasts Generated
+            </div>
+
+            <div class="kpi-value">{{ pipeline.predictions }}</div>
+
+        </div>
+
+        <div class="kpi glass">
+
+            <div class="kpi-label">
+                <i class="bi bi-stopwatch"></i>
+                Average Runtime
+            </div>
+
+            <div class="kpi-value">{{ pipeline.runtime }}</div>
+
+        </div>
+
+        <div class="kpi glass">
+
+            <div class="kpi-label">
+                <i class="bi bi-check2-circle"></i>
+                Success Rate
+            </div>
+
+            <div class="kpi-value">{{ pipeline.success_rate }}</div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% macro dag_model_card(model, node_class) %}
+<article class="card glass dag-node {{ node_class }}">
+
+    <div class="metric-icon">
+        <i class="bi bi-{{ model.icon }}"></i>
+    </div>
+
+    <h4>{{ model.name }}</h4>
+
+    <p class="card-subtitle">{{ model.description }}</p>
+
+    <div class="dag-node-meta">
+        <small>Model Type</small>
+        <strong>{{ model.type }}</strong>
+    </div>
+
+    <div class="dag-node-stats">
+        <span>
+            <small>Inputs</small>
+            <strong>{{ model.inputs }}</strong>
+        </span>
+        <span>
+            <small>Outputs</small>
+            <strong>{{ model.outputs }}</strong>
+        </span>
+    </div>
+
+    <span class="badge badge-success">{{ model.status }}</span>
+
+</article>
+{% endmacro %}
+
+<section class="mt-4 mb-4"
+         aria-labelledby="engine-dag-title">
+
+    <header class="section-title">
+
+        <div>
+
+            <h2 id="engine-dag-title">
+                Hierarchical ML Engine
+            </h2>
+
+            <p>
+                Forecast generation follows a Directed Acyclic Graph where lower
+                atmospheric variables become engineered inputs for higher-level
+                models.
+            </p>
+
+        </div>
+
+    </header>
+
+    <div class="dag-layout">
+
+        <div class="dag-canvas" aria-label="Model dependency graph">
+
+            {{ dag_model_card(engine.historical, 'node-historical') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            {{ dag_model_card(engine.features, 'node-features') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 1</span>
+
+            <div class="dag-tier dag-tier-split">
+
+                {{ dag_model_card(engine.temperature, 'node-temperature') }}
+                {{ dag_model_card(engine.pressure, 'node-pressure') }}
+
+            </div>
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 2</span>
+
+            {{ dag_model_card(engine.moisture, 'node-moisture') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 3</span>
+
+            {{ dag_model_card(engine.rain, 'node-rain') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 4</span>
+
+            {{ dag_model_card(engine.weather, 'node-weather') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            {{ dag_model_card(engine.consensus, 'node-consensus') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            {{ dag_model_card(engine.forecast, 'node-forecast') }}
+
+        </div>
+
+        <aside class="dag-summary card glass"
+               aria-label="Engine summary">
+
+            <h3 class="card-title">Engine Summary</h3>
+
+            <ul class="dag-summary-list">
+
+                {% for item in engine.summary %}
+
+                <li class="dag-summary-item">
+                    <i class="bi bi-{{ item.icon }}"></i>
+                    {{ item.label }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </aside>
+
+    </div>
+
+    <aside class="dag-note" aria-label="Engineering note">
+
+        <p>
+            Forecasts are not produced independently.
+            Each model receives predictions generated by previous tiers,
+            forming a dependency-aware forecasting pipeline that mirrors
+            physical atmospheric relationships.
+        </p>
+
+    </aside>
+
+</section>
+
+<section class="mt-4 mb-4"
+         aria-labelledby="engine-performance-title">
+
+    <header class="section-title">
+
+        <div>
+
+            <h2 id="engine-performance-title">
+                Engine Performance
+            </h2>
+
+            <p>
+                Continuous evaluation of forecasting accuracy across all
+                hierarchical models.
+            </p>
+
+        </div>
+
+    </header>
+
+    {% set performance_kpis = [
+        {
+            'icon': 'thermometer-half',
+            'metric': metrics.temperature_mae,
+            'label': 'Temperature MAE',
+            'trend': metrics.temperature_trend,
+            'trend_class': metrics.temperature_trend_class
+        },
+        {
+            'icon': 'speedometer2',
+            'metric': metrics.pressure_mae,
+            'label': 'Pressure MAE',
+            'trend': metrics.pressure_trend,
+            'trend_class': metrics.pressure_trend_class
+        },
+        {
+            'icon': 'droplet',
+            'metric': metrics.moisture_mae,
+            'label': 'Moisture MAE',
+            'trend': metrics.moisture_trend,
+            'trend_class': metrics.moisture_trend_class
+        },
+        {
+            'icon': 'cloud-rain',
+            'metric': metrics.rain_accuracy ~ '%',
+            'label': 'Rain Accuracy',
+            'trend': metrics.rain_trend,
+            'trend_class': metrics.rain_trend_class
+        },
+        {
+            'icon': 'cloud-sun',
+            'metric': metrics.weather_accuracy ~ '%',
+            'label': 'Weather Code Accuracy',
+            'trend': metrics.weather_trend,
+            'trend_class': metrics.weather_trend_class
+        },
+        {
+            'icon': 'cpu',
+            'metric': metrics.pipeline_success ~ '%',
+            'label': 'Pipeline Reliability',
+            'trend': metrics.pipeline_trend,
+            'trend_class': metrics.pipeline_trend_class
+        }
+    ] %}
+
+    <div class="kpi-row kpi-row-6">
+
+        {% for kpi in performance_kpis %}
+
+        <div class="kpi glass performance-kpi">
+
+            <div class="performance-kpi-header">
+
+                <div class="performance-kpi-icon">
+                    <i class="bi bi-{{ kpi.icon }}"></i>
+                </div>
+
+            </div>
+
+            <div class="kpi-value">{{ kpi.metric }}</div>
+
+            <div class="kpi-label">{{ kpi.label }}</div>
+
+            {% if kpi.trend %}
+
+            <span class="kpi-change {{ kpi.trend_class }}">
+                {{ kpi.trend }}
+            </span>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% set quality_metrics = [
+        {'name': 'Temperature', 'icon': 'thermometer-half', 'value': quality.temperature},
+        {'name': 'Pressure', 'icon': 'speedometer2', 'value': quality.pressure},
+        {'name': 'Moisture', 'icon': 'droplet', 'value': quality.moisture},
+        {'name': 'Rain', 'icon': 'cloud-rain', 'value': quality.rain},
+        {'name': 'Weather Code', 'icon': 'cloud-sun', 'value': quality.weather}
+    ] %}
+
+    {% set health_items = [
+        {'icon': 'box', 'title': 'Models Loaded', 'status': health.models_loaded, 'badge': health.models_badge},
+        {'icon': 'database', 'title': 'Database', 'status': health.database, 'badge': health.database_badge},
+        {'icon': 'clock', 'title': 'Scheduler', 'status': health.scheduler, 'badge': health.scheduler_badge},
+        {'icon': 'envelope-check', 'title': 'Email Service', 'status': health.email, 'badge': health.email_badge},
+        {'icon': 'cloud-check', 'title': 'Cache', 'status': health.cache, 'badge': health.cache_badge},
+        {'icon': 'calendar-event', 'title': 'Forecast Date', 'status': forecast_date, 'badge': health.forecast_badge}
+    ] %}
+
+    <div class="performance-grid">
+
+        <article class="card glass quality-card">
+
+            <h3 class="card-title">Forecast Quality</h3>
+
+            {% for item in quality_metrics %}
+
+            <div class="quality-item">
+
+                <div class="quality-item-header">
+
+                    <small>
+                        <i class="bi bi-{{ item.icon }}"></i>
+                        {{ item.name }}
+                    </small>
+
+                    <strong>{{ item.value }}%</strong>
+
+                </div>
+
+                <progress class="progress-bar"
+                          value="{{ item.value }}"
+                          max="100"
+                          aria-label="{{ item.name }} quality">
+                </progress>
+
+            </div>
+
+            {% endfor %}
+
+        </article>
+
+        <article class="card glass health-card">
+
+            <h3 class="card-title">System Health</h3>
+
+            {% for item in health_items %}
+
+            <div class="health-row">
+
+                <div class="health-row-left">
+
+                    <i class="bi bi-{{ item.icon }}"></i>
+
+                    {{ item.title }}
+
+                </div>
+
+                <span class="badge {{ item.badge }} health-badge">
+                    {{ item.status }}
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        </article>
+
+    </div>
+
+    <article class="card glass performance-info">
+
+        <h3>Continuous Evaluation</h3>
+
+        <p>
+            Forecasts generated by the Weather Engine are automatically compared
+            against actual weather observations every day. Error metrics are
+            stored historically, enabling long-term monitoring, model comparison
+            and continuous improvement of the forecasting pipeline.
+        </p>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4"
+         aria-labelledby="platform-architecture-title">
+
+    <header class="section-title">
+
+        <div>
+
+            <h2 id="platform-architecture-title">
+                Platform Architecture
+            </h2>
+
+            <p>
+                A modular machine learning system combining automation, data
+                engineering, feature engineering, hierarchical inference and
+                continuous evaluation.
+            </p>
+
+        </div>
+
+    </header>
+
+    {% set arch_blocks = [
+        {
+            'icon': 'database',
+            'title': 'Historical Data',
+            'description': 'Historical observations stored in PostgreSQL powering every model.',
+            'footer': '15+ Years'
+        },
+        {
+            'icon': 'gear',
+            'title': 'Automation Layer',
+            'description': 'Recharge scripts, NWP cache, prediction engine, evaluation and email reporting.',
+            'footer': 'Daily Execution'
+        },
+        {
+            'icon': 'cpu',
+            'title': 'ML Engine',
+            'description': 'Hierarchical LightGBM models connected through dependency-aware inference.',
+            'footer': '5 Models'
+        },
+        {
+            'icon': 'diagram-3',
+            'title': 'Feature Engineering',
+            'description': 'Temporal, astronomical, lag and NWP-derived features generated dynamically.',
+            'footer': '70+ Features'
+        },
+        {
+            'icon': 'bar-chart',
+            'title': 'Analytics',
+            'description': 'Forecast history, performance metrics, error analysis and dashboards.',
+            'footer': 'Continuous Monitoring'
+        }
+    ] %}
+
+    <div class="architecture-flow"
+         role="list"
+         aria-label="Platform data flow">
+
+        {% for block in arch_blocks %}
+
+        <article class="arch-box glass arch-flow-card"
+                 role="listitem">
+
+            <div class="arch-icon">
+                <i class="bi bi-{{ block.icon }}"></i>
+            </div>
+
+            <h3>{{ block.title }}</h3>
+
+            <p>{{ block.description }}</p>
+
+            <footer class="arch-footer">{{ block.footer }}</footer>
+
+        </article>
+
+        {% if not loop.last %}
+
+        <i class="bi bi-arrow-right arch-connector"
+           aria-hidden="true"></i>
+
+        {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+    {% set arch_layers = [
+        {
+            'title': 'Data Layer',
+            'items': [
+                'Historical observations',
+                'Forecast storage',
+                'Error storage',
+                'NWP cache',
+                'Cities'
+            ]
+        },
+        {
+            'title': 'Machine Learning Layer',
+            'items': [
+                'Temperature Regression',
+                'Pressure Regression',
+                'Moisture Regression',
+                'Rain Classification',
+                'Weather Classification',
+                'Consensus Filter'
+            ]
+        },
+        {
+            'title': 'Application Layer',
+            'items': [
+                'Flask',
+                'Bootstrap',
+                'Plotly',
+                'Email Reports',
+                'REST-ready Architecture'
+            ]
+        }
+    ] %}
+
+    <div class="grid grid-3 architecture-layers">
+
+        {% for layer in arch_layers %}
+
+        <article class="card glass arch-layer-card">
+
+            <h3 class="card-title">{{ layer.title }}</h3>
+
+            <ul class="arch-list">
+
+                {% for item in layer.items %}
+
+                <li>
+                    <i class="bi bi-check2"></i>
+                    {{ item }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    <article class="card glass arch-banner">
+
+        <div class="arch-banner-content">
+
+            <h3>Engineering Philosophy</h3>
+
+            <p>
+                The Weather Engine is designed as a modular forecasting platform
+                rather than a single predictive model. Every component is
+                independently replaceable, enabling future improvements in feature
+                engineering, model selection, automation and deployment without
+                redesigning the complete system.
+            </p>
+
+        </div>
+
+        <div class="arch-banner-badges">
+
+            <span class="badge badge-success philosophy-badge">
+                <i class="bi bi-check-circle"></i>
+                Production Ready
+            </span>
+
+            <span class="badge philosophy-badge">
+                <i class="bi bi-puzzle"></i>
+                Modular
+            </span>
+
+            <span class="badge philosophy-badge">
+                <i class="bi bi-arrows-angle-expand"></i>
+                Scalable
+            </span>
+
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}
+
+  <div class="kpi-row">
+    <i class="bi bi-calendar-event" aria-hidden="true"></i>
+    <span>Forecast Date</span>
+    <strong>{{ forecast_date }}</strong>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-buildings" aria-hidden="true"></i>
+    <span>Cities Processed</span>
+    <strong>{{ pipeline.cities_processed }}</strong>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-cloud-sun" aria-hidden="true"></i>
+    <span>Predictions Generated</span>
+    <strong>{{ pipeline.predictions }}</strong>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-speedometer2" aria-hidden="true"></i>
+    <span>Average Runtime</span>
+    <strong>{{ pipeline.runtime }}</strong>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-database-check" aria-hidden="true"></i>
+    <span>Database Writes</span>
+    <strong>{{ pipeline.database_writes }}</strong>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-clock-history" aria-hidden="true"></i>
+    <span>Scheduler</span>
+    <span class="badge">Operational</span>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-envelope-check" aria-hidden="true"></i>
+    <span>Email Queue</span>
+    <span class="badge">Empty</span>
+  </div>
+
+  <div class="kpi-row">
+    <i class="bi bi-heart-pulse" aria-hidden="true"></i>
+    <span>Overall Health</span>
+    <span class="badge">Healthy</span>
+  </div>
+</article>
+
+<div class="dashboard-grid">
+  <article class="metric-card glass">
+    <i class="bi bi-check-circle" aria-hidden="true"></i>
+    <div class="kpi">99.8%</div>
+    <p>Success Rate</p>
+  </article>
+
+  <article class="metric-card glass">
+    <i class="bi bi-x-octagon" aria-hidden="true"></i>
+    <div class="kpi">0</div>
+    <p>Pipeline Errors</p>
+  </article>
+
+  <article class="metric-card glass">
+    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+    <div class="kpi">0</div>
+    <p>Warnings</p>
+  </article>
+
+  <article class="metric-card glass">
+    <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+    <div class="kpi">0</div>
+    <p>Retries</p>
+  </article>
+</div>
+
+<header>
+  <h2 id="weather-engine-closing-title" class="section-title">Weather Engine</h2>
+  <h3>Hierarchical Machine Learning<br>Forecasting Platform</h3>
+</header>
+
+<p>
+  Weather Engine connects historical observations, feature engineering, a hierarchical DAG,
+  continuous evaluation, automation, and analytics into a structured forecasting system built
+  for repeatable daily prediction workflows.
+</p>
+
+<div class="kpi-row" aria-label="Platform capabilities">
+  <span class="badge">
+    <i class="bi bi-database" aria-hidden="true"></i>
+    Historical Data
+  </span>
+  <span class="badge">
+    <i class="bi bi-sliders" aria-hidden="true"></i>
+    Feature Engineering
+  </span>
+  <span class="badge">
+    <i class="bi bi-diagram-3" aria-hidden="true"></i>
+    Hierarchical DAG
+  </span>
+  <span class="badge">
+    <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+    Automation
+  </span>
+  <span class="badge">
+    <i class="bi bi-activity" aria-hidden="true"></i>
+    Continuous Evaluation
+  </span>
+  <span class="badge">
+    <i class="bi bi-bar-chart-line" aria-hidden="true"></i>
+    Analytics
+  </span>
+</div>
+
+<nav class="kpi-row" aria-label="Homepage closing actions">
+  <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+    <i class="bi bi-speedometer2" aria-hidden="true"></i>
+    Explore Dashboard
+  </a>
+  <a href="#architecture" class="btn btn-outline-light">
+    <i class="bi bi-diagram-2" aria-hidden="true"></i>
+    View Architecture
+  </a>
+</nav>
+
+<div class="dashboard-grid" aria-label="Platform metrics">
+  <article class="metric-card glass">
+    <div class="kpi">5</div>
+    <p>Machine Learning Models</p>
+  </article>
+
+  <article class="metric-card glass">
+    <div class="kpi">70+</div>
+    <p>Engineered Features</p>
+  </article>
+
+  <article class="metric-card glass">
+    <div class="kpi">Daily</div>
+    <p>Automated Pipeline</p>
+  </article>
+</div>
+
+<blockquote>
+  The Weather Engine is engineered as a production-style forecasting platform where every
+  prediction is generated, evaluated and continuously improved through a modular machine
+  learning pipeline.
+</blockquote>
+
+<footer>
+  <p>Built using</p>
+  <div class="kpi-row" aria-label="Technology stack">
+    <span class="badge">Python</span>
+    <span class="badge">Flask</span>
+    <span class="badge">PostgreSQL</span>
+    <span class="badge">LightGBM</span>
+    <span class="badge">Bootstrap</span>
+    <span class="badge">Plotly</span>
+    <span class="badge">Open-Meteo</span>
+  </div>
+</footer>
+
+

@@ -1,0 +1,142 @@
+WEBSITE DEVELOPMENT DAY
+
+Today marked the completion of the complete frontend architecture for the Weather Engine.
+The focus shifted from designing individual sections to building the entire presentation layer of the platform
+before beginning Flask integration.
+
+Started by finalising the overall website strategy. Instead of presenting the project as a weather application,
+the design philosophy was refined to showcase it as a production-style Hierarchical Machine
+Learning Weather Forecasting Platform, emphasising machine learning, automation, software engineering and
+data engineering equally.
+
+Finalised the website navigation and page hierarchy as:
+
+Home
+
+Dashboard
+
+Engine
+
+History
+
+Models
+
+Architecture
+
+About
+
+Designed and generated every HTML page using Cursor with Codex while continuously refining the structure,
+engineering content and UI strategy.
+
+Completed base.html which acts as the shared template across the entire website including common navigation,
+layout and reusable structure.
+
+Completed home.html showcasing the Weather Engine as a product with hero section, city forecast
+ cards, hierarchical DAG overview, engine statistics, platform overview and project summary.
+
+Completed dashboard.html designed as an engineering dashboard inspired by Bloomberg Terminal, Linear and Apple
+design language. Added KPI cards, analytics placeholders, pipeline monitoring, model performance cards, forecast
+tables, system health and engineering metrics.
+
+Completed engine.html explaining the complete inference engine. Added hierarchical DAG visualisation,
+ feature engineering pipeline, model descriptions, consensus filter, inference timeline and engineering overview.
+
+Completed history.html for browsing historical forecasts, prediction errors,
+filtering, searching, export options and forecast history exploration.
+
+Spent significant time discussing and designing architecture.html before implementation.
+Rather than generating generic documentation, the page was structured as an engineering whitepaper explaining:
+
+Engineering Philosophy
+
+Hierarchical Machine Learning
+
+Overall System Architecture
+
+Complete Data Flow
+
+Database Architecture
+
+Feature Engineering
+
+Hierarchical ML Pipeline
+
+Automation Pipeline
+
+Technology Stack
+
+Current Limitations
+
+Future Roadmap
+
+Discussed every major architectural decision including DAG reasoning, PostgreSQL selection,
+feature engineering strategy, recharge pipeline, automation flow and production architecture before generating the page.
+
+Completed architecture.html following the final engineering specification.
+
+Documented the complete modelling strategy for every machine learning model including:
+
+Temperature Model
+
+Pressure Model
+
+Moisture Model
+
+Rain Classification
+
+Weather Code Classification
+
+Wind modelling investigation
+
+Cloud Cover externalisation
+
+Rain Amount externalisation
+
+Consensus Filter strategy
+
+Evaluation metrics
+
+Feature inputs
+
+Engineering rationale behind every modelling decision.
+
+Using this documentation, designed and completed models.html as a
+dedicated machine learning showcase instead of repeating the Engine page. The page focuses on each individual model,
+its purpose, inputs, outputs, metrics, hierarchy and engineering reasoning.
+
+Completed about.html focusing entirely on the platform rather than personal biography. Included project vision,
+development journey, technology stack, project highlights, current scope, roadmap and overall platform objectives.
+
+Throughout development, extensive discussions were held regarding UI philosophy. The design direction evolved
+towards an Apple-inspired premium engineering interface with Bloomberg
+Terminal influences, focusing on clarity, hierarchy, whitespace and professional presentation rather than visual
+effects.
+
+Cursor together with Codex was used extensively to rapidly scaffold the HTML structure of every
+page while architectural planning, content strategy, engineering documentation,
+ ML explanations and overall project direction were refined manually before generation.
+
+By the end of the day, the complete frontend presentation layer was finished.
+
+Current project status:
+
+✓ base.html
+
+✓ home.html
+
+✓ dashboard.html
+
+✓ engine.html
+
+✓ history.html
+
+✓ architecture.html
+
+✓ models.html
+
+✓ about.html
+
+Next phase begins with Flask integration where
+the static templates will be converted into a fully dynamic application by
+connecting Flask routes, PostgreSQL, DatabaseManager, Jinja templates and Plotly
+visualisations before final testing, UI polishing and deployment.

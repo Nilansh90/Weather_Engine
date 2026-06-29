@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+
+{% block title %}
+Weather Engine | Engineering Dashboard
+{% endblock %}
+
+{% block content %}
+
+<header class="section-title" aria-labelledby="dashboard-title">
+
+    <div>
+
+        <h1 id="dashboard-title">Engineering Dashboard</h1>
+
+        <p>
+            Continuous monitoring of machine learning forecasts, prediction
+            accuracy and pipeline health.
+        </p>
+
+    </div>
+
+    <aside class="card glass" aria-label="Forecast status">
+
+        <div class="run-list">
+
+            <div class="run-item">
+
+                <div class="run-left">
+                    <i class="bi bi-calendar-event"></i>
+                    <small>Forecast Date</small>
+                </div>
+
+                <div class="run-right">
+                    <strong>{{ forecast_date }}</strong>
+                </div>
+
+            </div>
+
+            <div class="run-item">
+
+                <div class="run-left">
+                    <i class="bi bi-activity"></i>
+                    <small>Status</small>
+                </div>
+
+                <div class="run-right">
+                    <span class="badge badge-success">Operational</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</header>
+
+<section class="mt-4 mb-4" aria-labelledby="dashboard-kpis-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="dashboard-kpis-title">Forecast Operations</h2>
+            <p>Current production metrics for the latest automated run.</p>
+        </div>
+
+    </header>
+
+    {% set dashboard_kpis = [
+        {'icon': 'thermometer-half', 'value': metrics.temperature_mae, 'label': 'Temperature MAE'},
+        {'icon': 'speedometer2', 'value': metrics.pressure_mae, 'label': 'Pressure MAE'},
+        {'icon': 'droplet', 'value': metrics.moisture_mae, 'label': 'Moisture MAE'},
+        {'icon': 'cloud-rain', 'value': metrics.rain_accuracy ~ ' %', 'label': 'Rain Accuracy'},
+        {'icon': 'cloud-sun', 'value': metrics.weather_accuracy ~ ' %', 'label': 'Weather Accuracy'},
+        {'icon': 'clock', 'value': metrics.runtime, 'label': 'Pipeline Runtime'},
+        {'icon': 'building', 'value': metrics.cities, 'label': 'Cities'},
+        {'icon': 'cpu', 'value': metrics.predictions, 'label': 'Predictions Generated'}
+    ] %}
+
+    <div class="kpi-row" role="list" aria-label="Dashboard KPI metrics">
+
+        {% for item in dashboard_kpis %}
+
+        <article class="kpi glass performance-kpi" role="listitem">
+
+            <div class="performance-kpi-header">
+                <div class="performance-kpi-icon">
+                    <i class="bi bi-{{ item.icon }}"></i>
+                </div>
+            </div>
+
+            <div class="kpi-value">{{ item.value }}</div>
+            <div class="kpi-label">{{ item.label }}</div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="forecast-analytics-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="forecast-analytics-title">Forecast Analytics</h2>
+            <p>Forecast and observation comparison for core atmospheric targets.</p>
+        </div>
+
+    </header>
+
+    <article class="chart-card glass mb-4">
+
+        <header class="chart-header">
+            <div>
+                <h3 class="chart-title">Forecast vs Actual Temperature</h3>
+                <p class="chart-subtitle">Plotly analytics placeholder</p>
+            </div>
+            <span class="badge">Temperature</span>
+        </header>
+
+        <div id="temperature-chart"
+             class="chart-container"
+             role="img"
+             aria-label="Forecast vs actual temperature chart"></div>
+
+    </article>
+
+    <article class="chart-card glass">
+
+        <header class="chart-header">
+            <div>
+                <h3 class="chart-title">Forecast vs Actual Pressure</h3>
+                <p class="chart-subtitle">Plotly analytics placeholder</p>
+            </div>
+            <span class="badge">Pressure</span>
+        </header>
+
+        <div id="pressure-chart"
+             class="chart-container"
+             role="img"
+             aria-label="Forecast vs actual pressure chart"></div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="error-trends-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="error-trends-title">Error Trends</h2>
+            <p>Rolling model error signals from the last fifteen production runs.</p>
+        </div>
+
+    </header>
+
+    <div class="performance-grid">
+
+        <article class="chart-card glass">
+
+            <header class="chart-header">
+                <div>
+                    <h3 class="chart-title">15-Day Temperature Error Trend</h3>
+                    <p class="chart-subtitle">Mean absolute error over time</p>
+                </div>
+                <span class="badge">MAE</span>
+            </header>
+
+            <div id="temp-error-chart"
+                 class="chart-container"
+                 role="img"
+                 aria-label="15-day temperature error trend chart"></div>
+
+        </article>
+
+        <article class="chart-card glass">
+
+            <header class="chart-header">
+                <div>
+                    <h3 class="chart-title">15-Day Pressure Error Trend</h3>
+                    <p class="chart-subtitle">Mean absolute error over time</p>
+                </div>
+                <span class="badge">MAE</span>
+            </header>
+
+            <div id="pressure-error-chart"
+                 class="chart-container"
+                 role="img"
+                 aria-label="15-day pressure error trend chart"></div>
+
+        </article>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="model-performance-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="model-performance-title">Model Performance</h2>
+            <p>Production model status, scores and feature coverage.</p>
+        </div>
+
+    </header>
+
+    {% set model_cards = [
+        {
+            'icon': 'thermometer-half',
+            'name': 'Temperature Model',
+            'score': model_performance.temperature.score,
+            'training_date': model_performance.temperature.training_date,
+            'status': model_performance.temperature.status,
+            'features': model_performance.temperature.features,
+            'indicator': model_performance.temperature.indicator
+        },
+        {
+            'icon': 'speedometer2',
+            'name': 'Pressure Model',
+            'score': model_performance.pressure.score,
+            'training_date': model_performance.pressure.training_date,
+            'status': model_performance.pressure.status,
+            'features': model_performance.pressure.features,
+            'indicator': model_performance.pressure.indicator
+        },
+        {
+            'icon': 'droplet',
+            'name': 'Moisture Model',
+            'score': model_performance.moisture.score,
+            'training_date': model_performance.moisture.training_date,
+            'status': model_performance.moisture.status,
+            'features': model_performance.moisture.features,
+            'indicator': model_performance.moisture.indicator
+        },
+        {
+            'icon': 'cloud-rain',
+            'name': 'Rain Model',
+            'score': model_performance.rain.score,
+            'training_date': model_performance.rain.training_date,
+            'status': model_performance.rain.status,
+            'features': model_performance.rain.features,
+            'indicator': model_performance.rain.indicator
+        },
+        {
+            'icon': 'cloud-sun',
+            'name': 'Weather Code Model',
+            'score': model_performance.weather_code.score,
+            'training_date': model_performance.weather_code.training_date,
+            'status': model_performance.weather_code.status,
+            'features': model_performance.weather_code.features,
+            'indicator': model_performance.weather_code.indicator
+        }
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Model performance cards">
+
+        {% for model in model_cards %}
+
+        <article class="metric-card glass" role="listitem">
+
+            <div class="metric-icon">
+                <i class="bi bi-{{ model.icon }}"></i>
+            </div>
+
+            <h3 class="card-title">{{ model.name }}</h3>
+
+            <div class="city-stats">
+
+                <div class="city-stat">
+                    <small>Current Score</small>
+                    <strong>{{ model.score }}</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>Training Date</small>
+                    <strong>{{ model.training_date }}</strong>
+                </div>
+
+                <div class="city-stat">
+                    <small>Status</small>
+                    <span class="badge badge-success">{{ model.status }}</span>
+                </div>
+
+                <div class="city-stat">
+                    <small>Features Used</small>
+                    <strong>{{ model.features }}</strong>
+                </div>
+
+            </div>
+
+            <div class="hr"></div>
+
+            <span class="kpi-change text-success">
+                <i class="bi bi-circle-fill"></i>
+                {{ model.indicator }}
+            </span>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="pipeline-health-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="pipeline-health-title">Pipeline Health</h2>
+            <p>Latest automation stages and service readiness.</p>
+        </div>
+
+    </header>
+
+    {% set pipeline_runs = [
+        {'icon': 'database', 'title': 'Recharge', 'description': 'Historical observations refreshed.', 'time': pipeline.recharge_time},
+        {'icon': 'cloud-download', 'title': 'NWP Cache', 'description': 'Numerical weather prediction cache updated.', 'time': pipeline.cache_time},
+        {'icon': 'cpu', 'title': 'Prediction', 'description': 'Hierarchical inference completed.', 'time': pipeline.prediction_time},
+        {'icon': 'clipboard-data', 'title': 'Evaluation', 'description': 'Predictions compared with observations.', 'time': pipeline.evaluation_time},
+        {'icon': 'envelope-check', 'title': 'Email', 'description': 'Report queue processed.', 'time': pipeline.email_time}
+    ] %}
+
+    <div class="dashboard-grid">
+
+        <article class="card glass">
+
+            <h3 class="card-title">Recent Pipeline Runs</h3>
+
+            <div class="timeline" role="list" aria-label="Recent pipeline runs">
+
+                {% for run in pipeline_runs %}
+
+                <div class="timeline-item" role="listitem">
+
+                    <h4 class="timeline-title">
+                        <i class="bi bi-{{ run.icon }}"></i>
+                        {{ run.title }}
+                    </h4>
+
+                    <p>{{ run.description }}</p>
+
+                    <div class="timeline-date">
+                        {{ run.time }}
+                        <span class="badge badge-success">Completed</span>
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </article>
+
+        <aside class="card glass health-card" aria-label="System health">
+
+            <h3 class="card-title">System Health</h3>
+
+            {% set health_items = [
+                {'icon': 'database', 'label': 'Database', 'value': 'Connected'},
+                {'icon': 'clock-history', 'label': 'Scheduler', 'value': 'Healthy'},
+                {'icon': 'cloud-check', 'label': 'Cache', 'value': 'Healthy'},
+                {'icon': 'box', 'label': 'Models', 'value': 'Loaded'},
+                {'icon': 'envelope-check', 'label': 'Email', 'value': 'Healthy'}
+            ] %}
+
+            {% for item in health_items %}
+
+            <div class="health-row">
+
+                <div class="health-row-left">
+                    <i class="bi bi-{{ item.icon }}"></i>
+                    {{ item.label }}
+                </div>
+
+                <span class="badge badge-success health-badge">{{ item.value }}</span>
+
+            </div>
+
+            {% endfor %}
+
+        </aside>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="city-performance-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="city-performance-title">City Performance</h2>
+            <p>Forecast quality by monitored city.</p>
+        </div>
+
+    </header>
+
+    <article class="table-card glass">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th scope="col">City</th>
+                        <th scope="col">Temperature MAE</th>
+                        <th scope="col">Pressure MAE</th>
+                        <th scope="col">Rain Accuracy</th>
+                        <th scope="col">Weather Accuracy</th>
+                        <th scope="col">Forecast Count</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for city in city_metrics %}
+
+                    <tr>
+                        <td><strong>{{ city.name }}</strong></td>
+                        <td>{{ city.temperature_mae }}</td>
+                        <td>{{ city.pressure_mae }}</td>
+                        <td>{{ city.rain_accuracy }}%</td>
+                        <td>{{ city.weather_accuracy }}%</td>
+                        <td>{{ city.forecast_count }}</td>
+                        <td>
+                            <span class="badge badge-success">{{ city.status }}</span>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="latest-forecasts-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="latest-forecasts-title">Latest Forecasts</h2>
+            <p>Most recent prediction records written by the forecasting platform.</p>
+        </div>
+
+    </header>
+
+    <article class="table-card glass">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th scope="col">City</th>
+                        <th scope="col">Forecast Date</th>
+                        <th scope="col">Temperature</th>
+                        <th scope="col">Pressure</th>
+                        <th scope="col">Humidity</th>
+                        <th scope="col">Rain Probability</th>
+                        <th scope="col">Weather Code</th>
+                        <th scope="col">Prediction Time</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for forecast in latest_forecasts %}
+
+                    <tr>
+                        <td><strong>{{ forecast.city }}</strong></td>
+                        <td>{{ forecast.forecast_date }}</td>
+                        <td>{{ forecast.temperature }}</td>
+                        <td>{{ forecast.pressure }}</td>
+                        <td>{{ forecast.humidity }}</td>
+                        <td>{{ forecast.rain_probability }}%</td>
+                        <td>{{ forecast.weather_code }}</td>
+                        <td>{{ forecast.prediction_time }}</td>
+                        <td>
+                            <span class="badge badge-success">{{ forecast.status }}</span>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="quick-navigation-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="quick-navigation-title">Quick Navigation</h2>
+            <p>Move between core engineering surfaces.</p>
+        </div>
+
+    </header>
+
+    {% set navigation_cards = [
+        {'icon': 'diagram-3', 'title': 'Engine', 'description': 'Inspect the hierarchical forecasting pipeline.', 'endpoint': 'engine'},
+        {'icon': 'clock-history', 'title': 'History', 'description': 'Review historical predictions and accuracy.', 'endpoint': 'history'},
+        {'icon': 'hdd-network', 'title': 'Architecture', 'description': 'Trace data, model and automation layers.', 'endpoint': 'architecture'},
+        {'icon': 'house', 'title': 'Home', 'description': 'Return to the platform overview.', 'endpoint': 'home'}
+    ] %}
+
+    <nav class="metric-grid" aria-label="Dashboard quick navigation">
+
+        {% for item in navigation_cards %}
+
+        <a href="{{ url_for(item.endpoint) }}" class="metric-card glass">
+
+            <div class="metric-icon">
+                <i class="bi bi-{{ item.icon }}"></i>
+            </div>
+
+            <h3 class="card-title">{{ item.title }}</h3>
+
+            <p>{{ item.description }}</p>
+
+            <span class="card-subtitle">
+                Open
+                <i class="bi bi-arrow-right"></i>
+            </span>
+
+        </a>
+
+        {% endfor %}
+
+    </nav>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block title %}
+Weather Engine | Inference Engine
+{% endblock %}
+
+{% block content %}
+
+<header class="section-title" aria-labelledby="engine-title">
+
+    <div>
+
+        <h1 id="engine-title">Inference Engine</h1>
+
+        <p>
+            Understand how historical observations become tomorrow's weather
+            forecast through hierarchical machine learning.
+        </p>
+
+    </div>
+
+</header>
+
+<section class="mt-4 mb-4" aria-labelledby="engine-summary-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="engine-summary-title">Engine Summary</h2>
+            <p>Core operating characteristics of the production inference path.</p>
+        </div>
+
+    </header>
+
+    <div class="metric-grid" role="list" aria-label="Inference engine summary">
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-box"></i>
+            </div>
+            <div class="metric-number">5</div>
+            <div class="metric-label">Models</div>
+        </article>
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-sliders"></i>
+            </div>
+            <div class="metric-number">70+</div>
+            <div class="metric-label">Feature Count</div>
+        </article>
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+            <div class="metric-number">Hierarchical DAG</div>
+            <div class="metric-label">Inference</div>
+        </article>
+
+        <article class="metric-card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+            <div class="metric-number">Daily</div>
+            <div class="metric-label">Automation</div>
+        </article>
+
+    </div>
+
+</section>
+
+{% macro dag_node(node, node_class) %}
+<article class="card glass dag-node {{ node_class }}">
+
+    <div class="metric-icon">
+        <i class="bi bi-{{ node.icon }}"></i>
+    </div>
+
+    <h4>{{ node.name }}</h4>
+
+    <div class="dag-node-meta">
+        <small>Model Type</small>
+        <strong>{{ node.type }}</strong>
+    </div>
+
+    <div class="dag-node-stats">
+        <span>
+            <small>Inputs</small>
+            <strong>{{ node.inputs }}</strong>
+        </span>
+        <span>
+            <small>Outputs</small>
+            <strong>{{ node.outputs }}</strong>
+        </span>
+    </div>
+
+    <span class="badge badge-success">Loaded</span>
+
+</article>
+{% endmacro %}
+
+<section class="mt-4 mb-4" aria-labelledby="interactive-dag-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="interactive-dag-title">Interactive DAG</h2>
+            <p>Dependency-aware inference flow from observations to forecast output.</p>
+        </div>
+
+    </header>
+
+    {% set dag_nodes = {
+        'historical': {'icon': 'database', 'name': 'Historical Weather', 'type': 'Observation Store', 'inputs': '0', 'outputs': 'Raw weather records'},
+        'features': {'icon': 'sliders', 'name': 'Feature Engineering', 'type': 'Feature Pipeline', 'inputs': 'Historical + NWP', 'outputs': '70+ features'},
+        'temperature': {'icon': 'thermometer-half', 'name': 'Temperature Model', 'type': 'Regression', 'inputs': 'Feature vector', 'outputs': 'Temperature'},
+        'pressure': {'icon': 'speedometer2', 'name': 'Pressure Model', 'type': 'Regression', 'inputs': 'Feature vector', 'outputs': 'Pressure'},
+        'moisture': {'icon': 'droplet', 'name': 'Moisture Model', 'type': 'Regression', 'inputs': 'Features + Tier 1', 'outputs': 'Humidity + dew point'},
+        'rain': {'icon': 'cloud-rain', 'name': 'Rain Probability Model', 'type': 'Classification', 'inputs': 'Features + moisture', 'outputs': 'Rain probability'},
+        'weather': {'icon': 'cloud-sun', 'name': 'Weather Code Classifier', 'type': 'Classification', 'inputs': 'Features + prior tiers', 'outputs': 'Weather code'},
+        'consensus': {'icon': 'intersect', 'name': 'Consensus Filter', 'type': 'Validation Layer', 'inputs': 'ML + NWP', 'outputs': 'Validated code'},
+        'forecast': {'icon': 'clipboard-data', 'name': 'Forecast Output', 'type': 'Prediction Object', 'inputs': 'All model outputs', 'outputs': 'Stored forecast'}
+    } %}
+
+    <div class="dag-layout">
+
+        <div class="dag-canvas" aria-label="Hierarchical inference DAG">
+
+            {{ dag_node(dag_nodes.historical, 'node-historical') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            {{ dag_node(dag_nodes.features, 'node-features') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 1</span>
+
+            <div class="dag-tier dag-tier-split">
+                {{ dag_node(dag_nodes.temperature, 'node-temperature') }}
+                {{ dag_node(dag_nodes.pressure, 'node-pressure') }}
+            </div>
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 2</span>
+
+            {{ dag_node(dag_nodes.moisture, 'node-moisture') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 3</span>
+
+            {{ dag_node(dag_nodes.rain, 'node-rain') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            <span class="dag-tier-label">Tier 4</span>
+
+            {{ dag_node(dag_nodes.weather, 'node-weather') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            {{ dag_node(dag_nodes.consensus, 'node-consensus') }}
+
+            <div class="dag-arrow" aria-hidden="true">
+                <div class="dag-arrow-line"></div>
+                <i class="bi bi-arrow-down"></i>
+            </div>
+
+            {{ dag_node(dag_nodes.forecast, 'node-forecast') }}
+
+        </div>
+
+        <aside class="dag-summary card glass" aria-label="DAG dependency summary">
+
+            <h3 class="card-title">Dependency Flow</h3>
+
+            <ul class="dag-summary-list">
+                <li class="dag-summary-item">
+                    <i class="bi bi-database"></i>
+                    Historical observations seed the feature matrix.
+                </li>
+                <li class="dag-summary-item">
+                    <i class="bi bi-diagram-3"></i>
+                    Lower-tier predictions become inputs for later tiers.
+                </li>
+                <li class="dag-summary-item">
+                    <i class="bi bi-shield-check"></i>
+                    Final weather codes are validated before storage.
+                </li>
+            </ul>
+
+        </aside>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="model-details-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="model-details-title">Model Details</h2>
+            <p>Operational role and target structure for each inference model.</p>
+        </div>
+
+    </header>
+
+    {% set model_details = [
+        {
+            'icon': 'thermometer-half',
+            'name': 'Temperature Model',
+            'model_type': 'Atmospheric Regression',
+            'problem_type': 'Regression',
+            'targets': 'Temperature',
+            'features': 'Temporal, lag, astronomical and NWP features',
+            'status': 'Loaded',
+            'description': 'Predicts the primary temperature signal used by downstream atmospheric models.'
+        },
+        {
+            'icon': 'speedometer2',
+            'name': 'Pressure Model',
+            'model_type': 'Atmospheric Regression',
+            'problem_type': 'Regression',
+            'targets': 'Surface pressure',
+            'features': 'Temporal, lag, wind and NWP pressure features',
+            'status': 'Loaded',
+            'description': 'Estimates pressure conditions that help stabilize moisture and weather classification tiers.'
+        },
+        {
+            'icon': 'droplet',
+            'name': 'Moisture Model',
+            'model_type': 'Moisture Regression',
+            'problem_type': 'Regression',
+            'targets': 'Humidity and dew point',
+            'features': 'Feature matrix plus temperature and pressure predictions',
+            'status': 'Loaded',
+            'description': 'Uses first-tier outputs to infer moisture conditions for rain and weather code decisions.'
+        },
+        {
+            'icon': 'cloud-rain',
+            'name': 'Rain Classifier',
+            'model_type': 'Precipitation Classifier',
+            'problem_type': 'Classification',
+            'targets': 'Rain probability',
+            'features': 'Moisture, cloud cover, precipitation and NWP features',
+            'status': 'Loaded',
+            'description': 'Classifies precipitation likelihood after lower atmospheric variables are available.'
+        },
+        {
+            'icon': 'cloud-sun',
+            'name': 'Weather Code Classifier',
+            'model_type': 'Weather State Classifier',
+            'problem_type': 'Classification',
+            'targets': 'Weather code',
+            'features': 'All engineered features and hierarchical model outputs',
+            'status': 'Loaded',
+            'description': 'Produces the local weather state before consensus validation against NWP guidance.'
+        }
+    ] %}
+
+    <div class="metric-grid" role="list" aria-label="Model detail cards">
+
+        {% for model in model_details %}
+
+        <article class="metric-card glass" role="listitem">
+
+            <div class="metric-icon">
+                <i class="bi bi-{{ model.icon }}"></i>
+            </div>
+
+            <h3 class="card-title">{{ model.name }}</h3>
+
+            <div class="city-stats">
+                <div class="city-stat">
+                    <small>Model Type</small>
+                    <strong>{{ model.model_type }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Algorithm</small>
+                    <strong>LightGBM</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Problem Type</small>
+                    <strong>{{ model.problem_type }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Targets</small>
+                    <strong>{{ model.targets }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Features Used</small>
+                    <strong>{{ model.features }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Current Status</small>
+                    <span class="badge badge-success">{{ model.status }}</span>
+                </div>
+            </div>
+
+            <div class="hr"></div>
+
+            <p>{{ model.description }}</p>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="feature-engineering-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="feature-engineering-title">Feature Engineering</h2>
+            <p>Feature groups produced before hierarchical inference begins.</p>
+        </div>
+
+    </header>
+
+    {% set feature_groups = [
+        {'icon': 'calendar3', 'title': 'Temporal Features', 'items': ['Year', 'Month', 'Day', 'Day of Week', 'Cyclical Encoding']},
+        {'icon': 'sun', 'title': 'Astronomical Features', 'items': ['Sunshine', 'Daylight Duration', 'Radiation']},
+        {'icon': 'clock-history', 'title': 'Lag Features', 'items': ['Temperature', 'Pressure', 'Wind', 'Humidity']},
+        {'icon': 'cloud-download', 'title': 'External Features', 'items': ['Open-Meteo NWP', 'Wind', 'Cloud Cover', 'Precipitation', 'Weather Code']}
+    ] %}
+
+    <div class="grid grid-4" role="list" aria-label="Feature engineering groups">
+
+        {% for group in feature_groups %}
+
+        <article class="card glass arch-layer-card" role="listitem">
+
+            <div class="metric-icon">
+                <i class="bi bi-{{ group.icon }}"></i>
+            </div>
+
+            <h3 class="card-title">{{ group.title }}</h3>
+
+            <ul class="arch-list">
+                {% for item in group.items %}
+                <li>
+                    <i class="bi bi-check2"></i>
+                    {{ item }}
+                </li>
+                {% endfor %}
+            </ul>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="consensus-filter-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="consensus-filter-title">Consensus Filter</h2>
+            <p>Validation layer that reconciles local ML output with external NWP guidance.</p>
+        </div>
+
+    </header>
+
+    <div class="architecture-flow" aria-label="Consensus filter flow">
+
+        <article class="arch-box glass arch-flow-card">
+            <div class="arch-icon">
+                <i class="bi bi-cpu"></i>
+            </div>
+            <h3>ML Prediction</h3>
+            <p>The ML model acts as a local expert.</p>
+            <footer class="arch-footer">Local signal</footer>
+        </article>
+
+        <i class="bi bi-plus-lg arch-connector" aria-hidden="true"></i>
+
+        <article class="arch-box glass arch-flow-card">
+            <div class="arch-icon">
+                <i class="bi bi-cloud-download"></i>
+            </div>
+            <h3>NWP Prediction</h3>
+            <p>The NWP forecast acts as a global observer.</p>
+            <footer class="arch-footer">Global guidance</footer>
+        </article>
+
+        <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
+
+        <article class="arch-box glass arch-flow-card">
+            <div class="arch-icon">
+                <i class="bi bi-diagram-2"></i>
+            </div>
+            <h3>Neighbour Validation</h3>
+            <p>Neighbour codes are accepted when model and NWP outputs remain close.</p>
+            <footer class="arch-footer">Agreement check</footer>
+        </article>
+
+        <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
+
+        <article class="arch-box glass arch-flow-card">
+            <div class="arch-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h3>Final Weather Code</h3>
+            <p>Large disagreements fall back to NWP.</p>
+            <footer class="arch-footer">Validated output</footer>
+        </article>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="forecast-object-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="forecast-object-title">Forecast Object</h2>
+            <p>Final prediction structure persisted after consensus validation.</p>
+        </div>
+
+    </header>
+
+    <article class="card glass">
+
+        <h3 class="card-title">
+            <i class="bi bi-braces"></i>
+            Prediction Record
+        </h3>
+
+        <div class="city-stats">
+            <div class="city-stat"><small>city_id</small><strong>{{ forecast.city_id }}</strong></div>
+            <div class="city-stat"><small>forecast_date</small><strong>{{ forecast.forecast_date }}</strong></div>
+            <div class="city-stat"><small>temperature</small><strong>{{ forecast.temperature }}</strong></div>
+            <div class="city-stat"><small>pressure</small><strong>{{ forecast.pressure }}</strong></div>
+            <div class="city-stat"><small>humidity</small><strong>{{ forecast.humidity }}</strong></div>
+            <div class="city-stat"><small>dew point</small><strong>{{ forecast.dew_point }}</strong></div>
+            <div class="city-stat"><small>rain probability</small><strong>{{ forecast.rain_probability }}</strong></div>
+            <div class="city-stat"><small>wind</small><strong>{{ forecast.wind }}</strong></div>
+            <div class="city-stat"><small>cloud cover</small><strong>{{ forecast.cloud_cover }}</strong></div>
+            <div class="city-stat"><small>weather code</small><strong>{{ forecast.weather_code }}</strong></div>
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="inference-timeline-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="inference-timeline-title">Inference Timeline</h2>
+            <p>Runtime sequence for a complete production forecast run.</p>
+        </div>
+
+    </header>
+
+    {% set timeline_steps = [
+        {'title': 'Historical Data', 'runtime': pipeline.historical_runtime, 'description': 'Load recent and lagged observations.', 'status': 'Ready'},
+        {'title': 'Feature Generation', 'runtime': pipeline.feature_runtime, 'description': 'Build temporal, astronomical, lag and external features.', 'status': 'Ready'},
+        {'title': 'Tier 1', 'runtime': pipeline.tier_one_runtime, 'description': 'Execute temperature and pressure models.', 'status': 'Loaded'},
+        {'title': 'Tier 2', 'runtime': pipeline.tier_two_runtime, 'description': 'Generate moisture predictions from first-tier outputs.', 'status': 'Loaded'},
+        {'title': 'Tier 3', 'runtime': pipeline.tier_three_runtime, 'description': 'Infer rain probability from moisture-aware features.', 'status': 'Loaded'},
+        {'title': 'Tier 4', 'runtime': pipeline.tier_four_runtime, 'description': 'Classify weather code from all prior tiers.', 'status': 'Loaded'},
+        {'title': 'Consensus', 'runtime': pipeline.consensus_runtime, 'description': 'Validate ML code against NWP and neighbour codes.', 'status': 'Operational'},
+        {'title': 'Database', 'runtime': pipeline.database_runtime, 'description': 'Persist forecast object and pipeline metadata.', 'status': 'Connected'},
+        {'title': 'Email', 'runtime': pipeline.email_runtime, 'description': 'Dispatch automated performance and forecast report.', 'status': 'Healthy'}
+    ] %}
+
+    <article class="card glass">
+
+        <div class="timeline" role="list" aria-label="Inference execution timeline">
+
+            {% for step in timeline_steps %}
+
+            <div class="timeline-item" role="listitem">
+
+                <h3 class="timeline-title">{{ step.title }}</h3>
+
+                <p>{{ step.description }}</p>
+
+                <div class="timeline-date">
+                    {{ step.runtime }}
+                    <span class="badge badge-success">{{ step.status }}</span>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="engineering-notes-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="engineering-notes-title">Engineering Notes</h2>
+            <p>Design principles behind the inference engine.</p>
+        </div>
+
+    </header>
+
+    <div class="grid grid-3" role="list" aria-label="Engineering notes">
+
+        <article class="card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-puzzle"></i>
+            </div>
+            <h3 class="card-title">Modular Architecture</h3>
+            <p>Every model can be replaced independently.</p>
+        </article>
+
+        <article class="card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+            <h3 class="card-title">Hierarchical Design</h3>
+            <p>Predictions become inputs for higher tiers.</p>
+        </article>
+
+        <article class="card glass" role="listitem">
+            <div class="metric-icon">
+                <i class="bi bi-check2-circle"></i>
+            </div>
+            <h3 class="card-title">Continuous Evaluation</h3>
+            <p>Predictions are compared against actual observations every day.</p>
+        </article>
+
+    </div>
+
+</section>
+
+{% endblock %}

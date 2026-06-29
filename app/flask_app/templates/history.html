@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block title %}
+Weather Engine | Forecast History
+{% endblock %}
+
+{% block content %}
+
+<header class="section-title" aria-labelledby="history-title">
+
+    <div>
+
+        <h1 id="history-title">Forecast History</h1>
+
+        <p>
+            Explore historical forecasts, observed weather, prediction errors
+            and model performance across all monitored cities.
+        </p>
+
+    </div>
+
+</header>
+
+<section class="mt-4 mb-4" aria-labelledby="history-filters-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="history-filters-title">Search &amp; Filters</h2>
+            <p>Inspect forecast records by city, date range, weather code and prediction status.</p>
+        </div>
+
+    </header>
+
+    <form class="card glass" method="get" action="{{ url_for('history') }}">
+
+        <div class="filter-bar">
+
+            <div class="filter-group">
+
+                <div class="search">
+                    <i class="bi bi-search"></i>
+                    <input class="input"
+                           type="search"
+                           name="city"
+                           placeholder="Search City"
+                           value="{{ filters.city }}">
+                </div>
+
+                <select class="select" name="city_dropdown" aria-label="City dropdown">
+                    <option value="">All Cities</option>
+                    {% for city in cities %}
+                    <option value="{{ city.id }}"
+                            {% if filters.city_dropdown == city.id %}selected{% endif %}>
+                        {{ city.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select class="select" name="date_range" aria-label="Date range">
+                    <option value="">Date Range</option>
+                    <option value="7d" {% if filters.date_range == '7d' %}selected{% endif %}>Last 7 Days</option>
+                    <option value="15d" {% if filters.date_range == '15d' %}selected{% endif %}>Last 15 Days</option>
+                    <option value="30d" {% if filters.date_range == '30d' %}selected{% endif %}>Last 30 Days</option>
+                    <option value="custom" {% if filters.date_range == 'custom' %}selected{% endif %}>Custom</option>
+                </select>
+
+            </div>
+
+            <div class="filter-group">
+
+                <input class="input"
+                       type="date"
+                       name="from_date"
+                       aria-label="From date"
+                       value="{{ filters.from_date }}">
+
+                <input class="input"
+                       type="date"
+                       name="to_date"
+                       aria-label="To date"
+                       value="{{ filters.to_date }}">
+
+                <select class="select" name="weather_code" aria-label="Weather code filter">
+                    <option value="">Weather Code Filter</option>
+                    {% for code in weather_codes %}
+                    <option value="{{ code.value }}"
+                            {% if filters.weather_code == code.value %}selected{% endif %}>
+                        {{ code.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select class="select" name="status" aria-label="Prediction status">
+                    <option value="">Prediction Status</option>
+                    <option value="matched" {% if filters.status == 'matched' %}selected{% endif %}>Matched</option>
+                    <option value="partial" {% if filters.status == 'partial' %}selected{% endif %}>Partial</option>
+                    <option value="pending" {% if filters.status == 'pending' %}selected{% endif %}>Pending</option>
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="filter-group">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-funnel"></i>
+                Search
+            </button>
+
+            <a class="btn btn-secondary" href="{{ url_for('history') }}">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Reset Filters
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="history-summary-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="history-summary-title">History Summary</h2>
+            <p>Aggregate quality metrics from stored forecast and evaluation records.</p>
+        </div>
+
+    </header>
+
+    {% set summary_cards = [
+        {'icon': 'archive', 'value': summary.forecasts, 'label': 'Forecasts Stored'},
+        {'icon': 'buildings', 'value': summary.cities, 'label': 'Cities'},
+        {'icon': 'thermometer-half', 'value': summary.temp_mae, 'label': 'Average Temperature MAE'},
+        {'icon': 'speedometer2', 'value': summary.pressure_mae, 'label': 'Average Pressure MAE'},
+        {'icon': 'cloud-rain', 'value': summary.rain_accuracy, 'label': 'Rain Accuracy'},
+        {'icon': 'cloud-sun', 'value': summary.weather_accuracy, 'label': 'Weather Accuracy'}
+    ] %}
+
+    <div class="kpi-row kpi-row-6" role="list" aria-label="Forecast history summary">
+
+        {% for item in summary_cards %}
+
+        <article class="kpi glass performance-kpi" role="listitem">
+
+            <div class="performance-kpi-header">
+                <div class="performance-kpi-icon">
+                    <i class="bi bi-{{ item.icon }}"></i>
+                </div>
+            </div>
+
+            <div class="kpi-value">{{ item.value }}</div>
+            <div class="kpi-label">{{ item.label }}</div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="history-table-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="history-table-title">Forecast History Table</h2>
+            <p>Stored predictions, observed outcomes and evaluation status.</p>
+        </div>
+
+    </header>
+
+    <article class="table-card glass">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Forecast Date</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Forecast Temp Max</th>
+                        <th scope="col">Forecast Temp Min</th>
+                        <th scope="col">Actual Temp Max</th>
+                        <th scope="col">Actual Temp Min</th>
+                        <th scope="col">Pressure</th>
+                        <th scope="col">Rain Probability</th>
+                        <th scope="col">Weather Code</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in forecasts %}
+
+                    <tr>
+                        <td>{{ row.forecast_date }}</td>
+                        <td><strong>{{ row.city }}</strong></td>
+                        <td>{{ row.forecast_temp_max }}</td>
+                        <td>{{ row.forecast_temp_min }}</td>
+                        <td>{{ row.actual_temp_max }}</td>
+                        <td>{{ row.actual_temp_min }}</td>
+                        <td>{{ row.pressure }}</td>
+                        <td>{{ row.rain_probability }}</td>
+                        <td>{{ row.weather_code }}</td>
+                        <td>
+                            {% if row.status == 'Matched' %}
+                            <span class="badge badge-success">Matched</span>
+                            {% elif row.status == 'Partial' %}
+                            <span class="badge badge-warning">Partial</span>
+                            {% elif row.status == 'Pending' %}
+                            <span class="badge">Pending</span>
+                            {% else %}
+                            <span class="badge">{{ row.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary"
+                               href="{{ url_for('history', forecast_id=row.id) }}">
+                                <i class="bi bi-eye"></i>
+                                View
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="forecast-preview-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="forecast-preview-title">Forecast Detail Preview</h2>
+            <p>Selected forecast, actual observation and derived error context.</p>
+        </div>
+
+    </header>
+
+    <article class="card glass">
+
+        <header class="flex-between mb-2">
+            <h3 class="card-title">Forecast / Actual / Error</h3>
+            <span class="badge">{{ selected_forecast.status }}</span>
+        </header>
+
+        <div class="city-stats">
+            <div class="city-stat">
+                <small>Forecast Date</small>
+                <strong>{{ selected_forecast.forecast_date }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Prediction Generated</small>
+                <strong>{{ selected_forecast.prediction_generated }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Forecast Temperature</small>
+                <strong>{{ selected_forecast.forecast_temperature }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Actual Temperature</small>
+                <strong>{{ selected_forecast.actual_temperature }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Pressure</small>
+                <strong>{{ selected_forecast.pressure }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Humidity</small>
+                <strong>{{ selected_forecast.humidity }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Rain Probability</small>
+                <strong>{{ selected_forecast.rain_probability }}</strong>
+            </div>
+            <div class="city-stat">
+                <small>Weather Code</small>
+                <strong>{{ selected_forecast.weather_code }}</strong>
+            </div>
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="historical-error-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="historical-error-title">Historical Error Analysis</h2>
+            <p>Plotly-ready placeholders for forecast error timelines.</p>
+        </div>
+
+    </header>
+
+    <div class="performance-grid">
+
+        <article class="chart-card glass">
+
+            <header class="chart-header">
+                <div>
+                    <h3 class="chart-title">Temperature Error Timeline</h3>
+                    <p class="chart-subtitle">Forecast temperature deviation over time</p>
+                </div>
+                <span class="badge">Temperature</span>
+            </header>
+
+            <div id="history-temp-chart"
+                 class="chart-container"
+                 role="img"
+                 aria-label="Historical temperature error timeline"></div>
+
+        </article>
+
+        <article class="chart-card glass">
+
+            <header class="chart-header">
+                <div>
+                    <h3 class="chart-title">Pressure Error Timeline</h3>
+                    <p class="chart-subtitle">Forecast pressure deviation over time</p>
+                </div>
+                <span class="badge">Pressure</span>
+            </header>
+
+            <div id="history-pressure-chart"
+                 class="chart-container"
+                 role="img"
+                 aria-label="Historical pressure error timeline"></div>
+
+        </article>
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="prediction-accuracy-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="prediction-accuracy-title">Prediction Accuracy</h2>
+            <p>Current quality signals for primary model families.</p>
+        </div>
+
+    </header>
+
+    {% set accuracy_cards = [
+        {'icon': 'thermometer-half', 'title': 'Temperature', 'current': accuracy.temperature.current, 'trend': accuracy.temperature.trend, 'best': accuracy.temperature.best, 'updated': accuracy.temperature.updated},
+        {'icon': 'speedometer2', 'title': 'Pressure', 'current': accuracy.pressure.current, 'trend': accuracy.pressure.trend, 'best': accuracy.pressure.best, 'updated': accuracy.pressure.updated},
+        {'icon': 'cloud-sun', 'title': 'Weather Classification', 'current': accuracy.weather.current, 'trend': accuracy.weather.trend, 'best': accuracy.weather.best, 'updated': accuracy.weather.updated}
+    ] %}
+
+    <div class="grid grid-3" role="list" aria-label="Prediction accuracy cards">
+
+        {% for item in accuracy_cards %}
+
+        <article class="card glass" role="listitem">
+
+            <div class="metric-icon">
+                <i class="bi bi-{{ item.icon }}"></i>
+            </div>
+
+            <h3 class="card-title">{{ item.title }}</h3>
+
+            <div class="city-stats">
+                <div class="city-stat">
+                    <small>Current Accuracy</small>
+                    <strong>{{ item.current }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Trend</small>
+                    <strong>{{ item.trend }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Best Score</small>
+                    <strong>{{ item.best }}</strong>
+                </div>
+                <div class="city-stat">
+                    <small>Last Updated</small>
+                    <strong>{{ item.updated }}</strong>
+                </div>
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="recent-history-title">
+
+    <header class="section-title">
+
+        <div>
+            <h2 id="recent-history-title">Recent Forecasts</h2>
+            <p>Latest historical workflow events.</p>
+        </div>
+
+    </header>
+
+    {% set recent_events = [
+        {'icon': 'cloud-upload', 'title': 'Forecast Created', 'timestamp': history_events.forecast_created, 'status': 'Completed'},
+        {'icon': 'clipboard-check', 'title': 'Evaluation Completed', 'timestamp': history_events.evaluation_completed, 'status': 'Matched'},
+        {'icon': 'envelope-check', 'title': 'Email Sent', 'timestamp': history_events.email_sent, 'status': 'Sent'},
+        {'icon': 'database-check', 'title': 'Database Updated', 'timestamp': history_events.database_updated, 'status': 'Synced'}
+    ] %}
+
+    <article class="card glass">
+
+        <div class="timeline" role="list" aria-label="Recent forecast events">
+
+            {% for event in recent_events %}
+
+            <div class="timeline-item" role="listitem">
+
+                <h3 class="timeline-title">
+                    <i class="bi bi-{{ event.icon }}"></i>
+                    {{ event.title }}
+                </h3>
+
+                <div class="timeline-date">
+                    {{ event.timestamp }}
+                    <span class="badge badge-success">{{ event.status }}</span>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="mt-4 mb-4" aria-labelledby="export-title">
+
+    <article class="card glass">
+
+        <header class="section-title">
+
+            <div>
+                <h2 id="export-title">Export History</h2>
+                <p>Export filtered records or move to monitoring views.</p>
+            </div>
+
+        </header>
+
+        <div class="filter-group">
+
+            <a class="btn btn-primary" href="{{ url_for('history', export='csv') }}">
+                <i class="bi bi-filetype-csv"></i>
+                Download CSV
+            </a>
+
+            <a class="btn btn-secondary" href="{{ url_for('history', export='json') }}">
+                <i class="bi bi-braces"></i>
+                Export JSON
+            </a>
+
+            <a class="btn btn-secondary" href="{{ url_for('history', report='true') }}">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Generate Report
+            </a>
+
+            <a class="btn btn-secondary" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-speedometer2"></i>
+                View Dashboard
+            </a>
+
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}
