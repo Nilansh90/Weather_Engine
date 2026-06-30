@@ -10,6 +10,8 @@ Weather Engine | Home
 
     <div class="hero-content slide-left">
 
+
+
         <span class="badge mb-2">
             <i class="bi bi-layers"></i>
             Production ML Platform
@@ -81,10 +83,7 @@ Weather Engine | Home
 
             <header class="flex-between mb-2">
                 <h3 class="card-title">Engine Overview</h3>
-                <span class="card-subtitle">
-                    <i class="bi bi-hdd-network"></i>
-                    System
-                </span>
+
             </header>
 
             <div class="run-list mb-2">
@@ -150,88 +149,90 @@ Weather Engine | Home
 
             <div class="hr"></div>
 
-            <h4 class="card-subtitle mb-2">Inference Pipeline</h4>
+            <div class="hr"></div>
 
-            <nav class="flex-column flex-center text-center"
-                 aria-label="Hierarchical inference pipeline">
-
-                <small>
-                    <i class="bi bi-clock-history"></i>
-                    Historical Data
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-sliders"></i>
-                    Feature Engineering
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-thermometer-half"></i>
-                    Temperature
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-speedometer2"></i>
-                    Pressure
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-droplet"></i>
-                    Moisture
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-cloud-rain"></i>
-                    Rain
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-cloud-sun"></i>
-                    Weather Code
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-check2-circle"></i>
-                    Evaluation
-                </small>
-
-                <i class="bi bi-arrow-down text-muted mb-1 mt-1"
-                   aria-hidden="true"></i>
-
-                <small>
-                    <i class="bi bi-graph-up-arrow"></i>
-                    Prediction
-                </small>
-
-            </nav>
+            <div class="text-center mt-2">
+                <a href="#pipeline-status-title"
+                class="btn btn-secondary">
+                    View Pipeline
+                </a>
+            </div>
 
         </article>
 
     </aside>
 
 </section>
+<section class="pipeline-overview mt-4 mb-4">
 
+    <header class="section-title">
+        <div>
+            <h2>Inference Pipeline</h2>
+            <p>
+                Hierarchical execution order of the forecasting engine.
+            </p>
+        </div>
+    </header>
+
+    <div class="pipeline-horizontal">
+
+        <div class="pipeline-node">
+            <i class="bi bi-clock-history"></i>
+            <span>Historical Data</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-sliders"></i>
+            <span>Features</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-thermometer-half"></i>
+            <span>Temperature</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-speedometer2"></i>
+            <span>Pressure</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-droplet"></i>
+            <span>Moisture</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-cloud-rain"></i>
+            <span>Rain</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-cloud-sun"></i>
+            <span>Weather Code</span>
+        </div>
+
+        <i class="bi bi-arrow-right"></i>
+
+        <div class="pipeline-node">
+            <i class="bi bi-check2-circle"></i>
+            <span>Evaluation</span>
+        </div>
+
+    </div>
+
+</section>
 <section class="mt-4 mb-4"
          aria-labelledby="platform-overview-title">
 

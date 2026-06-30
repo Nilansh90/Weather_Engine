@@ -1,0 +1,28 @@
+Day 11
+
+Today's work focused on transitioning the Weather Engine from a static frontend into a functional
+Flask application connected to the backend. All HTML pages were integrated into Flask using Jinja
+templating, and routing was configured for the Home, Dashboard, Engine, Models, History,
+Architecture and About pages. The frontend was connected with the backend through
+`DatabaseManager` context methods, replacing placeholder data with dynamic database-backed contexts.
+
+A significant portion of the day was spent debugging and integrating the application.
+Multiple Jinja rendering errors, undefined variables, template context
+mismatches and Flask routing issues were identified and resolved. `server.py` \
+was restructured so each page receives the correct context, and navigation along with
+ several unnecessary UI elements was cleaned up. The Home page layout was also refined by
+ improving spacing, reducing the oversized Engine Overview section and making the landing
+ page more balanced.
+
+The backend integration was extended
+further by connecting pages with live database queries instead of temporary placeholders.
+Several PostgreSQL queries were inspected to verify predictions, historical observations and error records. The error calculation pipeline was thoroughly debugged after noticing zero values appearing in email reports. After tracing the entire flow from predictions to actual observations, it was confirmed that `calculate_errors.py` was functioning correctly and storing valid error values inside the `errors` table. The actual issue was identified as a schema mismatch between the `errors` table and the email reporting module. `DatabaseManager.get_error()` was then modified to transform raw error columns into the aggregated MAE format expected by the mailer, resolving the inconsistency.
+
+Development today involved extensive debugging,
+SQL verification and backend integration rather than feature development.
+Cursor and Codex had previously been used for rapid scaffolding until their usage
+ limits were exhausted, after which development shifted entirely to manual implementation with
+ ChatGPT assisting in debugging, architecture review and Flask integration. B
+ y the end of the day, the project had successfully progressed from a mostly
+ static dashboard to a database-connected, production-style Flask application with
+ much of the backend communication functioning correctly.

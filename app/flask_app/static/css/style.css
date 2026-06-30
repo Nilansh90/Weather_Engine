@@ -811,21 +811,23 @@ section{
 
     display:grid;
 
-    grid-template-columns:1.2fr .8fr;
+    grid-template-columns:1.8fr .65fr;
 
-    gap:32px;
+    gap:28px;
 
-    align-items:center;
 
-    margin-bottom:42px;
+
+    align-items:start;
+
+    margin-bottom:28px;
 
 }
 
 .hero-content h1{
 
-    font-size:3.4rem;
+    font-size:3 rem;
 
-    margin-bottom:18px;
+    margin-bottom:12px;
 
 }
 
@@ -833,7 +835,7 @@ section{
 
     font-size:1.05rem;
 
-    max-width:650px;
+    max-width:700px;
 
     line-height:1.8;
 
@@ -856,6 +858,8 @@ section{
     justify-content:center;
 
     align-items:center;
+    max-width:420px;
+    justify-self:end;
 
 }
 
@@ -937,7 +941,7 @@ a.btn{
 
     border-radius:22px;
 
-    padding:24px;
+    padding:20px;
 
     transition:var(--transition);
 
@@ -2186,7 +2190,7 @@ a.btn{
 
     align-items:center;
 
-    gap:32px;
+    gap:48px;
 
     padding:28px 32px;
 
@@ -3067,7 +3071,7 @@ tbody tr:last-child td{
 
     align-items:center;
 
-    padding:16px;
+    padding:12px 14px;
 
     border-radius:16px;
 
@@ -3918,6 +3922,7 @@ img:hover{
 
 }
 
+
 /*=========================================================
     PRINT
 =========================================================*/
@@ -3950,4 +3955,94 @@ img:hover{
 
     }
 
+}
+
+.hero-image{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.hero-image img{
+
+    width:520px;
+
+    max-width:100%;
+
+    height:auto;
+
+}
+
+.hero-visual .card{
+
+    max-width:360px;
+    width:100%;
+    padding:18px;
+
+}
+
+.hero-visual .card-title{
+
+    font-size:1.35rem;
+    margin-bottom:12px;
+
+}
+
+.hero-visual .run-list{
+
+    gap:10px;
+
+}
+
+.hero-visual .run-item{
+
+    padding:10px 14px;
+    min-height:50px;
+
+}
+
+.hero-visual .hr{
+
+    margin:16px 0;
+
+}
+
+.hero-visual{
+
+    display:flex;
+    justify-content:flex-end;
+    align-items:flex-start;
+
+}
+
+.pipeline-horizontal{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+}
+
+.pipeline-node{
+    background:var(--card-bg);
+    border:1px solid var(--border-color);
+    border-radius:14px;
+    padding:18px;
+    min-width:130px;
+    text-align:center;
+}
+
+.pipeline-node i{
+    font-size:1.6rem;
+    color:var(--primary);
+    display:block;
+    margin-bottom:10px;
+}
+
+.pipeline-horizontal>.bi-arrow-right{
+    color:var(--text-muted);
 }

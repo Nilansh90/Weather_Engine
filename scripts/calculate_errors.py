@@ -26,7 +26,10 @@ def main():
     db = DatabaseManager()
 
     predictions = db.get_predictions_without_errors()
+    print("Prediction count:", len(predictions))
 
+    for p in predictions:
+        print(p["city_id"], p["forecast_date"])
     total = len(predictions)
 
     success = 0
