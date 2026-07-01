@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}
+Email Subscription Requests
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <span class="page-kicker">
+        <i class="bi bi-shield-check"></i>
+        Administration
+    </span>
+
+    <h1>Email Subscription Requests</h1>
+
+    <p class="page-description">
+        Review subscription requests and approve or reject access to
+        Weather Engine daily reports.
+    </p>
+
+</div>
+
+<a
+    href="{{ url_for('admin_logout') }}"
+    class="btn btn-danger">
+
+    Logout
+
+</a>
+
+<!-- ================================================= -->
+<!-- Summary -->
+<!-- ================================================= -->
+
+<div class="kpi-row">
+
+    <article class="kpi glass performance-kpi">
+
+        <div class="kpi-label">Pending Requests</div>
+
+        <div class="kpi-value">
+
+            {{ pending|length }}
+
+        </div>
+
+    </article>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- Pending Requests -->
+<!-- ================================================= -->
+
+<div class="card">
+
+    <h2>
+
+        <i class="bi bi-envelope-paper"></i>
+
+        Pending Subscription Requests
+
+    </h2>
+
+    {% if pending %}
+
+    <table class="table">
+
+        <thead>
+
+        <tr>
+
+            <th>Email</th>
+
+            <th>Requested At</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for request in pending %}
+
+        <tr>
+
+            <td>
+
+                {{ request.email }}
+
+            </td>
+
+            <td>
+
+                {{ request.requested_at }}
+
+            </td>
+
+            <td>
+
+                <span class="badge">
+
+                    {{ request.status }}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <div class="admin-actions">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('approve_subscription', email=request.email) }}">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-sm">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            Approve
+
+                        </button>
+
+                    </form>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('reject_subscription', email=request.email) }}">
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger btn-sm">
+
+                            <i class="bi bi-x-circle"></i>
+
+                            Reject
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="bi bi-check2-circle"></i>
+
+        <h3>No Pending Requests</h3>
+
+        <p>
+            All subscription requests have been reviewed.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

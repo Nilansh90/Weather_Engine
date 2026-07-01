@@ -1,12 +1,28 @@
-from flask import Flask, render_template, request
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session
+)
 
+import os
 from app.database.db_manager import DatabaseManager
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+app_secret_key = os.getenv("APP_SECRET_KEY")
 app = Flask(
     __name__,
     template_folder="templates",
     static_folder="static"
 )
+
+app.secret_key = app_secret_key
 
 
 def _prefer_dict_key_getattr(obj, attribute):
@@ -242,12 +258,236 @@ def about():
         **db.get_about_context()
     )
 
+@app.route(
+    "/email-reports",
+    methods=["GET", "POST"]
+)
+def email_reports():
+
+    if request.method == "POST":
+
+        email = request.form["email"].strip().lower()
+
+        existing = db.get_subscription(email)
+
+        if existing is None:
+
+            db.create_subscription(email)
+
+            flash(
+                "Subscription request submitted successfully. Awaiting administrator approval.",
+                "success"
+            )
+
+        else:
+
+            if existing["status"] == "Pending":
+
+                flash(
+                    "A subscription request is already pending.",
+                    "warning"
+                )
+
+            elif existing["status"] == "Approved":
+
+                flash(
+                    "This email is already subscribed.",
+                    "info"
+                )
+
+            elif existing["status"] == "Rejected":
+
+                flash(
+                    "This email has already been rejected. Contact the administrator.",
+                    "danger"
+                )
+
+            elif existing["status"] == "Disabled":
+
+                flash(
+                    "Subscription is currently disabled.",
+                    "warning"
+                )
+
+        return redirect(
+            url_for("email_reports")
+        )
+
+    subscribers = db.get_active_subscriptions()
+
+    subscription = None
+
+    if subscribers:
+
+        subscription = subscribers[0]
+
+    context = db.get_email_reports_context()
+
+    return render_template(
+
+        "email_reports.html",
+
+        **context
+
+    )
+
 @app.route("/history")
 def history():
     return render_template(
         "history.html",
         **db.get_history_context(request.args)
     )
+
+@app.route("/admin/email-subscriptions")
+def admin_email_subscriptions():
+
+    if not session.get("admin"):
+
+        return redirect(
+
+            url_for("admin_login")
+
+        )
+
+    pending = db.get_pending_subscriptions()
+
+    return render_template(
+
+        "admin_email_subscriptions.html",
+
+        pending=pending
+
+    )
+@app.route(
+    "/admin/email-subscriptions/approve/<path:email>",
+    methods=["POST"]
+)
+def approve_subscription(email):
+
+    if not session.get("admin"):
+
+        return redirect(
+
+            url_for("admin_login")
+
+        )
+
+    db.approve_subscription(email)
+
+    flash(
+
+        "Subscription approved.",
+
+        "success"
+
+    )
+
+    return redirect(
+
+        url_for(
+
+            "admin_email_subscriptions"
+
+        )
+
+    )
+@app.route(
+    "/admin/email-subscriptions/reject/<path:email>",
+    methods=["POST"]
+)
+def reject_subscription(email):
+
+    if not session.get("admin"):
+
+        return redirect(
+
+            url_for("admin_login")
+
+        )
+
+    db.reject_subscription(email)
+
+    flash(
+
+        "Subscription rejected.",
+
+        "warning"
+
+    )
+
+    return redirect(
+
+        url_for(
+
+            "admin_email_subscriptions"
+
+        )
+
+    )
+
+@app.route(
+    "/admin/login",
+    methods=["GET", "POST"]
+)
+def admin_login():
+
+    if request.method == "POST":
+
+        password = request.form["password"]
+
+        if password == os.getenv("ADMIN_PASSWORD"):
+
+            session["admin"] = True
+
+            return redirect(
+
+                url_for(
+
+                    "admin_email_subscriptions"
+
+                )
+
+            )
+
+        flash(
+
+            "Incorrect password.",
+
+            "danger"
+
+        )
+
+    return render_template(
+
+        "admin_login.html"
+
+    )
+
+@app.route("/admin/logout")
+def admin_logout():
+
+    session.pop(
+
+        "admin",
+
+        None
+
+    )
+
+    flash(
+
+        "Logged out successfully.",
+
+        "success"
+
+    )
+
+    return redirect(
+
+        url_for("home")
+
+    )
+
 # ---------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------

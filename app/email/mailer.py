@@ -12,21 +12,9 @@ load_dotenv()
 class EmailReporter:
 
     def __init__(self):
-
         self.sender = os.getenv("EMAIL_ADDRESS")
+
         self.password = os.getenv("EMAIL_PASSWORD")
-        receivers = os.getenv("RECIPIENT_EMAILS", "")
-
-        self.receivers = [
-
-            email.strip()
-
-            for email in receivers.split(",")
-
-            if email.strip()
-
-        ]
-
     ########################################################
 
     def _forecast_section(self, forecast):
@@ -259,16 +247,15 @@ class EmailReporter:
 
     ########################################################
 
-
-    def send_daily_report(self,
-                          forecast,
-                          nwp,
-                          actual,
-                          errors,
-                          pipeline):
-
-
-
+    def send_daily_report(
+            self,
+            receiver,
+            forecast,
+            nwp,
+            actual,
+            errors,
+            pipeline
+    ):
         html = self.build_html(
 
             forecast,
@@ -279,20 +266,13 @@ class EmailReporter:
 
         )
 
-
         message = MIMEMultipart()
-
 
         message["From"] = self.sender
 
-        message["To"] = ", ".join(self.receivers)
+        message["To"] = receiver
 
-        message["Subject"] = (
-
-            "Weather Engine Daily Report"
-
-        )
-
+        message["Subject"] = "Weather Engine Daily Report"
 
         message.attach(
 
@@ -306,7 +286,6 @@ class EmailReporter:
 
         )
 
-
         with smtplib.SMTP(
 
                 "smtp.gmail.com",
@@ -314,10 +293,7 @@ class EmailReporter:
                 587
 
         ) as smtp:
-
-
             smtp.starttls()
-
 
             smtp.login(
 
@@ -327,20 +303,18 @@ class EmailReporter:
 
             )
 
-
             smtp.sendmail(
 
                 self.sender,
 
-                self.receivers,
+                receiver,
 
                 message.as_string()
 
             )
 
-
         print(
 
-            "Daily weather report sent."
+            f"Daily report sent to {receiver}"
 
         )

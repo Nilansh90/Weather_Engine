@@ -1,0 +1,206 @@
+remove model health and pipeline from dashboard , 9 not needed , what we show is thus -> Temp , pressure ,
+moisture MAE for last 15 days / whatever days available if data <15 days available in database ,for rain it is a
+classification model so add accuracy , for weather accuracy it is not needed , remove aerage runtime ,
+keep current cities count and forecast generate (this is at top )then we have plotly graphs -> in overal temperature
+error mae (for a all cities), same pressure , dew point , humidity error , rain error bar chart , weather code accuracy
+- remove , remove 3,do 4 forecast vs actual for temp and pressure ,5 (city wise factor) stays but tabulated showing mae ,
+accuracy etc. , 6 not needed - already on homepage 7 NO MODEL HEALTH 8 NO PIPELINE HEALTH 9 NO CITY COVERAGE MAP 10NO 10
+->DO NOT GIVE IT RIGHT NOW , JUST INFORMING , THIS IS GONNA BE OUR DASHBOARD STRATEGY
+
+---------------------------------------------------------------------------------------------------------
+
+I think this is a much stronger direction. It shifts the dashboard from **"system monitoring"** to
+**"model evaluation"**, which is exactly what someone evaluating an ML weather engine wants to see.
+
+## Final Dashboard Strategy
+
+---
+
+### 1. KPI Cards (Top)
+
+Keep only:
+
+* Temperature MAE
+* Pressure MAE
+* Moisture MAE *(combined dew point + humidity, as you currently calculate)*
+* Rain Accuracy (%)
+* Cities Processed
+* Forecasts Generated
+
+**Remove:**
+
+* ❌ Average Runtime
+* ❌ Weather Code Accuracy
+
+---
+
+### 2. Overall Model Performance (Plotly)
+
+These should use the last **15 days** of data, or **all available days if fewer than 15 exist**.
+
+#### Temperature MAE Trend
+
+* X-axis: Forecast Date
+* Y-axis: Mean Temperature MAE (averaged across all cities)
+
+#### Pressure MAE Trend
+
+* X-axis: Forecast Date
+* Y-axis: Mean Pressure MAE
+
+#### Dew Point MAE Trend
+
+* X-axis: Forecast Date
+* Y-axis: Mean Dew Point MAE
+
+#### Humidity MAE Trend
+
+* X-axis: Forecast Date
+* Y-axis: Mean Humidity MAE
+
+#### Rain Classification Accuracy
+
+* Daily bar chart
+* Y-axis: Accuracy (%)
+* Average across all cities for each day
+
+**Remove:**
+
+* ❌ Weather Code Accuracy chart
+
+---
+
+### 3. Forecast vs Actual
+
+These should compare predictions against observations.
+
+#### Temperature
+
+Two-line Plotly graph
+
+```
+Prediction
+────────────
+
+Actual
+────────────
+```
+
+Last 15 days.
+
+---
+
+#### Pressure
+
+Same format.
+
+---
+
+### 4. City Performance Table
+
+Keep this section.
+
+Instead of placeholder values, compute directly from the `errors` table.
+
+Suggested columns:
+
+| City | Temperature MAE | Pressure MAE | Dew Point MAE | Humidity MAE | Rain Accuracy | Forecasts Evaluated |
+| ---- | --------------- | ------------ | ------------- | ------------ | ------------- | ------------------- |
+
+This becomes a leaderboard showing which cities are easiest or hardest for the model.
+
+---
+
+## Remove Entirely
+
+* ❌ Pipeline Health
+* ❌ Engine/Model Health
+* ❌ Pipeline Timeline
+* ❌ City Coverage Map
+* ❌ Latest Forecasts (already covered on the homepage)
+* ❌ Weather Code Accuracy metrics and graphs
+* ❌ Error Distribution charts (histograms/box plots)
+* ❌ Runtime metrics
+
+---
+
+## Data Source Plan
+
+Everything should come from the existing tables you already have:
+
+### `errors`
+
+Used for:
+
+* Temperature MAE
+* Pressure MAE
+* Dew Point MAE
+* Humidity MAE
+* Rain Accuracy
+* City-wise metrics
+* Daily trend graphs
+
+### `predictions`
+
+Used for:
+
+* Forecast values (Forecast vs Actual)
+
+### `weather_data`
+
+Used for:
+
+* Actual observations (Forecast vs Actual)
+
+### `metrics`
+
+Used only for:
+
+* Top KPI cards (overall summary values)
+
+---
+
+## Final Dashboard Layout
+
+```
+----------------------------------------------------
+Dashboard
+----------------------------------------------------
+
+[KPI Cards]
+Temperature MAE
+Pressure MAE
+Moisture MAE
+Rain Accuracy
+Cities
+Forecasts
+
+----------------------------------------------------
+Temperature MAE Trend
+
+----------------------------------------------------
+Pressure MAE Trend
+
+----------------------------------------------------
+Dew Point MAE Trend
+
+----------------------------------------------------
+Humidity MAE Trend
+
+----------------------------------------------------
+Rain Accuracy Trend
+
+----------------------------------------------------
+Forecast vs Actual Temperature
+
+----------------------------------------------------
+Forecast vs Actual Pressure
+
+----------------------------------------------------
+City Performance Table
+```
+
+I think this design is much closer to what you'd expect from a production ML
+forecasting platform. It keeps the dashboard focused on **how well the models perform**,
+using live data from your database, rather than on operational details that are more
+appropriate for an internal admin or DevOps page.

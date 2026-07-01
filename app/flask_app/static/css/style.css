@@ -582,14 +582,23 @@ small{
     TOP ACTIONS
 =========================================================*/
 
-.top-actions{
+.top-actions a.icon-button{
 
     display:flex;
 
     align-items:center;
 
-    gap:16px;
+    justify-content:center;
 
+    text-decoration:none;
+
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:16px;
 }
 
 .icon-button{
@@ -4045,4 +4054,319 @@ img:hover{
 
 .pipeline-horizontal>.bi-arrow-right{
     color:var(--text-muted);
+}
+
+/*=========================================================
+EMAIL REPORT PAGE ONLY
+=========================================================*/
+
+.email-page .email-header{
+
+    margin-bottom:24px;
+
+}
+
+.email-page .email-header h1{
+
+    font-size:2.5rem;
+
+    margin-bottom:8px;
+
+}
+
+.email-page .email-header p{
+
+    max-width:700px;
+
+    line-height:1.7;
+
+}
+
+.email-page .card{
+
+    padding:24px;
+
+}
+
+.email-page .card h2{
+
+    font-size:1.6rem;
+
+    margin-bottom:20px;
+
+}
+
+.email-page .grid-2{
+
+    gap:18px;
+
+}
+
+.email-page .page-header{
+
+    align-items:flex-start;
+
+}
+
+.email-page .input{
+
+    width:100%;
+
+    max-width:420px;
+
+}
+
+.email-page .btn{
+
+    margin-top:18px;
+
+}
+
+.email-page .approval-note{
+
+    margin-top:18px;
+
+    font-size:.9rem;
+
+    color:var(--text-muted);
+
+}
+
+.email-page .report-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:14px;
+
+    margin-top:16px;
+
+}
+
+.email-page .report-grid div{
+
+    padding:12px 16px;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid var(--border);
+
+}
+
+.email-page table{
+
+    margin-top:10px;
+
+}
+
+.email-page .table th{
+
+    padding:14px;
+
+}
+
+.email-page .table td{
+
+    padding:14px;
+
+}
+
+.email-page .metric-row{
+
+    padding:12px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+
+}
+
+.email-page .metric-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.email-page .status-success{
+
+    color:var(--success);
+
+    font-weight:600;
+
+}
+
+.email-page section,
+
+.email-page .card{
+
+    margin-bottom:22px;
+
+}
+
+.email-page .card:hover{
+
+    transform:none;
+
+}
+
+@media(max-width:900px){
+
+    .email-page .grid-2{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+.email-page .alert{
+
+    padding:14px 18px;
+
+    border-radius:10px;
+
+    margin-bottom:22px;
+
+    font-weight:500;
+
+}
+
+.email-page .alert-success{
+
+    background:#12361f;
+
+    color:#8ef5b4;
+
+}
+
+.email-page .alert-warning{
+
+    background:#433510;
+
+    color:#ffd86d;
+
+}
+
+.email-page .alert-info{
+
+    background:#10374a;
+
+    color:#8fd7ff;
+
+}
+
+.email-page .alert-danger{
+
+    background:#4a1515;
+
+    color:#ff8b8b;
+
+}
+
+/*======================================================
+ADMIN EMAIL PAGE
+======================================================*/
+
+.admin-actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.admin-actions form{
+
+    margin:0;
+
+}
+
+.btn-success{
+
+    background:#1d7d46;
+
+    color:white;
+
+    border:none;
+
+}
+
+.btn-success:hover{
+
+    background:#239854;
+
+}
+
+.btn-danger{
+
+    background:#b83b3b;
+
+    color:white;
+
+    border:none;
+
+}
+
+.btn-danger:hover{
+
+    background:#cf4444;
+
+}
+
+.empty-state{
+
+    padding:70px 20px;
+
+    text-align:center;
+
+}
+
+.empty-state i{
+
+    font-size:3rem;
+
+    color:var(--primary);
+
+    margin-bottom:18px;
+
+}
+
+.empty-state h3{
+
+    margin-bottom:10px;
+
+}
+
+.icon-btn{
+    width:48px;
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:16px;
+
+    background:#141b2d;
+    border:1px solid rgba(255,255,255,.08);
+
+    cursor:pointer;
+}
+
+.profile-circle{
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:linear-gradient(135deg,#7c5cff,#4f7cff);
+
+    color:white;
+    font-weight:700;
+    font-size:20px;
 }

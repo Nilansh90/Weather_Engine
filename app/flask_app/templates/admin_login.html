@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Login
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Administrator Login</h1>
+
+    <p class="page-description">
+
+        Enter the administrator password to access
+        subscription management.
+
+    </p>
+
+</div>
+
+<div class="card" style="max-width:500px;">
+
+    <form method="POST">
+
+        <div class="form-group">
+
+            <label>Password</label>
+
+            <input
+
+                type="password"
+
+                name="password"
+
+                class="input"
+
+                required
+
+            >
+
+        </div>
+
+        <button
+            class="btn btn-primary"
+            type="submit">
+
+            Login
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

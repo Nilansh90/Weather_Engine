@@ -37,6 +37,12 @@ def main():
     db = DatabaseManager()
 
     reporter = EmailReporter()
+    subscribers = db.get_active_subscriptions()
+
+    if not subscribers:
+        print("No approved subscribers found.")
+
+        return
 
     forecast_date = date.today() + timedelta(days=1)
 
@@ -160,19 +166,30 @@ def main():
 
                 }
 
-            reporter.send_daily_report(
+            for subscriber in subscribers:
+                reporter.send_daily_report(
 
-                forecast,
+                    subscriber["email"],
 
-                nwp,
+                    forecast,
 
-                actual,
+                    nwp,
 
-                errors,
+                    actual,
 
-                pipeline
+                    errors,
 
-            )
+                    pipeline
+
+                )
+
+                print(
+
+                    f"✓ Email sent to {subscriber['email']}"
+
+                )
+
+                time.sleep(2)
 
             print(f"✓ Email sent for {city_name}")
             time.sleep(3)

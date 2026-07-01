@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}
+Email Report Subscription
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="alert alert-{{ category }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+<div class="email-page">
+<div class="page-header email-header">
+
+    <div>
+
+        <span class="page-kicker">
+
+            <i class="bi bi-envelope-check"></i>
+
+            Automated Reporting
+
+        </span>
+
+        <h1>Email Report Subscription</h1>
+
+        <p class="page-description">
+
+            Request access to receive the Weather Engine Daily Report.
+            All subscriptions require administrator approval before
+            reports begin.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+
+
+<!-- ================================================= -->
+<!-- Subscription + Current Status -->
+<!-- ================================================= -->
+
+<div class="grid grid-2">
+
+    <!-- Subscription -->
+
+    <div class="card">
+
+        <h2>
+            <i class="bi bi-envelope"></i>
+            Email Subscription
+        </h2>
+
+        <form
+            method="POST"
+            action="{{ url_for('email_reports') }}">
+
+            <div class="form-group">
+
+                <label>Email Address</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    class="input"
+                    placeholder="example@gmail.com"
+                    value="{{ subscription.email if subscription else '' }}"
+                    required>
+
+            </div>
+
+            <button
+                class="btn btn-primary"
+                type="submit">
+
+                Request Subscription
+
+            </button>
+
+        </form>
+
+        <p class="approval-note">
+            <i class="bi bi-shield-check"></i>
+            Administrator approval is required before daily reports
+            are activated.
+        </p>
+
+    </div>
+
+
+    <!-- Current Request -->
+
+    <div class="card">
+
+        <h2>
+            <i class="bi bi-check-circle"></i>
+            Current Request
+        </h2>
+
+        <div class="metric-list">
+
+            <div class="metric-row">
+
+                <span>Status</span>
+
+                <span class="status-success">
+
+                    {% if subscription %}
+
+                    {% if subscription.status == "Approved" %}
+
+                    Approved
+
+                    {% elif subscription.status == "Pending" %}
+
+                        Pending Approval
+
+                        {% elif subscription.status == "Rejected" %}
+
+                        Rejected
+
+                        {% elif subscription.status == "Disabled" %}
+
+                        Disabled
+
+                        {% else %}
+
+                        Unknown
+
+                        {% endif %}
+
+                        {% else %}
+
+                        Not Requested
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+            <div class="metric-row">
+
+                <span>Email</span>
+
+                <span>
+
+                    {% if subscription %}
+                        {{ subscription.email }}
+                    {% else %}
+                        —
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+            <div class="metric-row">
+
+                <span>Reports</span>
+
+                <span>Daily Weather Report</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- Included Report -->
+<!-- ================================================= -->
+
+<div class="card">
+
+    <h2>
+
+        <i class="bi bi-file-earmark-text"></i>
+
+        Included in Daily Report
+
+    </h2>
+
+    <div class="report-grid">
+
+        <div>✓ Tomorrow Forecast</div>
+
+        <div>✓ Open-Meteo Comparison</div>
+
+        <div>✓ Actual Weather</div>
+
+        <div>✓ Error Analysis</div>
+
+        <div>✓ Pipeline Health</div>
+
+        <div>✓ Model Evaluation</div>
+
+    </div>
+
+</div>
+
+
+
+</div>
+{% endblock %}

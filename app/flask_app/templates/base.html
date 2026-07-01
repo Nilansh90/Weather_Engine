@@ -285,28 +285,60 @@
                 <a href="{{ url_for('architecture') }}">Architecture</a>
 
                 <a href="{{ url_for('about') }}">About</a>
-
+                <a href="{{ url_for('email_reports') }}">
+                    Email Reports
+                </a>
             </div>
+
 
             <div class="top-actions">
 
-                <button class="icon-button">
 
-                    <i class="bi bi-bell"></i>
+                    <div class="top-actions">
 
-                </button>
 
-                <button class="icon-button">
 
-                    <i class="bi bi-sun"></i>
 
-                </button>
 
-                <div class="profile-circle">
+    {% if session.get("admin") %}
 
-                    NC
+        <a
+            href="{{ url_for('admin_email_subscriptions') }}"
+            class="icon-button"
+            title="Admin Panel">
 
-                </div>
+            <i class="bi bi-shield-lock"></i>
+
+        </a>
+
+        <a
+            href="{{ url_for('admin_logout') }}"
+            class="icon-button"
+            title="Logout">
+
+            <i class="bi bi-box-arrow-right"></i>
+
+        </a>
+
+            {% else %}
+
+        <a
+            href="{{ url_for('admin_login') }}"
+            class="icon-button"
+            title="Administrator Login">
+
+            <i class="bi bi-shield-lock"></i>
+
+        </a>
+
+        {% endif %}
+
+
+
+</div>
+
+
+
 
             </div>
 

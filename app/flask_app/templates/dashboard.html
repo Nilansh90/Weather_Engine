@@ -198,115 +198,8 @@ Weather Engine | Engineering Dashboard
 
 </section>
 
-<section class="mt-4 mb-4" aria-labelledby="model-performance-title">
 
-    <header class="section-title">
 
-        <div>
-            <h2 id="model-performance-title">Model Performance</h2>
-            <p>Production model status, scores and feature coverage.</p>
-        </div>
-
-    </header>
-
-    {% set model_cards = [
-        {
-            'icon': 'thermometer-half',
-            'name': 'Temperature Model',
-            'score': model_performance.temperature.score,
-            'training_date': model_performance.temperature.training_date,
-            'status': model_performance.temperature.status,
-            'features': model_performance.temperature.features,
-            'indicator': model_performance.temperature.indicator
-        },
-        {
-            'icon': 'speedometer2',
-            'name': 'Pressure Model',
-            'score': model_performance.pressure.score,
-            'training_date': model_performance.pressure.training_date,
-            'status': model_performance.pressure.status,
-            'features': model_performance.pressure.features,
-            'indicator': model_performance.pressure.indicator
-        },
-        {
-            'icon': 'droplet',
-            'name': 'Moisture Model',
-            'score': model_performance.moisture.score,
-            'training_date': model_performance.moisture.training_date,
-            'status': model_performance.moisture.status,
-            'features': model_performance.moisture.features,
-            'indicator': model_performance.moisture.indicator
-        },
-        {
-            'icon': 'cloud-rain',
-            'name': 'Rain Model',
-            'score': model_performance.rain.score,
-            'training_date': model_performance.rain.training_date,
-            'status': model_performance.rain.status,
-            'features': model_performance.rain.features,
-            'indicator': model_performance.rain.indicator
-        },
-        {
-            'icon': 'cloud-sun',
-            'name': 'Weather Code Model',
-            'score': model_performance.weather_code.score,
-            'training_date': model_performance.weather_code.training_date,
-            'status': model_performance.weather_code.status,
-            'features': model_performance.weather_code.features,
-            'indicator': model_performance.weather_code.indicator
-        }
-    ] %}
-
-    <div class="metric-grid" role="list" aria-label="Model performance cards">
-
-        {% for model in model_cards %}
-
-        <article class="metric-card glass" role="listitem">
-
-            <div class="metric-icon">
-                <i class="bi bi-{{ model.icon }}"></i>
-            </div>
-
-            <h3 class="card-title">{{ model.name }}</h3>
-
-            <div class="city-stats">
-
-                <div class="city-stat">
-                    <small>Current Score</small>
-                    <strong>{{ model.score }}</strong>
-                </div>
-
-                <div class="city-stat">
-                    <small>Training Date</small>
-                    <strong>{{ model.training_date }}</strong>
-                </div>
-
-                <div class="city-stat">
-                    <small>Status</small>
-                    <span class="badge badge-success">{{ model.status }}</span>
-                </div>
-
-                <div class="city-stat">
-                    <small>Features Used</small>
-                    <strong>{{ model.features }}</strong>
-                </div>
-
-            </div>
-
-            <div class="hr"></div>
-
-            <span class="kpi-change text-success">
-                <i class="bi bi-circle-fill"></i>
-                {{ model.indicator }}
-            </span>
-
-        </article>
-
-        {% endfor %}
-
-    </div>
-
-</section>
 
 <section class="mt-4 mb-4" aria-labelledby="pipeline-health-title">
 
@@ -423,17 +316,17 @@ Weather Engine | Engineering Dashboard
 
                 <tbody>
 
-                    {% for city in city_metrics %}
+                    {% for city in city_summary %}
 
                     <tr>
-                        <td><strong>{{ city.name }}</strong></td>
-                        <td>{{ city.temperature_mae }}</td>
-                        <td>{{ city.pressure_mae }}</td>
-                        <td>{{ city.rain_accuracy }}%</td>
-                        <td>{{ city.weather_accuracy }}%</td>
-                        <td>{{ city.forecast_count }}</td>
+                        <td><strong>City {{ city.city_id }} </strong></td>
+                        <td>{{ city.avg_temp_max|round(1) }}</td>
+                        <td> - </td>
+                        <td> - %</td>
+                        <td> - %</td>
+                        <td>{{ city.forecasts }}</td>
                         <td>
-                            <span class="badge badge-success">{{ city.status }}</span>
+                            <span class="badge badge-success">{{ Healthy }}</span>
                         </td>
                     </tr>
 
@@ -482,19 +375,19 @@ Weather Engine | Engineering Dashboard
 
                 <tbody>
 
-                    {% for forecast in latest_forecasts %}
+                    {% for forecast in predictions %}
 
                     <tr>
-                        <td><strong>{{ forecast.city }}</strong></td>
+                        <td><strong>City {{ forecast.city_id }} </strong></td>
                         <td>{{ forecast.forecast_date }}</td>
-                        <td>{{ forecast.temperature }}</td>
-                        <td>{{ forecast.pressure }}</td>
-                        <td>{{ forecast.humidity }}</td>
-                        <td>{{ forecast.rain_probability }}%</td>
+                        <td>{{ forecast.temp_max_c|round(1) }} / {{ forecast.temp_min_c|round(1) }} °C</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-%</td>
                         <td>{{ forecast.weather_code }}</td>
-                        <td>{{ forecast.prediction_time }}</td>
+                        <td>-}</td>
                         <td>
-                            <span class="badge badge-success">{{ forecast.status }}</span>
+                            <span class="badge badge-success">{{ Generated }}</span>
                         </td>
                     </tr>
 

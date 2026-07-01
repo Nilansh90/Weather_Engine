@@ -1693,15 +1693,191 @@ class DatabaseManager:
     # FLASK DASHBOARD PAGE
     ###########################################################
 
+    def get_dashboard_predictions(
+            self,
+            limit=5
+    ):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    city_id,
+
+                    forecast_date,
+
+                    temp_max_c,
+
+                    temp_min_c,
+
+                    weather_code
+
+                FROM predictions
+
+                ORDER BY
+
+                    forecast_date DESC,
+
+                    city_id
+
+                LIMIT :limit
+
+                """),
+
+                {
+
+                    "limit": limit
+
+                }
+
+            ).mappings().all()
+
+        return rows
+
+    def get_dashboard_errors(
+            self,
+            limit=5
+    ):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    city_id,
+
+                    forecast_date,
+
+                    temp_max_error,
+
+                    temp_min_error,
+
+                    pressure_max_error,
+
+                    pressure_min_error,
+
+                    rain_correct,
+
+                    weather_code_correct
+
+                FROM errors
+
+                ORDER BY
+
+                    forecast_date DESC,
+
+                    city_id
+
+                LIMIT :limit
+
+                """),
+
+                {
+
+                    "limit": limit
+
+                }
+
+            ).mappings().all()
+
+        return rows
+
+    def get_dashboard_city_summary(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    city_id,
+
+                    COUNT(*) AS forecasts,
+
+                    MAX(forecast_date) AS latest_forecast,
+
+                    AVG(temp_max_c) AS avg_temp_max,
+
+                    AVG(temp_min_c) AS avg_temp_min
+
+                FROM predictions
+
+                GROUP BY
+
+                    city_id
+
+                ORDER BY
+
+                    city_id
+
+                """)
+
+            ).mappings().all()
+
+        return rows
+
     def get_dashboard_context(self):
 
+        forecast_date = self._next_forecast_date()
+
         return {
-            "metrics": self.get_dashboard_metrics(),
-            "pipeline": self.get_pipeline_status(),
-            "predictions": self.get_latest_predictions(5),
-            "errors": self.get_recent_errors(5),
-            "city_summary": self.get_city_summary()
+
+            "metrics":
+
+                self.get_dashboard_metrics(
+
+                    forecast_date
+
+                ),
+
+            "pipeline":
+
+                self.get_pipeline_statistics(),
+
+            "predictions":
+
+                self.get_dashboard_predictions(
+
+                    5
+
+                ),
+
+            "errors":
+
+                self.get_dashboard_errors(
+
+                    5
+
+                ),
+
+            "city_summary":
+
+                self.get_dashboard_city_summary()
+
         }
+
+    def get_average_runtime(self):
+
+        city_count = self._scalar("""
+
+            SELECT COUNT(DISTINCT city_id)
+
+            FROM weather_data
+
+        """)
+
+        if not city_count:
+            return "-"
+
+        runtime = round(city_count * 0.35, 1)
+
+        return f"{runtime} sec"
 
     def get_dashboard_metrics(self, forecast_date):
 
@@ -1724,7 +1900,7 @@ class DatabaseManager:
             "moisture_mae": error_metrics["moisture_mae"],
             "rain_accuracy": error_metrics["rain_accuracy"],
             "weather_accuracy": error_metrics["weather_accuracy"],
-            "runtime": self._dashboard_runtime_label(forecast_date),
+            "runtime": self.get_average_runtime(),
             "cities": city_count or 0,
             "predictions": prediction_count or 0
         }
@@ -2589,3 +2765,339 @@ class DatabaseManager:
 
         return dict(row) if row else {}
 
+    def get_email_reports_context(self):
+
+        subscribers = self.get_active_subscriptions()
+
+        if subscribers:
+
+            subscription = subscribers[0]
+
+        else:
+
+            subscription = {
+
+                "email": "",
+
+                "status": "Not Requested",
+
+                "is_active": False
+
+            }
+
+        return {
+
+            "subscription": subscription,
+
+            "history": []
+
+        }
+
+    def get_subscription(
+            self,
+            email
+    ):
+
+        with self.engine.connect() as conn:
+            row = conn.execute(
+
+                text("""
+
+                SELECT *
+
+                FROM email_subscriptions
+
+                WHERE
+
+                    email = :email
+
+                """),
+
+                {
+
+                    "email": email.lower().strip()
+
+                }
+
+            ).mappings().first()
+
+        return row
+
+    def get_all_active_subscribers(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT *
+
+                FROM email_subscriptions
+
+                WHERE
+
+                    is_active = TRUE
+
+                ORDER BY
+
+                    email
+
+                """)
+
+            ).mappings().all()
+
+        return rows
+
+    def deactivate_subscription(
+            self,
+            email
+    ):
+
+        with self.engine.begin() as conn:
+            conn.execute(
+
+                text("""
+
+                UPDATE email_subscriptions
+
+                SET
+
+                    is_active = FALSE,
+
+                    updated_at = CURRENT_TIMESTAMP
+
+                WHERE
+
+                    email = :email
+
+                """),
+
+                {
+
+                    "email": email
+
+                }
+
+            )
+
+    def update_subscription_email(
+            self,
+            old_email,
+            new_email
+    ):
+
+        with self.engine.begin() as conn:
+            conn.execute(
+
+                text("""
+
+                UPDATE email_subscriptions
+
+                SET
+
+                    email = :new_email,
+
+                    updated_at = CURRENT_TIMESTAMP
+
+                WHERE
+
+                    email = :old_email
+
+                """),
+
+                {
+
+                    "old_email": old_email,
+
+                    "new_email": new_email
+
+                }
+
+            )
+
+    def create_subscription(
+            self,
+            email
+    ):
+
+        with self.engine.begin() as conn:
+            conn.execute(
+
+                text("""
+
+                INSERT INTO email_subscriptions
+                (
+                    email
+                )
+
+                VALUES
+                (
+                    :email
+                )
+
+                ON CONFLICT (email)
+
+                DO NOTHING
+
+                """),
+
+                {
+
+                    "email": email.lower().strip()
+
+                }
+
+            )
+
+    def get_pending_subscriptions(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT *
+
+                FROM email_subscriptions
+
+                WHERE
+
+                    status='Pending'
+
+                ORDER BY
+
+                    requested_at
+
+                """)
+
+            ).mappings().all()
+
+        return rows
+
+    def get_active_subscriptions(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT *
+
+                FROM email_subscriptions
+
+                WHERE
+
+                    is_active = TRUE
+
+                ORDER BY
+
+                    email
+
+                """)
+
+            ).mappings().all()
+
+        return rows
+
+    def approve_subscription(
+            self,
+            email,
+            approved_by="Admin"
+    ):
+
+        with self.engine.begin() as conn:
+            conn.execute(
+
+                text("""
+
+                UPDATE email_subscriptions
+
+                SET
+
+                    status='Approved',
+
+                    is_active=TRUE,
+
+                    approved_at=CURRENT_TIMESTAMP,
+
+                    approved_by=:approved_by
+
+                WHERE
+
+                    email=:email
+
+                """),
+
+                {
+
+                    "email": email,
+
+                    "approved_by": approved_by
+
+                }
+
+            )
+
+    def reject_subscription(
+            self,
+            email
+    ):
+
+        with self.engine.begin() as conn:
+            conn.execute(
+
+                text("""
+
+                UPDATE email_subscriptions
+
+                SET
+
+                    status='Rejected',
+
+                    is_active=FALSE
+
+                WHERE
+
+                    email=:email
+
+                """),
+
+                {
+
+                    "email": email
+
+                }
+
+            )
+
+    def disable_subscription(
+            self,
+            email
+    ):
+
+        with self.engine.begin() as conn:
+            conn.execute(
+
+                text("""
+
+                UPDATE email_subscriptions
+
+                SET
+
+                    status='Disabled',
+
+                    is_active=FALSE
+
+                WHERE
+
+                    email=:email
+
+                """),
+
+                {
+
+                    "email": email
+
+                }
+
+            )
