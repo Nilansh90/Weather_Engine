@@ -17,8 +17,9 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 import pandas as pd
 import os
-from sqlalchemy import text
 from datetime import date, timedelta
+import plotly.graph_objects as go
+import plotly.io as pio
 
 
 load_dotenv()
@@ -375,55 +376,6 @@ class DatabaseManager:
     def close(self):
 
         self.engine.dispose()
-
-    def get_cached_nwp(
-            self,
-            latitude,
-            longitude,
-            forecast_date
-    ):
-
-        query = text("""
-
-            SELECT *
-
-
-            FROM nwp_cache
-
-
-            WHERE latitude=:lat
-
-
-            AND longitude=:lon
-
-
-            AND forecast_date=:date
-
-
-        """)
-
-        df = pd.read_sql(
-
-            query,
-
-            self.engine,
-
-            params={
-
-                "lat": latitude,
-
-                "lon": longitude,
-
-                "date": forecast_date
-
-            }
-
-        )
-
-        if df.empty:
-            return None
-
-        return df.iloc[0].to_dict()
 
     def save_nwp_cache(
 
@@ -891,7 +843,6 @@ class DatabaseManager:
 
         return nwp
 
-    from sqlalchemy import text
 
     def get_actual_weather(
             self,
@@ -932,7 +883,6 @@ class DatabaseManager:
 
         return row
 
-    from sqlalchemy import text
 
     def update_actuals(
             self,
@@ -1129,9 +1079,6 @@ class DatabaseManager:
 
             )
 
-    from sqlalchemy import text
-
-    ...
 
     def get_error(
         self,
@@ -1693,216 +1640,28 @@ class DatabaseManager:
     # FLASK DASHBOARD PAGE
     ###########################################################
 
-    def get_dashboard_predictions(
-            self,
-            limit=5
-    ):
-
-        with self.engine.connect() as conn:
-            rows = conn.execute(
-
-                text("""
-
-                SELECT
-
-                    city_id,
-
-                    forecast_date,
-
-                    temp_max_c,
-
-                    temp_min_c,
-
-                    weather_code
-
-                FROM predictions
-
-                ORDER BY
-
-                    forecast_date DESC,
-
-                    city_id
-
-                LIMIT :limit
-
-                """),
-
-                {
-
-                    "limit": limit
-
-                }
-
-            ).mappings().all()
-
-        return rows
-
-    def get_dashboard_errors(
-            self,
-            limit=5
-    ):
-
-        with self.engine.connect() as conn:
-            rows = conn.execute(
-
-                text("""
-
-                SELECT
-
-                    city_id,
-
-                    forecast_date,
-
-                    temp_max_error,
-
-                    temp_min_error,
-
-                    pressure_max_error,
-
-                    pressure_min_error,
-
-                    rain_correct,
-
-                    weather_code_correct
-
-                FROM errors
-
-                ORDER BY
-
-                    forecast_date DESC,
-
-                    city_id
-
-                LIMIT :limit
-
-                """),
-
-                {
-
-                    "limit": limit
-
-                }
-
-            ).mappings().all()
-
-        return rows
-
-    def get_dashboard_city_summary(self):
-
-        with self.engine.connect() as conn:
-            rows = conn.execute(
-
-                text("""
-
-                SELECT
-
-                    city_id,
-
-                    COUNT(*) AS forecasts,
-
-                    MAX(forecast_date) AS latest_forecast,
-
-                    AVG(temp_max_c) AS avg_temp_max,
-
-                    AVG(temp_min_c) AS avg_temp_min
-
-                FROM predictions
-
-                GROUP BY
-
-                    city_id
-
-                ORDER BY
-
-                    city_id
-
-                """)
-
-            ).mappings().all()
-
-        return rows
-
     def get_dashboard_context(self):
 
-        forecast_date = self._next_forecast_date()
-
         return {
 
-            "metrics":
+            "metrics": self.get_dashboard_metrics(),
 
-                self.get_dashboard_metrics(
+            "temperature_graph": self.build_temperature_graph(),
 
-                    forecast_date
+            "pressure_graph": self.build_pressure_graph(),
 
-                ),
+            "dewpoint_graph": self.build_dewpoint_graph(),
 
-            "pipeline":
+            "humidity_graph": self.build_humidity_graph(),
 
-                self.get_pipeline_statistics(),
+            "rain_graph": self.build_rain_accuracy_graph(),
 
-            "predictions":
+            "temperature_forecast_graph": self.build_temperature_forecast_graph(),
 
-                self.get_dashboard_predictions(
+            "pressure_forecast_graph": self.build_pressure_forecast_graph(),
 
-                    5
+            "city_performance": self.get_city_performance()
 
-                ),
-
-            "errors":
-
-                self.get_dashboard_errors(
-
-                    5
-
-                ),
-
-            "city_summary":
-
-                self.get_dashboard_city_summary()
-
-        }
-
-    def get_average_runtime(self):
-
-        city_count = self._scalar("""
-
-            SELECT COUNT(DISTINCT city_id)
-
-            FROM weather_data
-
-        """)
-
-        if not city_count:
-            return "-"
-
-        runtime = round(city_count * 0.35, 1)
-
-        return f"{runtime} sec"
-
-    def get_dashboard_metrics(self, forecast_date):
-
-        error_metrics = self._get_home_metrics()
-
-        city_count = self._scalar("""
-            SELECT COUNT(DISTINCT city_id)
-            FROM weather_data
-        """)
-
-        prediction_count = self._scalar("""
-            SELECT COUNT(*)
-            FROM predictions
-            WHERE forecast_date = :forecast_date
-        """, {"forecast_date": forecast_date})
-
-        return {
-            "temperature_mae": error_metrics["temperature_mae"],
-            "pressure_mae": error_metrics["pressure_mae"],
-            "moisture_mae": error_metrics["moisture_mae"],
-            "rain_accuracy": error_metrics["rain_accuracy"],
-            "weather_accuracy": error_metrics["weather_accuracy"],
-            "runtime": self.get_average_runtime(),
-            "cities": city_count or 0,
-            "predictions": prediction_count or 0
         }
 
     def _get_dashboard_model_performance(self):
@@ -2076,19 +1835,6 @@ class DatabaseManager:
             }
             for row in rows
         ]
-
-    def _dashboard_runtime_label(self, forecast_date):
-
-        prediction_count = self._scalar("""
-            SELECT COUNT(*)
-            FROM predictions
-            WHERE forecast_date = :forecast_date
-        """, {"forecast_date": forecast_date})
-
-        if prediction_count:
-            return f"{prediction_count} records"
-
-        return "No run"
 
     def _dashboard_email_time(self, forecast_date):
 
@@ -2592,16 +2338,6 @@ class DatabaseManager:
     # FLASK ENGINE CONTEXT
     ###########################################################
 
-    def get_engine_context(self):
-
-        return {
-
-            "pipeline": self.get_pipeline_statistics(),
-
-            "forecast": self.get_latest_prediction_summary()
-
-        }
-
     ###########################################################
     # FLASK MODELS CONTEXT
     ###########################################################
@@ -2610,31 +2346,39 @@ class DatabaseManager:
 
         return {
 
-            "moisture_metrics": {
+            "weather_metrics": {
 
-                "dew_point_max": {
-                    "r2": 0.92,
-                    "mae": 0.99,
-                    "rmse": 1.48
+                "clear_sky": {
+                    "precision": 0.94,
+                    "recall": 0.92,
+                    "f1": 0.93
                 },
 
-                "dew_point_min": {
-                    "r2": 0.92,
-                    "mae": 1.39,
-                    "rmse": 2.05
+                "mainly_clear": {
+                    "precision": 0.88,
+                    "recall": 0.86,
+                    "f1": 0.87
                 },
 
-                "humidity_max": {
-                    "r2": 0.85,
-                    "mae": 4.74,
-                    "rmse": 6.82
+                "partly_cloudy": {
+                    "precision": 0.82,
+                    "recall": 0.80,
+                    "f1": 0.81
                 },
 
-                "humidity_min": {
-                    "r2": 0.93,
-                    "mae": 3.97,
-                    "rmse": 5.31
-                }
+                "overcast": {
+                    "precision": 0.89,
+                    "recall": 0.91,
+                    "f1": 0.90
+                },
+
+                "rain": {
+                    "precision": 0.84,
+                    "recall": 0.88,
+                    "f1": 0.86
+                },
+
+                "overall_accuracy": 73.58
 
             },
 
@@ -3101,3 +2845,870 @@ class DatabaseManager:
                 }
 
             )
+
+    def get_dashboard_metrics(self):
+
+        with self.engine.connect() as conn:
+            row = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    AVG((temp_max_error + temp_min_error) / 2.0)                AS temperature_mae,
+
+                    AVG((pressure_max_error + pressure_min_error) / 2.0)        AS pressure_mae,
+
+                    AVG(
+                        (
+                            dew_point_max_error +
+                            dew_point_min_error +
+                            humidity_max_error +
+                            humidity_min_error
+                        ) / 4.0
+                    )                                                           AS moisture_mae,
+
+                    AVG(
+                        CASE
+                            WHEN rain_correct THEN 100
+                            ELSE 0
+                        END
+                    )                                                           AS rain_accuracy
+
+                FROM errors
+
+                """)
+
+            ).mappings().first()
+
+            cities = conn.execute(
+
+                text("""
+
+                SELECT COUNT(DISTINCT city_id)
+
+                FROM predictions
+
+                """)
+
+            ).scalar()
+
+            forecasts = conn.execute(
+
+                text("""
+
+                SELECT COUNT(*)
+
+                FROM predictions
+
+                """)
+
+            ).scalar()
+
+        return {
+
+            "temperature_mae":
+
+                round(row["temperature_mae"] or 0, 2),
+
+            "pressure_mae":
+
+                round(row["pressure_mae"] or 0, 2),
+
+            "moisture_mae":
+
+                round(row["moisture_mae"] or 0, 2),
+
+            "rain_accuracy":
+
+                round(row["rain_accuracy"] or 0, 2),
+
+            "cities":
+
+                cities,
+
+            "forecasts":
+
+                forecasts
+
+        }
+
+    def get_temperature_mae_trend(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    forecast_date,
+
+                    AVG(
+
+                        (temp_max_error + temp_min_error) / 2.0
+
+                    ) AS mae
+
+                FROM errors
+
+                GROUP BY forecast_date
+
+                ORDER BY forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_temperature_graph(self):
+
+        data = self.get_temperature_mae_trend()
+
+        dates = [
+
+            row["forecast_date"]
+
+            for row in data
+
+        ]
+
+        mae = [
+
+            row["mae"]
+
+            for row in data
+
+        ]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+
+            go.Scatter(
+
+                x=dates,
+
+                y=mae,
+
+                mode="lines+markers",
+
+                name="Temperature MAE"
+
+            )
+
+        )
+
+        fig.update_layout(
+
+            title="Temperature MAE",
+
+            xaxis_title="Forecast Date",
+
+            yaxis_title="MAE (°C)",
+
+            template="plotly_dark",
+
+            height=420,
+
+            margin=dict(
+
+                l=40,
+
+                r=20,
+
+                t=50,
+
+                b=40
+
+            )
+
+        )
+
+        return pio.to_html(
+
+            fig,
+
+            full_html=False,
+
+            include_plotlyjs="cdn"
+
+        )
+
+
+    def get_pressure_mae_trend(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    forecast_date,
+
+                    AVG(
+
+                        (pressure_max_error + pressure_min_error) / 2.0
+
+                    ) AS mae
+
+                FROM errors
+
+                GROUP BY forecast_date
+
+                ORDER BY forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_pressure_graph(self):
+
+        data = self.get_pressure_mae_trend()
+
+        dates = [
+
+            row["forecast_date"]
+
+            for row in data
+
+        ]
+
+        mae = [
+
+            row["mae"]
+
+            for row in data
+
+        ]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+
+            go.Scatter(
+
+                x=dates,
+
+                y=mae,
+
+                mode="lines+markers",
+
+                name="Pressure MAE"
+
+            )
+
+        )
+
+        fig.update_layout(
+
+            title="Pressure MAE",
+
+            xaxis_title="Forecast Date",
+
+            yaxis_title="MAE (hPa)",
+
+            template="plotly_dark",
+
+            height=420,
+
+            margin=dict(
+
+                l=40,
+
+                r=20,
+
+                t=50,
+
+                b=40
+
+            )
+
+        )
+
+        return pio.to_html(
+
+            fig,
+
+            full_html=False,
+
+            include_plotlyjs="cdn"
+
+        )
+
+    def get_dewpoint_mae_trend(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    forecast_date,
+
+                    AVG(
+
+                        (dew_point_max_error + dew_point_min_error) / 2.0
+
+                    ) AS mae
+
+                FROM errors
+
+                GROUP BY forecast_date
+
+                ORDER BY forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_dewpoint_graph(self):
+
+        data = self.get_dewpoint_mae_trend()
+
+        dates = [
+
+            row["forecast_date"]
+
+            for row in data
+
+        ]
+
+        mae = [
+
+            row["mae"]
+
+            for row in data
+
+        ]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+
+            go.Scatter(
+
+                x=dates,
+
+                y=mae,
+
+                mode="lines+markers",
+
+                name="Dew Point MAE"
+
+            )
+
+        )
+
+        fig.update_layout(
+
+            title="Dew Point MAE",
+
+            xaxis_title="Forecast Date",
+
+            yaxis_title="MAE (°C)",
+
+            template="plotly_dark",
+
+            height=420,
+
+            margin=dict(
+
+                l=40,
+
+                r=20,
+
+                t=50,
+
+                b=40
+
+            )
+
+        )
+
+        return pio.to_html(
+
+            fig,
+
+            full_html=False,
+
+            include_plotlyjs="cdn"
+
+        )
+
+    def get_humidity_mae_trend(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    forecast_date,
+
+                    AVG(
+
+                        (humidity_max_error + humidity_min_error) / 2.0
+
+                    ) AS mae
+
+                FROM errors
+
+                GROUP BY forecast_date
+
+                ORDER BY forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_humidity_graph(self):
+
+        data = self.get_humidity_mae_trend()
+
+        dates = [
+
+            row["forecast_date"]
+
+            for row in data
+
+        ]
+
+        mae = [
+
+            row["mae"]
+
+            for row in data
+
+        ]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+
+            go.Scatter(
+
+                x=dates,
+
+                y=mae,
+
+                mode="lines+markers",
+
+                name="Humidity MAE"
+
+            )
+
+        )
+
+        fig.update_layout(
+
+            title="Humidity MAE",
+
+            xaxis_title="Forecast Date",
+
+            yaxis_title="MAE",
+
+            template="plotly_dark",
+
+            height=420,
+
+            margin=dict(
+
+                l=40,
+
+                r=20,
+
+                t=50,
+
+                b=40
+
+            )
+
+        )
+
+        return pio.to_html(
+
+            fig,
+
+            full_html=False,
+
+            include_plotlyjs="cdn"
+
+        )
+
+    def get_rain_accuracy_trend(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    forecast_date,
+
+                    AVG(
+
+                        CASE
+
+                            WHEN rain_correct
+
+                            THEN 100
+
+                            ELSE 0
+
+                        END
+
+                    ) AS accuracy
+
+                FROM errors
+
+                GROUP BY forecast_date
+
+                ORDER BY forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_rain_accuracy_graph(self):
+
+        data = self.get_rain_accuracy_trend()
+
+        dates = [
+
+            row["forecast_date"]
+
+            for row in data
+
+        ]
+
+        accuracy = [
+
+            row["accuracy"]
+
+            for row in data
+
+        ]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+
+            go.Bar(
+
+                x=dates,
+
+                y=accuracy,
+
+
+
+                name="Rain Accuracy"
+
+            )
+
+        )
+
+        fig.update_layout(
+
+            title="Rain Accuracy",
+
+            xaxis_title="Forecast Date",
+
+            yaxis_title="Accuracy (%)",
+
+            template="plotly_dark",
+
+            height=420,
+
+            margin=dict(
+
+                l=40,
+
+                r=20,
+
+                t=50,
+
+                b=40
+
+            )
+
+        )
+
+        return pio.to_html(
+
+            fig,
+
+            full_html=False,
+
+            include_plotlyjs="cdn"
+
+        )
+
+    def get_temperature_forecast_actual(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    p.forecast_date,
+
+                    AVG(
+
+                        (p.temp_max_c + p.temp_min_c) / 2.0
+
+                    ) AS forecast,
+
+                    AVG(
+
+                        (w.temp_max_c + w.temp_min_c) / 2.0
+
+                    ) AS actual
+
+                FROM predictions p
+
+                JOIN weather_data w
+
+                    ON
+
+                        p.city_id = w.city_id
+
+                    AND
+
+                        p.forecast_date = w.date
+
+                GROUP BY
+
+                    p.forecast_date
+
+                ORDER BY
+
+                    p.forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_temperature_forecast_graph(self):
+
+        data = self.get_temperature_forecast_actual()
+
+        dates = [row["forecast_date"] for row in data]
+        forecast = [row["forecast"] for row in data]
+        actual = [row["actual"] for row in data]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Scatter(
+                x=dates,
+                y=forecast,
+                mode="lines",
+                name="Forecast"
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=dates,
+                y=actual,
+                mode="lines",
+                name="Actual"
+            )
+        )
+
+        fig.update_layout(
+            title="Temperature Forecast vs Actual",
+            xaxis_title="Forecast Date",
+            yaxis_title="Temperature (°C)",
+            template="plotly_dark",
+            height=420,
+            margin=dict(l=40, r=20, t=50, b=40)
+        )
+
+        return pio.to_html(fig, full_html=False, include_plotlyjs="cdn")
+
+    def get_pressure_forecast_actual(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    p.forecast_date,
+
+                    AVG(
+
+                        (p.pressure_msl_max_hpa +
+                         p.pressure_msl_min_hpa) / 2.0
+
+                    ) AS forecast,
+
+                    AVG(
+
+                        (w.pressure_msl_max_hpa +
+                         w.pressure_msl_min_hpa) / 2.0
+
+                    ) AS actual
+
+                FROM predictions p
+
+                JOIN weather_data w
+
+                    ON
+
+                        p.city_id = w.city_id
+
+                    AND
+
+                        p.forecast_date = w.date
+
+                GROUP BY
+
+                    p.forecast_date
+
+                ORDER BY
+
+                    p.forecast_date DESC
+
+                LIMIT 15
+
+                """)
+
+            ).mappings().all()
+
+        return list(reversed(rows))
+
+    def build_pressure_forecast_graph(self):
+
+        data = self.get_pressure_forecast_actual()
+
+        dates = [row["forecast_date"] for row in data]
+        forecast = [row["forecast"] for row in data]
+        actual = [row["actual"] for row in data]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Scatter(
+                x=dates,
+                y=forecast,
+                mode="lines",
+                name="Forecast"
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=dates,
+                y=actual,
+                mode="lines",
+                name="Actual"
+            )
+        )
+
+        fig.update_layout(
+            title="Pressure Forecast vs Actual",
+            xaxis_title="Forecast Date",
+            yaxis_title="Pressure (hPa)",
+            template="plotly_dark",
+            height=420,
+            margin=dict(l=40, r=20, t=50, b=40)
+        )
+
+        return pio.to_html(fig, full_html=False, include_plotlyjs="cdn")
+
+    def get_city_performance(self):
+
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+
+                text("""
+
+                SELECT
+
+                    city_id,
+
+                    AVG(
+
+                        (temp_max_error + temp_min_error) / 2.0
+
+                    ) AS temperature_mae,
+
+                    AVG(
+
+                        (pressure_max_error + pressure_min_error) / 2.0
+
+                    ) AS pressure_mae,
+
+                    AVG(
+
+                        (dew_point_max_error + dew_point_min_error) / 2.0
+
+                    ) AS dewpoint_mae,
+
+                    AVG(
+
+                        (humidity_max_error + humidity_min_error) / 2.0
+
+                    ) AS humidity_mae,
+
+                    AVG(
+
+                        CASE
+
+                            WHEN rain_correct
+
+                            THEN 100
+
+                            ELSE 0
+
+                        END
+
+                    ) AS rain_accuracy,
+
+                    COUNT(*) AS forecasts
+
+                FROM errors
+
+                GROUP BY city_id
+
+                ORDER BY temperature_mae
+
+                """)
+
+            ).mappings().all()
+
+        return rows
+

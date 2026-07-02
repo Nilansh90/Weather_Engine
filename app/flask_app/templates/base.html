@@ -90,18 +90,9 @@
 
             <div class="nav-section">
 
-                <span class="nav-title">
-                    ENGINE
-                </span>
 
-                <a href="{{ url_for('engine') }}"
-                   class="nav-link">
 
-                    <i class="bi bi-diagram-3"></i>
 
-                    Engine Pipeline
-
-                </a>
 
                 <a href="{{ url_for('models') }}"
                    class="nav-link">
@@ -145,18 +136,11 @@
 
                     <i class="bi bi-graph-up"></i>
 
-                    Dashboard
+                    Prediction Metrics Dashboard
 
                 </a>
 
-                <a href="{{ url_for('history') }}"
-                   class="nav-link">
 
-                    <i class="bi bi-clock-history"></i>
-
-                    History
-
-                </a>
 
                 <a href="#"
                    class="nav-link">
@@ -274,19 +258,18 @@
 
                 <a href="{{ url_for('home') }}">Home</a>
 
-                <a href="{{ url_for('engine') }}">Engine</a>
 
-                <a href="{{ url_for('dashboard') }}">Dashboard</a>
 
-                <a href="{{ url_for('models') }}">Models</a>
+                <a href="{{ url_for('dashboard') }}">Prediction Metrics Dashboard</a>
 
-                <a href="{{ url_for('history') }}">History</a>
+                <a href="{{ url_for('models') }}">Model architecture</a>
 
-                <a href="{{ url_for('architecture') }}">Architecture</a>
 
-                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('architecture') }}">System Architecture</a>
+
+                <a href="{{ url_for('about') }}">Project Insights</a>
                 <a href="{{ url_for('email_reports') }}">
-                    Email Reports
+                    SignUp for mailed reports
                 </a>
             </div>
 

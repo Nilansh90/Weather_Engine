@@ -223,13 +223,7 @@ def dashboard():
 # ENGINE
 # ---------------------------------------------------------
 
-@app.route("/engine")
-def engine():
 
-    return render_template(
-        "engine.html",
-        **db.get_engine_context()
-    )
 
 
 @app.route("/models")
@@ -331,12 +325,7 @@ def email_reports():
 
     )
 
-@app.route("/history")
-def history():
-    return render_template(
-        "history.html",
-        **db.get_history_context(request.args)
-    )
+
 
 @app.route("/admin/email-subscriptions")
 def admin_email_subscriptions():

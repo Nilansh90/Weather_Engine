@@ -1,0 +1,81 @@
+DAY 12
+
+Today was primarily focused on transforming the email reporting system from a simple hardcoded feature
+into a scalable, database-driven component of the Weather Engine while
+also laying the groundwork for administrator-controlled access and improving the overall application architecture.
+
+The first major task was redesigning the email reporting workflow. Previously, the mailer relied on
+hardcoded recipient email addresses stored in the environment configuration.
+This was replaced with a database-driven approach where recipient information is managed dynamically
+through PostgreSQL. The email reporting pipeline was updated so that it can fetch approved
+recipients directly from the database instead of relying on static configuration values, making the
+system considerably more flexible and production-ready.
+
+To support this, a dedicated email subscription system was designed and implemented.
+A new Email Reports page was created where users can submit a request to receive the Weather Engine
+Daily Report. Instead of automatically enabling subscriptions, t
+he page now acts as a request form that collects the user's email address and stores it in
+the database as a pending subscription. The interface was simplified to remove unnecessary configuration
+options such as custom delivery times, time zones and selectable report components,
+since the Weather Engine currently generates a fixed daily report.
+ The page was also redesigned to be cleaner and less crowded while clearly informing users that administrator
+ approval is required before reports will begin.
+
+The backend was extended to support this new subscription workflow.
+A dedicated email_subscriptions table was introduced and corresponding
+database methods were implemented inside the DatabaseManager class for creating subscription requests,
+retrieving subscription information, checking approval status and preparing data for the Email Reports page.
+The previous placeholder values displayed on the page were replaced with information retrieved directly
+from the database, ensuring that the interface reflects the current state of each subscription request.
+
+Considerable work was also carried out on integrating the existing
+ mail delivery system with the new database architecture.
+ The EmailReporter class and the daily reporting script were reviewed and
+ modified so that future email delivery will operate using approved database entries rather than
+ fixed environment variables. Although additional enhancements such as multi-user delivery and
+ scheduled mail dispatch were intentionally postponed for a later phase,
+ the underlying architecture is now prepared to support them.
+
+Another significant milestone was introducing an administrator approval
+workflow. Rather than allowing anyone who submits an email address to immediately
+begin receiving reports, every subscription is now stored as a pending request awaiting
+administrator approval. This provides much better control over SMTP usage, prevents spam subscriptions
+ and establishes a more secure distribution process suitable for deployment.
+
+To manage these requests, planning and initial implementation of an
+ administrator interface were completed.
+  A dedicated Admin page was introduced where pending subscription
+  requests will eventually be reviewed, approved or rejected.
+  Alongside this, administrator authentication was designed so that the
+  management interface remains inaccessible to normal users.
+  For the current deployment stage, a simple password-based administrator a
+  uthentication approach was selected as it provides sufficient protection
+  without introducing the complexity of a full user management system. Th
+  is approach can later be expanded into proper authentication and role-based access control if required.
+
+The application's navigation and user interface were also updated to
+accommodate these new features.
+Email Reports was integrated into the primary navigation bar,
+additional entry points were added from other pages, and
+the interface was refined to better fit the existing Weather Engine design language. S
+everal layout improvements were made, including reducing visual clutter on the Email Reports page
+and reorganizing interface components to improve readability and user experience.
+
+Towards the latter part of the session, work shifted to improving backend integration for the dashboard.
+The dashboard architecture was reviewed and several new database methods were introduced to prepare
+it for fully database-driven content. Placeholder methods were replaced with structured queries
+returning dashboard metrics, prediction summaries, error summaries and city-level statistics.
+During this process, multiple schema inconsistencies were identified, including assumptions about a
+non-existent cities table. These issues were resolved by redesigning the queries around the actual
+database schema consisting of predictions, errors, metrics, weather_data, nwp_cache and email_subscriptions.
+
+Finally, the overall dashboard strategy was redesigned. Rather than presenting operational
+pipeline information, the dashboard will now focus on machine learning performance evaluation.
+ The new design will emphasize long-term model accuracy through Plotly visualizations of Temperature MAE,
+ Pressure MAE, Dew Point MAE, Humidity MAE and Rain Accuracy trends over the last fifteen available
+  days, along with forecast-versus-actual comparison graphs and city-wise performance tables.
+  Several previously planned sections such as pipeline monitoring, runtime statistics,
+  system health, model health and weather code accuracy were intentionally removed to
+  create a cleaner dashboard centred on forecasting performance rather than infrastructure monitoring.
+  This establishes a clear roadmap for the next development phase, where the dashboard will evolve into a
+  comprehensive model evaluation interface backed entirely by live database data.

@@ -1,677 +1,1495 @@
 {% extends "base.html" %}
 
 {% block title %}
-Weather Engine | Machine Learning Models
+Models
 {% endblock %}
 
 {% block content %}
 
-<header class="section-title" aria-labelledby="models-title">
+<div class="models-page">
 
-    <div>
+    <!-- ========================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================== -->
 
-        <span class="badge mb-2">
-            <i class="bi bi-cpu"></i>
-            5 Production Models
-        </span>
+    <div class="page-header">
 
-        <h1 id="models-title">Machine Learning Models</h1>
 
-        <p>
-            A hierarchical collection of regression and classification models
-            responsible for forecasting tomorrow's atmospheric state.
+
+        <h1>
+
+            Models & Research Architecture
+
+        </h1>
+
+        <p class="page-description">
+
+            The Weather Engine is designed as a hybrid forecasting system combining
+            internally trained machine learning models with external Numerical Weather
+            Prediction (NWP) products. Predictable atmospheric variables are learned
+            from historical observations while chaotic and physics-dominated variables
+            are delegated to state-of-the-art NWP forecasts. This design minimizes
+            recursive error propagation while maintaining physical consistency across
+            the complete atmospheric state.
+
         </p>
 
     </div>
 
-</header>
 
-{% macro model_node(icon, title, type, output, node_class) %}
-<article class="card glass dag-node {{ node_class }}">
+    <!-- ========================================== -->
+    <!-- SUMMARY CARDS -->
+    <!-- ========================================== -->
 
-    <div class="metric-icon">
-        <i class="bi bi-{{ icon }}"></i>
+    <div class="grid grid-4">
+
+        <div class="card architecture-card">
+
+            <div class="metric-icon">
+
+                <i class="bi bi-diagram-3"></i>
+
+            </div>
+
+            <h2>
+
+                4
+
+            </h2>
+
+            <p>
+
+                Inference Tiers
+
+            </p>
+
+        </div>
+
+
+
+        <div class="card ml-card">
+
+            <div class="metric-icon">
+
+                <i class="bi bi-cpu-fill"></i>
+
+            </div>
+
+            <h2>
+
+                5
+
+            </h2>
+
+            <p>
+
+                Internal ML Models
+
+            </p>
+
+        </div>
+
+
+
+        <div class="card nwp-card">
+
+            <div class="metric-icon">
+
+                <i class="bi bi-globe2"></i>
+
+            </div>
+
+            <h2>
+
+                3
+
+            </h2>
+
+            <p>
+
+                External NWP Components
+
+            </p>
+
+        </div>
+
+
+
+        <div class="card variable-card">
+
+            <div class="metric-icon">
+
+                <i class="bi bi-cloud-sun"></i>
+
+            </div>
+
+            <h2>
+
+                8
+
+            </h2>
+
+            <p>
+
+                Atmospheric Variables Forecasted
+
+            </p>
+
+        </div>
+
     </div>
 
-    <h4>{{ title }}</h4>
 
-    <p class="card-subtitle">{{ type }}</p>
+    <!-- ========================================== -->
+    <!-- INTRODUCTION -->
+    <!-- ========================================== -->
 
-    <div class="dag-node-meta">
-        <small>Output</small>
-        <strong>{{ output }}</strong>
+    <div class="card intro-card">
+
+        <h2>
+
+            <i class="bi bi-journal-text"></i>
+
+            Research Philosophy
+
+        </h2>
+
+        <br>
+
+        <p>
+
+            Unlike conventional forecasting systems that attempt to model every atmospheric
+            variable using machine learning, the Weather Engine follows a selective modelling
+            strategy. Variables exhibiting strong deterministic behaviour are predicted using
+            supervised machine learning, whereas variables dominated by large-scale atmospheric
+            dynamics are sourced from external Numerical Weather Prediction (NWP) models.
+
+        </p>
+
+        <br>
+
+        <p>
+
+            This hybrid design was developed after extensive experimentation across multiple
+            regression and classification algorithms. The final architecture minimizes recursive
+            forecasting errors, improves long-term stability, and leverages the complementary
+            strengths of statistical learning and physics-based numerical simulation.
+
+        </p>
+
+    </div>
+        <!-- ========================================== -->
+    <!-- HYBRID ARCHITECTURE -->
+    <!-- ========================================== -->
+
+    <div class="page-header section-spacing">
+
+
+
+        <h2>
+
+            Hybrid Weather Engine Architecture
+
+        </h2>
+
+        <p class="page-description">
+
+            The complete forecasting engine follows a directed acyclic graph (DAG)
+            where atmospheric variables are predicted in dependency order. Stable
+            variables are estimated using machine learning while highly chaotic
+            variables are supplied by Numerical Weather Prediction (NWP).
+
+        </p>
+
     </div>
 
-    <span class="badge badge-success">Loaded</span>
 
-</article>
-{% endmacro %}
 
-{% macro metric_pair(label, r2, mae, rmse='') %}
-<article class="metric-card glass">
+    <div class="card architecture-image-card">
 
-    <h4 class="card-title">{{ label }}</h4>
+        <div class="architecture-header">
 
-    <div class="city-stats">
-        <div class="city-stat">
-            <small>R<sup>2</sup></small>
-            <strong>{{ r2 }}</strong>
+            <div>
+
+                <h2>
+
+                    Four-Tier Forecasting Pipeline
+
+                </h2>
+
+                <p>
+
+                    Hybrid Machine Learning + Numerical Weather Prediction Architecture
+
+                </p>
+
+            </div>
+
+
+
         </div>
-        <div class="city-stat">
-            <small>MAE</small>
-            <strong>{{ mae }}</strong>
+
+        <div class="architecture-image">
+
+            <img
+                src="{{ url_for('static', filename='images/MODEL_2.png') }}"
+                alt="Weather Engine Architecture">
+
         </div>
-        {% if rmse %}
-        <div class="city-stat">
-            <small>RMSE</small>
-            <strong>{{ rmse }}</strong>
-        </div>
-        {% endif %}
+
     </div>
 
-</article>
-{% endmacro %}
 
-{% macro feature_chips(features) %}
-<div class="chips" aria-label="Input features">
-    {% for feature in features %}
-    <span class="chip">{{ feature }}</span>
-    {% endfor %}
-</div>
-{% endmacro %}
 
-<section class="mt-4 mb-4" aria-labelledby="hierarchy-overview-title">
 
-    <header class="section-title">
 
-        <div>
-            <h2 id="hierarchy-overview-title">Hierarchy Overview</h2>
-            <p>Each model receives engineered information generated by lower tiers instead of operating independently.</p>
+
+
+
+
+        <!-- ========================================== -->
+    <!-- INTERNAL MACHINE LEARNING MODELS -->
+    <!-- ========================================== -->
+
+    <div class="page-header section-spacing">
+
+
+
+        <h2>
+
+            Model Portfolio
+
+        </h2>
+
+        <p class="page-description">
+
+            Five supervised learning models constitute the core of the Weather Engine.
+            Each model predicts a distinct atmospheric component and is executed in a
+            dependency-aware pipeline. Multi-output regression is employed wherever
+            multiple correlated variables can be learned simultaneously.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="grid grid-3 model-overview-grid">
+
+        <!-- ================================= -->
+
+        <div class="card model-overview-card temperature-model">
+
+            <div class="model-icon">
+
+                <i class="bi bi-thermometer-half"></i>
+
+            </div>
+
+            <h3>
+
+                Temperature
+
+            </h3>
+
+            <p>
+
+                Multi-output regression
+
+            </p>
+
+            <span class="model-status">
+
+                Internal ML
+
+            </span>
+
         </div>
 
-    </header>
 
-    <div class="dag-layout">
 
-        <div class="dag-canvas" aria-label="Machine learning model hierarchy">
+        <!-- ================================= -->
 
-            <span class="dag-tier-label">Tier 1</span>
+        <div class="card model-overview-card pressure-model">
 
-            <div class="dag-tier dag-tier-split">
-                {{ model_node('thermometer-half', 'Temperature', 'Regression', 'Max / Min', 'node-temperature') }}
-                {{ model_node('speedometer2', 'Pressure', 'Regression', 'Max / Min', 'node-pressure') }}
+            <div class="model-icon">
+
+                <i class="bi bi-speedometer2"></i>
+
             </div>
 
-            <div class="dag-arrow" aria-hidden="true">
-                <div class="dag-arrow-line"></div>
-                <i class="bi bi-arrow-down"></i>
-            </div>
+            <h3>
 
-            <span class="dag-tier-label">Tier 2</span>
-            {{ model_node('droplet', 'Moisture', 'Regression', 'Dew Point / Humidity', 'node-moisture') }}
+                Pressure
 
-            <div class="dag-arrow" aria-hidden="true">
-                <div class="dag-arrow-line"></div>
-                <i class="bi bi-arrow-down"></i>
-            </div>
+            </h3>
 
-            <span class="dag-tier-label">Tier 3</span>
-            {{ model_node('cloud-rain', 'Rain Probability', 'Binary Classification', 'Probability', 'node-rain') }}
+            <p>
 
-            <div class="dag-arrow" aria-hidden="true">
-                <div class="dag-arrow-line"></div>
-                <i class="bi bi-arrow-down"></i>
-            </div>
+                Multi-output regression
 
-            <span class="dag-tier-label">Tier 4</span>
-            {{ model_node('cloud-sun', 'Weather Code', 'Multiclass Classification', 'Sky Condition', 'node-weather') }}
+            </p>
 
-            <div class="dag-arrow" aria-hidden="true">
-                <div class="dag-arrow-line"></div>
-                <i class="bi bi-arrow-down"></i>
-            </div>
+            <span class="model-status">
 
-            {{ model_node('intersect', 'Consensus Filter', 'Validation Layer', 'Final Code', 'node-consensus') }}
+                Internal ML
+
+            </span>
 
         </div>
 
-        <aside class="dag-summary card glass" aria-label="Model hierarchy summary">
 
-            <h3 class="card-title">DAG Contract</h3>
 
-            <ul class="dag-summary-list">
-                <li class="dag-summary-item">
-                    <i class="bi bi-diagram-3"></i>
-                    Lower-tier predictions become higher-tier features.
-                </li>
-                <li class="dag-summary-item">
-                    <i class="bi bi-box"></i>
-                    Every model owns one production responsibility.
-                </li>
-                <li class="dag-summary-item">
-                    <i class="bi bi-shield-check"></i>
-                    Final classification is validated before storage.
-                </li>
+        <!-- ================================= -->
+
+        <div class="card model-overview-card moisture-model">
+
+            <div class="model-icon">
+
+                <i class="bi bi-droplet-half"></i>
+
+            </div>
+
+            <h3>
+
+                Moisture
+
+            </h3>
+
+            <p>
+
+                Multi-output regression
+
+            </p>
+
+            <span class="model-status">
+
+                Internal ML
+
+            </span>
+
+        </div>
+
+
+
+        <!-- ================================= -->
+
+        <div class="card model-overview-card rain-model">
+
+            <div class="model-icon">
+
+                <i class="bi bi-cloud-rain-heavy"></i>
+
+            </div>
+
+            <h3>
+
+                Rain Classification
+
+            </h3>
+
+            <p>
+
+                Binary Classification
+
+            </p>
+
+            <span class="model-status">
+
+                Internal ML
+
+            </span>
+
+        </div>
+
+
+
+        <!-- ================================= -->
+
+        <div class="card model-overview-card weather-model">
+
+            <div class="model-icon">
+
+                <i class="bi bi-cloud-sun-fill"></i>
+
+            </div>
+
+            <h3>
+
+                Weather Code
+
+            </h3>
+
+            <p>
+
+                Multi-class Classification
+
+            </p>
+
+            <span class="model-status">
+
+                Internal ML and NWP Fallback
+
+            </span>
+
+        </div>
+
+
+
+        <!-- ================================= -->
+
+        <div class="card model-overview-card external-model">
+
+            <div class="model-icon">
+
+                <i class="bi bi-globe2"></i>
+
+            </div>
+
+            <h3>
+
+                External NWP
+
+            </h3>
+
+            <p>
+
+                Wind • Cloud • Rain Amount
+
+            </p>
+
+            <span class="model-status external-status">
+
+                Physics Based
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+        <!-- ========================================== -->
+    <!-- MOISTURE & WIND -->
+    <!-- ========================================== -->
+
+    <div class="page-header section-spacing">
+
+
+
+        <h2>
+
+            Moisture Prediction & Wind Modelling
+
+        </h2>
+
+        <p class="page-description">
+
+            Following temperature and pressure estimation, the Weather Engine
+            predicts atmospheric moisture variables. Wind forecasting was
+            extensively investigated but ultimately replaced with external
+            Numerical Weather Prediction due to intrinsic atmospheric chaos.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="grid grid-2">
+
+        <!-- ================================================= -->
+
+        <div class="card research-card moisture-model">
+
+            <div class="research-header">
+
+                <h2>
+
+                    💧 Moisture Model
+
+                </h2>
+
+                <span class="algorithm-tag">
+
+                    MultiOutput + LightGBM
+
+                </span>
+
+            </div>
+
+            <h4>Objective</h4>
+
+            <p>
+
+                Joint prediction of dew point and relative humidity extremes
+                using a single multi-output regression model.
+
+            </p>
+
+            <h4>Predicted Variables</h4>
+
+            <ul>
+
+                <li>Dew Point Maximum</li>
+
+                <li>Dew Point Minimum</li>
+
+                <li>Relative Humidity Maximum</li>
+
+                <li>Relative Humidity Minimum</li>
+
             </ul>
 
-        </aside>
+            <h4>Input Features</h4>
+
+            <div class="feature-box">
+
+Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Encoding • Day Cyclic Encoding • Shortwave Radiation • Daylight Duration • Temperature Lags • Rolling Temperature Features
+
+            </div>
+
+            <h4>Test Performance</h4>
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Variable</th>
+
+                        <th>R²</th>
+
+                        <th>MAE</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Dew Point Max</td>
+
+                        <td>0.92</td>
+
+                        <td>0.99</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Dew Point Min</td>
+
+                        <td>0.92</td>
+
+                        <td>1.39</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>RH Max</td>
+
+                        <td>0.85</td>
+
+                        <td>4.74</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>RH Min</td>
+
+                        <td>0.93</td>
+
+                        <td>3.97</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+
+        <div class="card decision-card wind-model">
+
+            <div class="research-header">
+
+                <h2>
+
+                    🌬 Wind Prediction
+
+                </h2>
+
+                <span class="decision-badge">
+
+                    Shifted to External NWP
+
+                </span>
+
+            </div>
+
+            <div class="decision-highlight">
+
+                Final Validation R² ≈ 0.65
+
+            </div>
+
+            <p>
+
+                Extensive experimentation was performed using LightGBM,
+                CatBoost and ensemble models with geographical,
+                temporal, radiation, temperature, pressure,
+                moisture and lag-based features.
+
+                Despite comprehensive feature engineering,
+                validation performance consistently plateaued
+                around an R² of 0.65 while training performance
+                exceeded 0.85, indicating strong overfitting
+                and an inherent predictability ceiling.
+
+            </p>
+
+            <h4>
+
+                Research Conclusions
+
+            </h4>
+
+            <ul class="reason-list">
+
+                <li>
+
+                    Wind depends on regional pressure gradients rather than purely local weather.
+
+                </li>
+
+                <li>
+
+                    Synoptic-scale systems influence local wind several hundred kilometres away.
+
+                </li>
+
+                <li>
+
+                    Terrain roughness, valleys and channeling dominate local flow.
+
+                </li>
+
+                <li>
+
+                    Numerical Weather Prediction solves these physical processes directly.
+
+                </li>
+
+            </ul>
+
+        </div>
 
     </div>
 
-</section>
+        <!-- ========================================== -->
+    <!-- RAIN -->
+    <!-- ========================================== -->
 
-<section class="mt-4 mb-4" aria-labelledby="temperature-model-title">
+    <div class="page-header section-spacing">
 
-    <header class="section-title">
 
-        <div>
-            <h2 id="temperature-model-title">Temperature Model</h2>
-            <p>Predict tomorrow's maximum and minimum temperature.</p>
+        <h2>
+
+            Rain Classification & Rain Amount
+
+        </h2>
+
+        <p class="page-description">
+
+            Precipitation forecasting is separated into two independent tasks.
+            The occurrence of rainfall is treated as a binary classification
+            problem, whereas rainfall amount is supplied through Numerical
+            Weather Prediction due to the complexity of quantitative
+            precipitation forecasting.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="grid grid-2">
+
+        <!-- ========================================== -->
+
+        <div class="card research-card rain-model">
+
+            <div class="research-header">
+
+                <h2>
+
+                    🌧 Rain Classification
+
+                </h2>
+
+                <span class="algorithm-tag">
+
+                    Binary Classification
+
+                </span>
+
+            </div>
+
+            <h4>
+
+                Objective
+
+            </h4>
+
+            <p>
+
+                Predict whether rainfall will occur during the forecast period
+                while simultaneously estimating prediction confidence.
+
+            </p>
+
+            <h4>
+
+                Decision Threshold
+
+            </h4>
+
+            <div class="decision-highlight success-highlight">
+
+                Probability Threshold = 0.30 (Recall Optimised)
+
+            </div>
+
+            <h4>
+
+                Why Optimise Recall?
+
+            </h4>
+
+            <p>
+
+                Missing an actual rainfall event (False Negative) is considered
+                substantially more expensive than incorrectly predicting rain.
+                Therefore, the decision threshold was intentionally reduced
+                from the conventional 0.50 to 0.30 to maximise rainfall detection.
+
+            </p>
+
+            <h4>
+
+                Classification Report
+
+            </h4>
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Metric</th>
+
+                        <th>No Rain</th>
+
+                        <th>Rain</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Precision</td>
+
+                        <td>0.92</td>
+
+                        <td>0.83</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Recall</td>
+
+                        <td>0.87</td>
+
+                        <td>0.89</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>F1 Score</td>
+
+                        <td>0.90</td>
+
+                        <td>0.86</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
         </div>
 
-    </header>
 
-    {% set temperature_features = [
-        'Latitude', 'Longitude', 'City ID', 'Year', 'Day of Week',
-        'Month Sin', 'Month Cos', 'Day Sin', 'Day Cos',
-        'Shortwave Radiation', 'Daylight Duration',
-        'Temperature Lag1', 'Temperature Rolling Mean'
-    ] %}
 
-    <article class="card glass">
+        <!-- ========================================== -->
 
-        <div class="dashboard-grid">
+        <div class="card decision-card rain-amount-model">
 
-            <div>
-                <h3 class="card-title">Multi-output LightGBM Regressor</h3>
+            <div class="research-header">
+
+                <h2>
+
+                    🌦 Rain Amount
+
+                </h2>
+
+                <span class="decision-badge">
+
+                    External NWP
+
+                </span>
+
+            </div>
+
+            <div class="decision-highlight">
+
+                ML Regression Replaced by Physics-Based Forecasting
+
+            </div>
+
+            <p>
+
+                Rainfall quantity prediction was initially investigated using
+                Tweedie regression. While acceptable performance was obtained
+                for typical rainfall events, the model consistently
+                underestimated extreme precipitation and suffered from
+                zero-inflated target distributions.
+
+            </p>
+
+            <h4>
+
+                Research Decision
+
+            </h4>
+
+            <ul class="reason-list">
+
+                <li>
+
+                    Rare extreme rainfall events are underrepresented within historical training data.
+
+                </li>
+
+                <li>
+
+                    Quantitative precipitation depends upon complex three-dimensional atmospheric physics.
+
+                </li>
+
+                <li>
+
+                    Numerical Weather Prediction models directly simulate cloud microphysics.
+
+                </li>
+
+                <li>
+
+                    Using the same NWP provider for wind, cloud and rainfall maintains physical consistency.
+
+                </li>
+
+                <li>
+
+                    External NWP remains considerably more reliable beyond short forecasting horizons.
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+        <!-- ========================================== -->
+    <!-- CLOUD COVER & WEATHER CODE -->
+    <!-- ========================================== -->
+
+    <div class="page-header section-spacing">
+
+
+        <h2>
+
+            Cloud Cover & Weather Code Prediction
+
+        </h2>
+
+        <p class="page-description">
+
+            Cloud cover and weather code prediction illustrate the hybrid
+            forecasting philosophy adopted throughout the Weather Engine.
+            Cloud cover is delegated to Numerical Weather Prediction while
+            the final weather condition is inferred using a supervised
+            multi-class classification model.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="grid grid-2">
+
+        <!-- ========================================== -->
+
+        <div class="card decision-card cloud-model">
+
+            <div class="research-header">
+
+                <h2>
+
+                    ☁ Cloud Cover
+
+                </h2>
+
+                <span class="decision-badge">
+
+                    External NWP
+
+                </span>
+
+            </div>
+
+            <div class="decision-highlight">
+
+                Internal ML Replaced by External Numerical Weather Prediction
+
+            </div>
+
+            <p>
+
+                Cloud forecasting was intentionally removed from the machine
+                learning pipeline after extensive evaluation. Unlike
+                temperature or pressure, cloud formation depends upon
+                three-dimensional atmospheric dynamics and satellite-observed
+                processes that cannot be adequately represented using
+                historical tabular weather observations alone.
+
+            </p>
+
+            <h4>
+
+                Research Decision
+
+            </h4>
+
+            <ul class="reason-list">
+
+                <li>
+
+                    Eliminates recursive error accumulation across multiple forecast horizons.
+
+                </li>
+
+                <li>
+
+                    Enables detection of approaching weather systems beyond the local region.
+
+                </li>
+
+                <li>
+
+                    Captures high-altitude cloud structures invisible to surface observations.
+
+                </li>
+
+                <li>
+
+                    Removes dependency upon lag-based cloud features during production.
+
+                </li>
+
+            </ul>
+
+        </div>
+
+
+
+        <!-- ========================================== -->
+
+        <div class="card research-card weather-model">
+
+            <div class="research-header">
+
+                <h2>
+
+                    ⛅ Weather Code
+
+                </h2>
+
+                <span class="algorithm-tag">
+
+                    Multi-Class Classification
+
+                </span>
+
+            </div>
+
+            <h4>
+
+                Objective
+
+            </h4>
+
+            <p>
+
+                Predict the final WMO weather code representing overall
+                atmospheric conditions after combining all previously
+                estimated meteorological variables.
+
+            </p>
+
+            <div class="decision-highlight success-highlight">
+
+                Overall Test Accuracy
+
+                <strong>
+
+                    73.58%
+
+                </strong>
+
+            </div>
+
+            <h4>
+
+                Classification Summary
+
+            </h4>
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Weather Code</th>
+
+                        <th>F1 Score</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Clear Sky</td>
+
+                        <td>0.94</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Mainly Clear</td>
+
+                        <td>0.68</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Partly Cloudy</td>
+
+                        <td>0.35</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Overcast</td>
+
+                        <td>0.86</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Light Drizzle</td>
+
+                        <td>0.86</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Moderate Drizzle</td>
+
+                        <td>0.58</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Heavy Rain</td>
+
+                        <td>0.55</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================== -->
+    <!-- HYBRID CONSENSUS -->
+    <!-- ========================================== -->
+
+    <div class="card consensus-card">
+
+        <h2>
+
+            <i class="bi bi-shuffle"></i>
+
+            Hybrid Consensus Filter
+
+        </h2>
+
+        <br>
+
+        <p>
+
+            The Weather Code model is intentionally not used as the sole source
+            of truth. Instead, every prediction undergoes a consensus
+            verification stage with the external Numerical Weather Prediction
+            system.
+
+        </p>
+
+        <div class="consensus-flow">
+
+            <div class="consensus-box">
+
+                Machine Learning Prediction
+
+            </div>
+
+            <div class="consensus-arrow">
+
+                +
+
+            </div>
+
+            <div class="consensus-box">
+
+                External NWP Forecast
+
+            </div>
+
+            <div class="consensus-arrow">
+
+                →
+
+            </div>
+
+            <div class="consensus-box final-box">
+
+                Final Weather Forecast
+
+            </div>
+
+        </div>
+
+        <p>
+
+            Predictions exhibiting strong agreement with Numerical Weather
+            Prediction are accepted directly. When disagreement occurs on
+            historically weak weather classes, the engine defaults to the
+            physics-based NWP forecast to preserve physical realism and improve
+            operational robustness.
+
+        </p>
+
+    </div>
+
+        <!-- ========================================== -->
+    <!-- FINAL HYBRID STRATEGY -->
+    <!-- ========================================== -->
+
+    <div class="page-header section-spacing">
+
+
+
+        <h2>
+
+            Final Hybrid Forecasting Strategy
+
+        </h2>
+
+        <p class="page-description">
+
+            The final Weather Engine architecture was developed after extensive
+            experimentation across regression, classification and ensemble
+            learning techniques. Rather than maximising the number of machine
+            learning models, the objective was to maximise overall forecasting
+            reliability through an evidence-based hybrid strategy.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="grid grid-2">
+
+        <!-- ========================================== -->
+
+        <div class="card final-strategy-card">
+
+            <h2>
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Predicted Internally
+
+            </h2>
+
+            <br>
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Variable</th>
+
+                        <th>Method</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Temperature</td>
+
+                        <td>Multi-Output Regression</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Pressure</td>
+
+                        <td>Multi-Output Regression</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Moisture</td>
+
+                        <td>Multi-Output Regression</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Rain Occurrence</td>
+
+                        <td>Binary Classification</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Weather Code</td>
+
+                        <td>Multi-Class Classification</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- ========================================== -->
+
+        <div class="card external-strategy-card">
+
+            <h2>
+
+                <i class="bi bi-globe2"></i>
+
+                Retrieved Externally
+
+            </h2>
+
+            <br>
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Variable</th>
+
+                        <th>Reason</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>Wind</td>
+
+                        <td>Chaotic Atmospheric Dynamics</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Cloud Cover</td>
+
+                        <td>Satellite-Based Physics</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Rain Amount</td>
+
+                        <td>3D Numerical Simulation</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================== -->
+
+    <div class="card conclusion-card">
+
+        <h2>
+
+            <i class="bi bi-award-fill"></i>
+
+            Research Outcome
+
+        </h2>
+
+        <br>
+
+        <p>
+
+            The resulting Weather Engine is neither a purely machine learning
+            system nor a conventional Numerical Weather Prediction pipeline.
+            Instead, it combines the strengths of both paradigms into a hybrid
+            architecture where statistical learning captures local temporal
+            relationships while physics-based forecasting provides global
+            atmospheric consistency.
+
+        </p>
+
+        <br>
+
+        <p>
+
+            This approach reduces recursive forecasting errors, improves
+            robustness for long forecast horizons and allows each atmospheric
+            variable to be predicted using the methodology best suited to its
+            underlying physical behaviour. The resulting engine therefore
+            balances predictive accuracy, computational efficiency and
+            operational reliability.
+
+        </p>
+
+        <br>
+
+        <div class="research-summary">
+
+            <div class="summary-box success">
+
+                <h3>5</h3>
+
                 <p>
-                    Maximum and minimum temperatures are strongly correlated.
-                    Predicting them together improves consistency while reducing
-                    the number of deployed models.
+
+                    Internal Machine Learning Models
+
                 </p>
 
-                <div class="hr"></div>
-
-                <h4 class="card-subtitle">Input Features</h4>
-                {{ feature_chips(temperature_features) }}
             </div>
 
-            <aside>
-                <div class="run-list">
-                    <div class="run-item">
-                        <div class="run-left"><i class="bi bi-bullseye"></i><small>Output</small></div>
-                        <div class="run-right"><strong>Maximum Temperature</strong></div>
-                    </div>
-                    <div class="run-item">
-                        <div class="run-left"><i class="bi bi-bullseye"></i><small>Output</small></div>
-                        <div class="run-right"><strong>Minimum Temperature</strong></div>
-                    </div>
-                    <div class="run-item">
-                        <div class="run-left"><i class="bi bi-clipboard-data"></i><small>Performance</small></div>
-                        <div class="run-right"><span class="badge">Test Set</span></div>
-                    </div>
-                </div>
-            </aside>
+            <div class="summary-box warning">
 
-        </div>
-
-        <div class="metric-grid mt-3" aria-label="Temperature model performance">
-            {{ metric_pair('Temperature Maximum', '0.954', '0.85 C', '1.17 C') }}
-            {{ metric_pair('Temperature Minimum', '0.960', '0.779 C', '1.07 C') }}
-        </div>
-
-        <article class="dag-note" aria-label="Temperature model engineering note">
-            <p>
-                Temperature forms the foundation of the hierarchical forecasting
-                pipeline because many atmospheric variables depend directly on it.
-            </p>
-        </article>
-
-    </article>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="pressure-model-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="pressure-model-title">Pressure Model</h2>
-            <p>Predict maximum and minimum pressure immediately after the temperature tier.</p>
-        </div>
-
-    </header>
-
-    {% set pressure_features = [
-        'Latitude', 'Longitude', 'City ID', 'Year', 'Day of Week',
-        'Month Sin', 'Month Cos', 'Day Sin', 'Day Cos',
-        'Shortwave Radiation', 'Daylight Duration',
-        'Pressure Lag1', 'Pressure Rolling Mean',
-        'Temperature Maximum', 'Temperature Minimum'
-    ] %}
-
-    <article class="card glass">
-
-        <h3 class="card-title">Multi-output LightGBM Regressor</h3>
-
-        <p>
-            Pressure is predicted immediately after temperature because both
-            variables describe the lower atmospheric state required by
-            higher-level models.
-        </p>
-
-        <div class="hr"></div>
-
-        <h4 class="card-subtitle">Input Features</h4>
-        {{ feature_chips(pressure_features) }}
-
-        <div class="metric-grid mt-3" aria-label="Pressure model performance">
-            {{ metric_pair('Pressure Maximum', '0.953', '0.947 hPa') }}
-            {{ metric_pair('Pressure Minimum', '0.943', '1.054 hPa') }}
-        </div>
-
-    </article>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="moisture-model-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="moisture-model-title">Moisture Model</h2>
-            <p>Predict dew point and relative humidity after lower-atmosphere state is available.</p>
-        </div>
-
-    </header>
-
-    {% set moisture_features = [
-        'Latitude', 'Longitude', 'City ID', 'Year', 'Day of Week',
-        'Month Sin', 'Month Cos', 'Day Sin', 'Day Cos',
-        'Temperature Maximum', 'Temperature Minimum',
-        'Pressure Maximum', 'Pressure Minimum',
-        'Humidity Lag1', 'Humidity Rolling Mean',
-        'Dew Point Lag1', 'Dew Point Rolling Mean'
-    ] %}
-
-    <article class="card glass">
-
-        <h3 class="card-title">Multi-output LightGBM Regressor</h3>
-
-        <p>
-            Moisture variables bridge thermodynamic state and rainfall
-            generation inside the hierarchy.
-        </p>
-
-        <div class="hr"></div>
-
-        <h4 class="card-subtitle">Outputs</h4>
-
-        <div class="kpi-row mb-2" aria-label="Moisture model outputs">
-            <div class="kpi glass"><div class="kpi-label">Output</div><div class="kpi-value">Max Dew Point</div></div>
-            <div class="kpi glass"><div class="kpi-label">Output</div><div class="kpi-value">Min Dew Point</div></div>
-            <div class="kpi glass"><div class="kpi-label">Output</div><div class="kpi-value">Max RH</div></div>
-            <div class="kpi glass"><div class="kpi-label">Output</div><div class="kpi-value">Min RH</div></div>
-        </div>
-
-        <h4 class="card-subtitle">Input Features</h4>
-        {{ feature_chips(moisture_features) }}
-
-        <div class="metric-grid mt-3" aria-label="Moisture model performance">
-            {{ metric_pair('Maximum Dew Point', moisture_metrics.dew_point_max.r2, moisture_metrics.dew_point_max.mae, moisture_metrics.dew_point_max.rmse) }}
-            {{ metric_pair('Minimum Dew Point', moisture_metrics.dew_point_min.r2, moisture_metrics.dew_point_min.mae, moisture_metrics.dew_point_min.rmse) }}
-            {{ metric_pair('Maximum Relative Humidity', moisture_metrics.humidity_max.r2, moisture_metrics.humidity_max.mae, moisture_metrics.humidity_max.rmse) }}
-            {{ metric_pair('Minimum Relative Humidity', moisture_metrics.humidity_min.r2, moisture_metrics.humidity_min.mae, moisture_metrics.humidity_min.rmse) }}
-        </div>
-
-    </article>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="rain-model-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="rain-model-title">Rain Probability Model</h2>
-            <p>Estimate the probability of rainfall from moisture-aware features.</p>
-        </div>
-
-    </header>
-
-    <article class="card glass">
-
-        <div class="dashboard-grid">
-
-            <div>
-                <h3 class="card-title">LightGBM Binary Classifier</h3>
+                <h3>3</h3>
 
                 <p>
-                    The model outputs a calibrated probability instead of only a
-                    binary label, allowing the application layer to expose both
-                    confidence and operational state.
+
+                    External NWP Components
+
                 </p>
 
-                <div class="hr"></div>
-
-                <div class="city-stats">
-                    <div class="city-stat">
-                        <small>Precision</small>
-                        <strong>{{ rain_metrics.precision }}</strong>
-                    </div>
-                    <div class="city-stat">
-                        <small>Recall</small>
-                        <strong>{{ rain_metrics.recall }}</strong>
-                    </div>
-                    <div class="city-stat">
-                        <small>F1</small>
-                        <strong>{{ rain_metrics.f1 }}</strong>
-                    </div>
-                    <div class="city-stat">
-                        <small>Threshold</small>
-                        <strong>0.30</strong>
-                    </div>
-                </div>
             </div>
 
-            <aside class="metric-card glass">
-                <div class="metric-icon">
-                    <i class="bi bi-cloud-rain"></i>
-                </div>
-                <div class="metric-number">72%</div>
-                <div class="metric-label">Rain Probability</div>
-                <span class="badge badge-success mt-2">Rain Expected</span>
-            </aside>
+            <div class="summary-box primary">
+
+                <h3>1</h3>
+
+                <p>
+
+                    Hybrid Forecasting Engine
+
+                </p>
+
+            </div>
 
         </div>
-
-        <article class="dag-note" aria-label="Rain classifier engineering note">
-            <p>
-                The threshold is deliberately optimised for recall. False
-                negatives are operationally more expensive than false positives
-                because missing rainfall events has greater practical impact.
-            </p>
-        </article>
-
-    </article>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="weather-code-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="weather-code-title">Weather Code Classifier</h2>
-            <p>Predict tomorrow's weather code using all hierarchical model outputs.</p>
-        </div>
-
-    </header>
-
-    <article class="card glass">
-
-        <header class="flex-between mb-2">
-            <div>
-                <h3 class="card-title">LightGBM Multiclass Classifier</h3>
-                <p class="card-subtitle">Overall Accuracy</p>
-            </div>
-            <span class="badge badge-success">73.58%</span>
-        </header>
-
-        <article class="table-card glass">
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Weather Code</th>
-                            <th scope="col">Precision</th>
-                            <th scope="col">Recall</th>
-                            <th scope="col">F1</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Clear Sky</strong></td>
-                            <td>{{ weather_metrics.clear_sky.precision }}</td>
-                            <td>{{ weather_metrics.clear_sky.recall }}</td>
-                            <td>{{ weather_metrics.clear_sky.f1 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Overcast</strong></td>
-                            <td>{{ weather_metrics.overcast.precision }}</td>
-                            <td>{{ weather_metrics.overcast.recall }}</td>
-                            <td>{{ weather_metrics.overcast.f1 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Light Drizzle</strong></td>
-                            <td>{{ weather_metrics.light_drizzle.precision }}</td>
-                            <td>{{ weather_metrics.light_drizzle.recall }}</td>
-                            <td>{{ weather_metrics.light_drizzle.f1 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Moderate Rain</strong></td>
-                            <td>{{ weather_metrics.moderate_rain.precision }}</td>
-                            <td>{{ weather_metrics.moderate_rain.recall }}</td>
-                            <td>{{ weather_metrics.moderate_rain.f1 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Heavy Rain</strong></td>
-                            <td>{{ weather_metrics.heavy_rain.precision }}</td>
-                            <td>{{ weather_metrics.heavy_rain.recall }}</td>
-                            <td>{{ weather_metrics.heavy_rain.f1 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </article>
-
-        <article class="dag-note" aria-label="Weather classifier engineering note">
-            <p>
-                Rare weather codes are naturally underrepresented because only
-                five cities were available for training.
-            </p>
-        </article>
-
-    </article>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="consensus-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="consensus-title">Consensus Filter</h2>
-            <p>Validate the local model prediction against external numerical weather prediction.</p>
-        </div>
-
-    </header>
-
-    <div class="architecture-flow" aria-label="Consensus filter model flow">
-
-        <article class="arch-box glass arch-flow-card">
-            <div class="arch-icon">
-                <i class="bi bi-cpu"></i>
-            </div>
-            <h3>Machine Learning Prediction</h3>
-            <p>The machine learning model acts as a local atmospheric expert.</p>
-            <footer class="arch-footer">Local expert</footer>
-        </article>
-
-        <i class="bi bi-plus-lg arch-connector" aria-hidden="true"></i>
-
-        <article class="arch-box glass arch-flow-card">
-            <div class="arch-icon">
-                <i class="bi bi-cloud-download"></i>
-            </div>
-            <h3>Open-Meteo NWP</h3>
-            <p>The external Numerical Weather Prediction forecast acts as a global observer.</p>
-            <footer class="arch-footer">Global observer</footer>
-        </article>
-
-        <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
-
-        <article class="arch-box glass arch-flow-card">
-            <div class="arch-icon">
-                <i class="bi bi-diagram-2"></i>
-            </div>
-            <h3>Neighbour Validation</h3>
-            <p>Neighbouring weather codes are accepted.</p>
-            <footer class="arch-footer">Agreement check</footer>
-        </article>
-
-        <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
-
-        <article class="arch-box glass arch-flow-card">
-            <div class="arch-icon">
-                <i class="bi bi-check2-circle"></i>
-            </div>
-            <h3>Agreement</h3>
-            <p>Large disagreements fall back to the external forecast.</p>
-            <footer class="arch-footer">Consistency gate</footer>
-        </article>
-
-        <i class="bi bi-arrow-right arch-connector" aria-hidden="true"></i>
-
-        <article class="arch-box glass arch-flow-card">
-            <div class="arch-icon">
-                <i class="bi bi-shield-check"></i>
-            </div>
-            <h3>Final Weather Code</h3>
-            <p>Validated output preserves physical consistency.</p>
-            <footer class="arch-footer">Forecast output</footer>
-        </article>
 
     </div>
 
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="investigated-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="investigated-title">Models Investigated</h2>
-            <p>Variables intentionally externalised after model validation and production review.</p>
-        </div>
-
-    </header>
-
-    <div class="grid grid-3" role="list" aria-label="Investigated externalised models">
-
-        <article class="card glass" role="listitem">
-            <div class="metric-icon">
-                <i class="bi bi-wind"></i>
-            </div>
-            <h3 class="card-title">Wind</h3>
-            <span class="badge">Externalised</span>
-            <p>
-                Validation performance plateaued near R<sup>2</sup> around 0.65
-                despite extensive feature engineering. Atmospheric research
-                indicated dependence on regional pressure gradients, terrain and
-                synoptic systems beyond the available feature space.
-            </p>
-            <span class="badge badge-warning">Engineering Decision</span>
-        </article>
-
-        <article class="card glass" role="listitem">
-            <div class="metric-icon">
-                <i class="bi bi-cloud"></i>
-            </div>
-            <h3 class="card-title">Cloud Cover</h3>
-            <span class="badge">Externalised</span>
-            <p>
-                Recursive error propagation, upper-atmospheric visibility and
-                production robustness motivated transition to external Numerical
-                Weather Prediction.
-            </p>
-            <span class="badge badge-warning">Engineering Decision</span>
-        </article>
-
-        <article class="card glass" role="listitem">
-            <div class="metric-icon">
-                <i class="bi bi-cloud-drizzle"></i>
-            </div>
-            <h3 class="card-title">Rain Amount</h3>
-            <span class="badge">Externalised</span>
-            <p>
-                Extreme precipitation, zero-inflated targets and multi-scale
-                atmospheric physics made Numerical Weather Prediction a more
-                reliable production solution.
-            </p>
-            <span class="badge badge-warning">Engineering Decision</span>
-        </article>
-
-    </div>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="model-summary-title">
-
-    <header class="section-title">
-
-        <div>
-            <h2 id="model-summary-title">Model Summary</h2>
-            <p>Comparison of production model responsibilities.</p>
-        </div>
-
-    </header>
-
-    {% set summary_cards = [
-        {'icon': 'thermometer-half', 'name': 'Temperature', 'type': 'Regression', 'output': '2 Outputs'},
-        {'icon': 'speedometer2', 'name': 'Pressure', 'type': 'Regression', 'output': '2 Outputs'},
-        {'icon': 'droplet', 'name': 'Moisture', 'type': 'Regression', 'output': '4 Outputs'},
-        {'icon': 'cloud-rain', 'name': 'Rain', 'type': 'Binary Classification', 'output': 'Probability'},
-        {'icon': 'cloud-sun', 'name': 'Weather', 'type': 'Multiclass Classification', 'output': 'Sky Condition'}
-    ] %}
-
-    <div class="metric-grid" role="list" aria-label="Production model summary">
-
-        {% for item in summary_cards %}
-
-        <article class="metric-card glass" role="listitem">
-            <div class="metric-icon">
-                <i class="bi bi-{{ item.icon }}"></i>
-            </div>
-            <h3 class="card-title">{{ item.name }}</h3>
-            <div class="metric-label">{{ item.type }}</div>
-            <div class="metric-number">{{ item.output }}</div>
-        </article>
-
-        {% endfor %}
-
-    </div>
-
-</section>
-
-<section class="mt-4 mb-4" aria-labelledby="closing-title">
-
-    <article class="card glass text-center">
-
-        <h2 id="closing-title">Hierarchical Intelligence</h2>
-
-        <p>
-            Rather than predicting every atmospheric variable independently,
-            Weather Engine combines multiple specialised machine learning models
-            into a dependency-aware forecasting hierarchy. Lower-level
-            predictions become engineered features for higher tiers, producing
-            forecasts that remain both statistically accurate and physically
-            consistent.
-        </p>
-
-        <div class="chips mt-3" aria-label="Technology stack">
-            <span class="chip">Python</span>
-            <span class="chip">LightGBM</span>
-            <span class="chip">scikit-learn</span>
-            <span class="chip">PostgreSQL</span>
-            <span class="chip">Flask</span>
-            <span class="chip">Open-Meteo</span>
-            <span class="chip">Bootstrap</span>
-            <span class="chip">Joblib</span>
-        </div>
-
-    </article>
-
-</section>
+</div>
 
 {% endblock %}

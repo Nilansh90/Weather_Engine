@@ -1,0 +1,112 @@
+Day Log – Dashboard Redesign, Models Research Page, Navigation Simplification and System Refinement
+
+Today's work focused on significantly restructuring the web application from a collection of informational
+pages into a cleaner engineering and research platform. The objective was to remove redundant sections,
+improve the overall user experience, and make every page serve a clearly defined purpose.
+
+The first major task involved redesigning the Performance Dashboard.
+The dashboard was shifted away from a system monitoring perspective and redesigned as a model
+evaluation dashboard. Several sections that were originally intended for operational monitoring,
+ such as pipeline health, model health, execution timeline, runtime metrics, latest forecasts,
+ weather code accuracy, city coverage map and similar administrative components,
+ were removed from the design. This decision helped keep the dashboard focused solely on
+ evaluating forecasting performance.
+
+A new dashboard strategy was finalized. The top section now contains only meaningful
+evaluation metrics including Temperature MAE, Pressure MAE, Moisture MAE, Rain Classification Accuracy,
+Total Cities Processed and Total Forecasts Generated. Average runtime and weather code accuracy
+ were intentionally removed since they do not contribute significantly to evaluating the forecasting engine.
+
+The analytical section of the dashboard was redesigned around Plotly visualizations.
+Instead of generic placeholder graphs, the dashboard will now display daily error trends
+calculated from the database over the last fifteen days, or fewer if less historical data is available.
+Separate graphs are planned for Temperature MAE, Pressure MAE, Dew Point MAE,
+Humidity MAE and Rain Classification Accuracy. Forecast versus Actual visualizations were retained
+only for Temperature and Pressure while unnecessary charts were removed.
+ The city performance section was redesigned into a database-driven evaluation table
+ showing city-wise performance statistics instead of placeholder values.
+
+While implementing these changes, several template issues were encountered and resolved.
+Multiple Jinja template syntax errors caused by incomplete control blocks, nested expressions and
+ partially commented template logic were corrected. Undefined variables such as pipeline references r
+ emaining after section removal were eliminated. Dashboard styling was also revised to improve
+ readability by introducing better spacing, reduced visual clutter and section-specific colour themes.
+ Different visual identities were assigned to forecast evaluation, rain classification, forecast versus actual
+ plots, city performance and dashboard information panels to make the page easier to navigate.
+
+Database integration issues were also addressed during dashboard development.
+The dashboard initially failed because SQL queries attempted to join a cities table that did not exist
+within the database schema. The implementation was modified to use existing tables instead,
+ensuring compatibility with the current PostgreSQL database without requiring additional schema modifications.
+
+After the dashboard redesign was completed, attention shifted to the Models page.
+Rather than repairing the existing implementation,
+the decision was made to redesign the entire page from scratch into a
+research-oriented documentation interface. T
+he new objective became presenting the modelling methodology in a manner similar to an
+academic paper or technical report rather than simply displaying metrics.
+
+A completely new research page structure was designed.
+ The opening section now introduces the modelling philosophy
+ followed by a dedicated architecture section displaying the
+ complete Hybrid Weather Engine Tiered DAG.
+ This architecture was also refined to better represent the final production strategy.
+  Elevation was removed from the deterministic input layer, wind prediction was updated to
+  rely entirely on external Numerical Weather Prediction data,
+  cloud prediction was similarly shifted to external NWP without internal fallback logic,
+   rain amount was replaced by NWP instead of an internal regression model,
+   and the weather code stage was relabelled as an inference stage rather than purely a machine
+   learning classifier. The final forecast vector was updated accordingly to accurately reflect the
+   production pipeline.
+
+The remainder of the Models page was developed section by section.
+Separate academic-style documentation was created for the Temperature and Pressure models,
+including objectives, input features, output variables and evaluation metrics.
+Similar research documentation was produced for the Moisture model alongside a
+detailed engineering discussion explaining why wind prediction was abandoned internally
+ due to an observed performance ceiling and replaced with external Numerical Weather Prediction.
+
+Rain
+forecasting documentation was divided into two independent research sections. Rain occurrence was documented as a
+binary classification problem with threshold optimisation focused on maximising recall to reduce false negatives.
+ Rain amount prediction was documented separately, explaining why regression approaches were abandoned
+ in favour of external NWP because of zero-inflated rainfall distributions, poor extreme event prediction
+ and the advantages of physics-based numerical weather prediction.
+
+Cloud cover and weather code modelling were then documented. Cloud prediction was presented as an engineer
+ing decision where external Numerical Weather Prediction provides greater reliability than internal
+regression. Weather code prediction was documented as a multiclass inference stage, accompanied by
+overall classification accuracy and representative class-wise performance metrics.
+ A Hybrid Consensus Filter section was also introduced to explain how machine learning predictions
+ are validated against external Numerical Weather Prediction before producing the final weather forecast.
+
+The Models page concluded with a comprehensive Hybrid Forecasting Strategy section summarising which
+ atmospheric variables are predicted internally using machine learning and which are supplied externally.
+  A final Research Outcome section documented the overall philosophy of the forecasting engine,
+  emphasising the deliberate combination of statistical learning and physics-based forecasting to
+  maximise reliability rather than relying exclusively on machine learning.
+
+Substantial CSS work accompanied each research section. New reusable research cards,
+ decision cards, feature containers, algorithm badges, consensus diagrams, summary panels and
+ section-specific colour themes were introduced to produce a clean academic presentation while
+ maintaining consistency with the overall application interface.
+
+Navigation across the application was also simplified. Earlier decisions resulted in the
+complete removal of the Engine page and the History page because their functionality either
+duplicated existing pages or no longer aligned with the project's direction.
+A systematic cleanup strategy was established for removing unused routes, templates,
+navigation links, CSS, JavaScript and backend functions associated with these pages.
+
+Finally, the overall navigation terminology was reviewed and updated to better
+match the evolving purpose of the application. Instead of generic names, the
+interface now presents clearer engineering-oriented page titles including Prediction Metrics Dashboard,
+ Model Architecture, System Architecture, Project Insights and Signup for Mailed Reports, giving
+ the application a more coherent identity as a hybrid machine learning and weather forecasting platform.
+
+By the end of today's development session, the dashboard had been transformed into a
+dedicated performance evaluation platform, the Models page had evolved into a comprehensive research
+methodology document, the hybrid forecasting architecture had been updated to reflect the final
+production strategy, redundant pages had been removed, navigation had been simplified,
+numerous template and database issues had been resolved, and the project had taken a
+significant step toward becoming a polished engineering and research application rather than a
+conventional weather forecasting website.
