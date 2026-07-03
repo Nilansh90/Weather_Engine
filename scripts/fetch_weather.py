@@ -21,13 +21,13 @@ from app.external.nwp_client import NWPClient
 
 def main():
 
-    print("\n" + "=" * 60)
-    print("        WEATHER ENGINE - NWP CACHE BUILDER")
-    print("=" * 60)
+    # print("\n" + "=" * 60)
+    # print("        WEATHER ENGINE - NWP CACHE BUILDER")
+    # print("=" * 60)
 
     forecast_date = date.today() + timedelta(days=1)
 
-    print(f"\nForecast Date : {forecast_date}\n")
+    # print(f"\nForecast Date : {forecast_date}\n")
 
     # ----------------------------------------------------
     # Initialize
@@ -59,7 +59,7 @@ def main():
 
         longitude = city["longitude"]
 
-        print(f"[{index}/{total}] {city_name}")
+        # print(f"[{index}/{total}] {city_name}")
 
         try:
 
@@ -73,32 +73,32 @@ def main():
 
             success += 1
 
-            print("   ✓ Forecast cached\n")
+            # print("   ✓ Forecast cached\n")
 
         except Exception as e:
 
             failed += 1
 
-            print(f"   ✗ Failed : {e}\n")
+            # print(f"   ✗ Failed : {e}\n")
 
     # ----------------------------------------------------
     # Summary
     # ----------------------------------------------------
 
-    print("=" * 60)
-
-    print("CACHE BUILD COMPLETE\n")
-
-    print(f"Cities Processed : {total}")
-    print(f"Successful       : {success}")
-    print(f"Failed           : {failed}")
-
-    if failed == 0:
-        print("\nPipeline Status  : SUCCESS")
-    else:
-        print("\nPipeline Status  : PARTIAL FAILURE")
-
-    print("=" * 60)
+    # print("=" * 60)
+    #
+    # print("CACHE BUILD COMPLETE\n")
+    #
+    # print(f"Cities Processed : {total}")
+    # print(f"Successful       : {success}")
+    # print(f"Failed           : {failed}")
+    #
+    # if failed == 0:
+    #     print("\nPipeline Status  : SUCCESS")
+    # else:
+    #     print("\nPipeline Status  : PARTIAL FAILURE")
+    #
+    # print("=" * 60)
 
 
 if __name__ == "__main__":

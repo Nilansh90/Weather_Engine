@@ -23,13 +23,13 @@ from app.ml.predictor import InferenceOrchestrator
 
 def main():
 
-    print("\n" + "=" * 65)
-    print("           WEATHER ENGINE - DAILY PREDICTION")
-    print("=" * 65)
+    # print("\n" + "=" * 65)
+    # print("           WEATHER ENGINE - DAILY PREDICTION")
+    # print("=" * 65)
 
     forecast_date = date.today() + timedelta(days=1)
 
-    print(f"\nForecast Date : {forecast_date}\n")
+    # print(f"\nForecast Date : {forecast_date}\n")
 
     # ---------------------------------------------------
     # Initialize objects
@@ -67,7 +67,7 @@ def main():
 
         longitude = city["longitude"]
 
-        print(f"[{index}/{total}] {city_name}")
+        # print(f"[{index}/{total}] {city_name}")
 
         try:
 
@@ -112,41 +112,41 @@ def main():
 
             success += 1
 
-            print("   ✓ Prediction Saved\n")
+            # print("   ✓ Prediction Saved\n")
 
         except Exception:
 
             failed += 1
 
-            print("   ✗ Prediction Failed\n")
+            # print("   ✗ Prediction Failed\n")
 
             traceback.print_exc()
 
-            print()
+            # print()
 
     # ---------------------------------------------------
     # Summary
     # ---------------------------------------------------
 
-    print("=" * 65)
-
-    print("PREDICTION PIPELINE COMPLETE\n")
-
-    print(f"Cities Processed : {total}")
-
-    print(f"Successful       : {success}")
-
-    print(f"Failed           : {failed}")
-
-    if failed == 0:
-
-        print("\nPipeline Status  : SUCCESS")
-
-    else:
-
-        print("\nPipeline Status  : PARTIAL FAILURE")
-
-    print("=" * 65)
+    # print("=" * 65)
+    #
+    # print("PREDICTION PIPELINE COMPLETE\n")
+    #
+    # print(f"Cities Processed : {total}")
+    #
+    # print(f"Successful       : {success}")
+    #
+    # print(f"Failed           : {failed}")
+    #
+    # if failed == 0:
+    #
+    #     print("\nPipeline Status  : SUCCESS")
+    #
+    # else:
+    #
+    #     print("\nPipeline Status  : PARTIAL FAILURE")
+    #
+    # print("=" * 65)
 
     db.close()
 

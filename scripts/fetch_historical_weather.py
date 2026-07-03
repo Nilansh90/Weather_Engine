@@ -20,46 +20,46 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JSON_PATH = os.path.join(BASE_DIR, 'cities.json')
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'data', 'raw')
 
-print("[INIT] Starting historical weather data ingestion...")
-print(f"[PATH] Base directory: {BASE_DIR}")
-print(f"[PATH] Cities JSON: {JSON_PATH}")
-print(f"[PATH] Raw data directory: {RAW_DATA_DIR}")
+# print("[INIT] Starting historical weather data ingestion...")
+# print(f"[PATH] Base directory: {BASE_DIR}")
+# print(f"[PATH] Cities JSON: {JSON_PATH}")
+# print(f"[PATH] Raw data directory: {RAW_DATA_DIR}")
 
 
 def clean_raw_data_directory():
     """Remove existing raw data directory if it exists"""
-    print("\n[CLEANUP] Checking for existing raw data directory...")
+    # print("\n[CLEANUP] Checking for existing raw data directory...")
     if os.path.exists(RAW_DATA_DIR):
-        print(f"[CLEANUP] Found existing directory: {RAW_DATA_DIR}")
+        # print(f"[CLEANUP] Found existing directory: {RAW_DATA_DIR}")
         shutil.rmtree(RAW_DATA_DIR)
-        print(f"[CLEANUP] [OK] Deleted existing directory")
+        # print(f"[CLEANUP] [OK] Deleted existing directory")
 
     # Create fresh directory
     os.makedirs(RAW_DATA_DIR, exist_ok=True)
-    print(f"[CLEANUP] [OK] Created fresh raw data directory")
+    # print(f"[CLEANUP] [OK] Created fresh raw data directory")
 
 
 def run_ingestion():
     """Fetch 15 years of historical weather data from OpenMeteo API"""
 
     if not os.path.exists(JSON_PATH):
-        print(f"[ERROR] {JSON_PATH} not found.")
+        # print(f"[ERROR] {JSON_PATH} not found.")
         return
 
-    print(f"\n[LOAD] Loading cities from {JSON_PATH}...")
+    # print(f"\n[LOAD] Loading cities from {JSON_PATH}...")
     with open(JSON_PATH, 'r') as f:
         cities = json.load(f)['cities']
 
-    print(f"[LOAD] ✓ Loaded {len(cities)} cities:")
-    for city in cities:
-        print(f"      - {city['name']} (ID: {city['id']}, Lat: {city['lat']}, Lon: {city['lon']})")
+    # print(f"[LOAD] ✓ Loaded {len(cities)} cities:")
+    # for city in cities:
+    #     print(f"      - {city['name']} (ID: {city['id']}, Lat: {city['lat']}, Lon: {city['lon']})")
 
     ist = pytz.timezone('Asia/Kolkata')
     today = datetime.now(ist).date()
     fifteen_years_ago = today - timedelta(days=15 * 365)
 
-    print(f"\n[DATE] Today's date (IST): {today}")
-    print(f"[DATE] 15 years ago: {fifteen_years_ago}")
+    # print(f"\n[DATE] Today's date (IST): {today}")
+    # print(f"[DATE] 15 years ago: {fifteen_years_ago}")
 
     daily_params = [
         "weather_code", "temperature_2m_mean", "temperature_2m_max", "temperature_2m_min",
@@ -71,20 +71,20 @@ def run_ingestion():
         "pressure_msl_mean", "pressure_msl_max", "pressure_msl_min"
     ]
 
-    print(f"[API] ✓ Configured {len(daily_params)} weather parameters")
+    # print(f"[API] ✓ Configured {len(daily_params)} weather parameters")
 
     # Pause before hitting the API loop
-    print("\n[PAUSE] Sleeping for 15 seconds before starting the API ingestion loop...")
+    # print("\n[PAUSE] Sleeping for 15 seconds before starting the API ingestion loop...")
     time.sleep(15)
 
     for idx, city in enumerate(cities):
-        print(f"\n{'=' * 70}")
-        print(f"[CITY] Processing {city['name']} (ID: {city['id']}) [{idx + 1}/{len(cities)}]")
-        print(f"{'=' * 70}")
+        # print(f"\n{'=' * 70}")
+        # print(f"[CITY] Processing {city['name']} (ID: {city['id']}) [{idx + 1}/{len(cities)}]")
+        # print(f"{'=' * 70}")
 
         # The 45-second wait to hit the ~1 city/minute rate limit
         if idx > 0:
-            print(f"[PAUSE] Sleeping for 45 seconds to ensure 1 city/minute limit...")
+            # print(f"[PAUSE] Sleeping for 45 seconds to ensure 1 city/minute limit...")
             time.sleep(45)
 
         params = {
@@ -100,7 +100,7 @@ def run_ingestion():
             "timezone": "Asia/Kolkata"
         }
 
-        print(f"[API] Fetching data from {params['start_date']} to {params['end_date']}...")
+        # print(f"[API] Fetching data from {params['start_date']} to {params['end_date']}...")
 
         try:
             responses = openmeteo.weather_api(
@@ -109,7 +109,7 @@ def run_ingestion():
             )
             daily = responses[0].Daily()
 
-            print(f"[API] ✓ Successfully fetched data from API")
+            # print(f"[API] ✓ Successfully fetched data from API")
 
             # --- FIXED DATE PARSING FOR THE OPEN-METEO SDK ---
             start_epoch = daily.Time()
@@ -125,8 +125,8 @@ def run_ingestion():
             ).tz_convert('Asia/Kolkata')
 
             num_days = len(time_series)
-            print(f"[DATA] Retrieved {num_days} days of data")
-            print(f"[DATA] Date range: {time_series[0].date()} to {time_series[-1].date()}")
+            # print(f"[DATA] Retrieved {num_days} days of data")
+            # print(f"[DATA] Date range: {time_series[0].date()} to {time_series[-1].date()}")
 
             # Create DataFrame
             df = pd.DataFrame({
@@ -160,41 +160,41 @@ def run_ingestion():
                 "pressure_msl_min_hpa": daily.Variables(21).ValuesAsNumpy()
             })
 
-            print(f"[VERIFY] DataFrame shape: {df.shape}")
-
-            # Quality checks
-            print(f"\n[QUALITY] Checking data quality...")
+            # print(f"[VERIFY] DataFrame shape: {df.shape}")
+            #
+            # # Quality checks
+            # print(f"\n[QUALITY] Checking data quality...")
             null_counts = df.isnull().sum()
-            if null_counts.sum() > 0:
-                print(f"[QUALITY] ⚠ Found null values")
-            else:
-                print(f"[QUALITY] ✓ No null values found")
+            # if null_counts.sum() > 0:
+            #     print(f"[QUALITY] ⚠ Found null values")
+            # else:
+            #     print(f"[QUALITY] ✓ No null values found")
 
             # Save to CSV
             csv_filename = f"{city['name'].lower().replace(' ', '_')}.csv"
             csv_path = os.path.join(RAW_DATA_DIR, csv_filename)
 
-            print(f"\n[SAVE] Saving to CSV...")
+            # print(f"\n[SAVE] Saving to CSV...")
             df.to_csv(csv_path, index=False)
 
             file_size = os.path.getsize(csv_path)
-            print(f"[SAVE] ✓ File saved: {csv_path} ({file_size / (1024 * 1024):.2f} MB)")
+            # print(f"[SAVE] ✓ File saved: {csv_path} ({file_size / (1024 * 1024):.2f} MB)")
 
         except Exception as e:
-            print(f"[ERROR] Failed to fetch data for {city['name']}: {str(e)}")
+            # print(f"[ERROR] Failed to fetch data for {city['name']}: {str(e)}")
             import traceback
             traceback.print_exc()
 
-    print(f"\n{'=' * 70}")
-    print(f"[COMPLETE] ✓ Ingestion complete! Total files: {len(os.listdir(RAW_DATA_DIR))}")
-    print(f"{'=' * 70}")
+    # print(f"\n{'=' * 70}")
+    # print(f"[COMPLETE] ✓ Ingestion complete! Total files: {len(os.listdir(RAW_DATA_DIR))}")
+    # print(f"{'=' * 70}")
 
 
 if __name__ == "__main__":
     clean_raw_data_directory()
 
     # Pause between cleaning the directory and starting the main ingestion
-    print("\n[PAUSE] Directory cleaned. Sleeping for 15 seconds before ingestion...")
+    # print("\n[PAUSE] Directory cleaned. Sleeping for 15 seconds before ingestion...")
     time.sleep(15)
 
     run_ingestion()

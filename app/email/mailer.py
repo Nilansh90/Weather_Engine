@@ -313,8 +313,8 @@ class EmailReporter:
 
             )
 
-        print(
-
-            f"Daily report sent to {receiver}"
-
-        )
+        # print(
+        #
+        #     f"Daily report sent to {receiver}"
+        #
+        # )

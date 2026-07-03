@@ -41,7 +41,7 @@ try:
     import psycopg2
     from dotenv import load_dotenv
 except ImportError:
-    print("Please install required packages: pip install requests psycopg2-binary python-dotenv")
+    # print("Please install required packages: pip install requests psycopg2-binary python-dotenv")
     sys.exit(1)
 
 # Load environment variables
@@ -84,7 +84,7 @@ def most_common(values: List[Any]) -> Optional[Any]:
 
 
 def ensure_table(conn):
-    print("Checking database table structure...")
+    # print("Checking database table structure...")
     with conn.cursor() as cur:
         cur.execute("""
             CREATE TABLE IF NOT EXISTS weather_data (
@@ -124,7 +124,7 @@ def ensure_table(conn):
 
 
 def fetch_for_city(lat: float, lon: float, start_date: str, end_date: str) -> Dict[str, Any]:
-    print(f"  -> Fetching API data for ({lat}, {lon}) from {start_date} to {end_date}...")
+    # print(f"  -> Fetching API data for ({lat}, {lon}) from {start_date} to {end_date}...")
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -302,7 +302,7 @@ def main():
     cities_path = Path(args.cities)
 
     if not cities_path.exists():
-        print(f"Error: {cities_path} not found.")
+        # print(f"Error: {cities_path} not found.")
         sys.exit(1)
 
     with open(cities_path, "r", encoding="utf-8") as fh:
@@ -315,17 +315,17 @@ def main():
         cities = raw_data
 
     if not isinstance(cities, list):
-        print("Error: cities.json must contain a JSON array of objects.")
+        # print("Error: cities.json must contain a JSON array of objects.")
         sys.exit(1)
 
-    print(f"Found {len(cities)} cities in {cities_path}.")
+    # print(f"Found {len(cities)} cities in {cities_path}.")
     # 2. Setup dates and DB
     start_date, end_date, dates = start_end_dates(args.days)
     if not DATABASE_URL:
-        print("Error: DATABASE_URL not found in environment or .env file.")
+        # print("Error: DATABASE_URL not found in environment or .env file.")
         sys.exit(1)
 
-    print("Opening connection to PostgreSQL...")
+    # print("Opening connection to PostgreSQL...")
     conn = psycopg2.connect(DATABASE_URL)
     ensure_table(conn)
 
@@ -376,16 +376,16 @@ def main():
 
             # Insert into Postgres
             ins, sk = insert_rows(conn, city, aggs, dates)
-            print(f"  -> {city_name} finished: {ins} inserted, {sk} skipped (already existed).")
+            # print(f"  -> {city_name} finished: {ins} inserted, {sk} skipped (already existed).")
             total_inserted += ins
             total_skipped += sk
 
         except Exception as e:
-            print(f"  !! Error processing {city_name}: {e}")
+            # print(f"  !! Error processing {city_name}: {e}")
             continue
 
     conn.close()
-    print(f"\nAll done! Total rows inserted: {total_inserted}, Total skipped: {total_skipped}.")
+    # print(f"\nAll done! Total rows inserted: {total_inserted}, Total skipped: {total_skipped}.")
 
 
 if __name__ == '__main__':

@@ -367,26 +367,26 @@ class InferenceOrchestrator:
 
         return forecast
 
-    def debug_feature_names(self):
-        print("\nTemperature")
-        print(
-            self.temp_model.estimators_[0].booster_.feature_name()
-        )
-
-        print("\nPressure")
-        print(
-            self.pressure_model.estimators_[0].booster_.feature_name()
-        )
-
-        print("\nMoisture")
-        print(
-            self.moisture_model.estimators_[0].booster_.feature_name()
-        )
-
-        print("\nRain")
-        print(
-            self.rain_model.booster_.feature_name()
-        )
+    # def debug_feature_names(self):
+    #     print("\nTemperature")
+    #     print(
+    #         self.temp_model.estimators_[0].booster_.feature_name()
+    #     )
+    #
+    #     print("\nPressure")
+    #     print(
+    #         self.pressure_model.estimators_[0].booster_.feature_name()
+    #     )
+    #
+    #     print("\nMoisture")
+    #     print(
+    #         self.moisture_model.estimators_[0].booster_.feature_name()
+    #     )
+    #
+    #     print("\nRain")
+    #     print(
+    #         self.rain_model.booster_.feature_name()
+    #     )
 
         print("\nWeather")
         print(

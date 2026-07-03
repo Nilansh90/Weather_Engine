@@ -19,17 +19,17 @@ def abs_error(a, b):
 
 def main():
 
-    print("=" * 65)
-    print("        WEATHER ENGINE - ERROR CALCULATION")
-    print("=" * 65)
+    # print("=" * 65)
+    # print("        WEATHER ENGINE - ERROR CALCULATION")
+    # print("=" * 65)
 
     db = DatabaseManager()
 
     predictions = db.get_predictions_without_errors()
-    print("Prediction count:", len(predictions))
+    # print("Prediction count:", len(predictions))
 
-    for p in predictions:
-        print(p["city_id"], p["forecast_date"])
+    # for p in predictions:
+    #     print(p["city_id"], p["forecast_date"])
     total = len(predictions)
 
     success = 0
@@ -38,12 +38,12 @@ def main():
 
     for prediction in predictions:
 
-        print(
-
-            f"[{prediction['city_id']}] "
-            f"{prediction['forecast_date']}"
-
-        )
+        # print(
+        #
+        #     f"[{prediction['city_id']}] "
+        #     f"{prediction['forecast_date']}"
+        #
+        # )
 
         actual = db.get_actual_weather(
 
@@ -55,7 +55,7 @@ def main():
 
         if actual is None:
 
-            print("   Actual weather unavailable\n")
+            # print("   Actual weather unavailable\n")
 
             failed += 1
 
@@ -189,17 +189,17 @@ def main():
 
         success += 1
 
-        print("   ✓ Error calculated\n")
+        # print("   ✓ Error calculated\n")
 
-    print("=" * 65)
-
-    print("Processed :", total)
-
-    print("Successful:", success)
-
-    print("Skipped   :", failed)
-
-    print("=" * 65)
+    # print("=" * 65)
+    #
+    # print("Processed :", total)
+    #
+    # print("Successful:", success)
+    #
+    # print("Skipped   :", failed)
+    #
+    # print("=" * 65)
 
     db.close()
 

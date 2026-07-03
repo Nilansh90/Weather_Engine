@@ -30,9 +30,9 @@ from app.email.mailer import EmailReporter
 
 def main():
 
-    print("\n" + "=" * 65)
-    print("          WEATHER ENGINE - EMAIL REPORT")
-    print("=" * 65)
+    # print("\n" + "=" * 65)
+    # print("          WEATHER ENGINE - EMAIL REPORT")
+    # print("=" * 65)
 
     db = DatabaseManager()
 
@@ -40,7 +40,7 @@ def main():
     subscribers = db.get_active_subscriptions()
 
     if not subscribers:
-        print("No approved subscribers found.")
+        # print("No approved subscribers found.")
 
         return
 
@@ -70,7 +70,7 @@ def main():
 
             city_name = city["city_name"]
 
-            print(f"Preparing report for {city_name}")
+            # print(f"Preparing report for {city_name}")
 
             # ------------------------------------------
             # Tomorrow Forecast
@@ -86,7 +86,7 @@ def main():
 
             if forecast is None:
 
-                print(f"Skipping {city_name} (forecast missing)")
+                # print(f"Skipping {city_name} (forecast missing)")
 
                 continue
 
@@ -183,17 +183,17 @@ def main():
 
                 )
 
-                print(
-
-                    f"✓ Email sent to {subscriber['email']}"
-
-                )
+                # print(
+                #
+                #     f"✓ Email sent to {subscriber['email']}"
+                #
+                # )
 
                 time.sleep(2)
 
-            print(f"✓ Email sent for {city_name}")
-            time.sleep(3)
-        print("\nReport generation complete.")
+            # print(f"✓ Email sent for {city_name}")
+            # time.sleep(3)
+        # print("\nReport generation complete.")
 
     except Exception:
 

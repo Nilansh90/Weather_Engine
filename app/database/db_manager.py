@@ -1308,9 +1308,9 @@ p.weather_code,
             WHERE p.forecast_date = :forecast_date
             ORDER BY p.city_id
         """, {"forecast_date": forecast_date})
-        print("================")
-        print("HOME FORECAST DATE:", forecast_date)
-        print("ROWS FOUND:", len(rows))
+        # print("================")
+        # print("HOME FORECAST DATE:", forecast_date)
+        # print("ROWS FOUND:", len(rows))
 
         for r in rows:
             print(
@@ -1320,7 +1320,7 @@ p.weather_code,
                 r["weather_code"]
             )
 
-        print("================")
+        # print("================")
 
         return [
             {

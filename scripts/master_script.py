@@ -17,15 +17,13 @@ scripts = [
     "mail_script.py",
 ]
 
-print("=" * 60)
-print("WEATHER ENGINE - MASTER PIPELINE")
-print("=" * 60)
+
 
 with open(log_file, "a", encoding="utf-8") as log:
 
     for script in scripts:
 
-        print(f"\nRunning {script}")
+        # print(f"\nRunning {script}")
 
         log.write(f"\n\n{'=' * 60}\n")
         log.write(f"Running {script}\n")
@@ -43,13 +41,13 @@ with open(log_file, "a", encoding="utf-8") as log:
                 check=True
             )
 
-            print(f"✓ {script} completed")
+            # print(f"✓ {script} completed")
 
         except subprocess.CalledProcessError:
 
-            print(f"✗ {script} failed")
-            print(f"Check log: {log_file}")
+            # print(f"✗ {script} failed")
+            # print(f"Check log: {log_file}")
 
             break
 
-print("\nPipeline finished.")
+# print("\nPipeline finished.")
