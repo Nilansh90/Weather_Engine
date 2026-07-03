@@ -519,3 +519,96 @@ Developed as a full-stack machine learning engineering project exploring product
 
 © 2026 Weather Engine  
 Hybrid ML Forecasting Platform
+
+## Local Setup
+
+### 1. Clone Repository
+
+git clone https://github.com/Nilansh90/Weather_Project.git
+
+cd Weather_Project
+
+
+### 2. Create Virtual Environment
+
+python -m venv .venv
+
+Windows:
+.venv\Scripts\activate
+
+Linux/Mac:
+source .venv/bin/activate
+
+
+### 3. Install Dependencies
+
+pip install -r requirements.txt
+
+
+### 4. Environment Variables
+
+Create a .env file:
+
+DATABASE_URL=
+EMAIL_ADDRESS=
+EMAIL_PASSWORD=
+
+
+### 5. Setup Database
+
+Create PostgreSQL database:
+
+weather_db
+
+Run:
+
+python setup_tasks/db_setup.py
+
+
+### 6. Train / Load Models
+
+Pre-trained model artifacts are stored in:
+
+model/
+
+
+### 7. Run Forecast Pipeline
+
+python scripts/master_script.py
+
+
+### 8. Start Dashboard
+
+python app/flask_app/server.py
+
+
+Application runs at:
+
+http://localhost:5000
+
+## Project Structure
+
+Weather_Project/
+
+├── app/
+│   ├── database/
+│   ├── flask_app/
+│   ├── ml/
+│   ├── email/
+│   └── external/
+│
+├── scripts/
+│   ├── data collection
+│   ├── prediction pipeline
+│   └── evaluation
+│
+├── model/
+│   └── trained ML models
+│
+├── docs/
+│   └── engineering documentation
+│
+├── notebooks/
+│   └── experimentation
+│
+└── README.md
