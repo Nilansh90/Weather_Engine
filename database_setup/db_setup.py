@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 DB_URL = os.getenv("DATABASE_URL")
 
-# 1. Get the directory of the current script (setup_tasks)
+# 1. Get the directory of the current script (database_setup)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 2. Go up one level to the project root
