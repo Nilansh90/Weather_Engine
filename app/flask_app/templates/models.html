@@ -18,7 +18,7 @@ Models
 
         <h1>
 
-            Models & Research Architecture
+            Machine Learning Architecture
 
         </h1>
 
@@ -150,7 +150,7 @@ Models
 
             <i class="bi bi-journal-text"></i>
 
-            Research Philosophy
+            Engineering Philosophy
 
         </h2>
 
@@ -469,6 +469,353 @@ Models
     </div>
 
 
+    <!-- ========================================== -->
+<!-- TEMPERATURE & PRESSURE MODELS -->
+<!-- ========================================== -->
+
+<div class="page-header section-spacing">
+
+
+    <h2>
+
+        Temperature & Pressure Modelling
+
+    </h2>
+
+    <p class="page-description">
+
+        The first inference tier of the Weather Engine predicts stable
+        thermodynamic atmospheric variables. Temperature and pressure
+        are modelled internally because they demonstrate strong temporal
+        patterns and reliable relationships with astronomical, geographical
+        and historical weather features.
+
+    </p>
+
+
+</div>
+
+
+
+<div class="grid grid-2">
+
+
+    <!-- ========================================== -->
+    <!-- TEMPERATURE MODEL -->
+    <!-- ========================================== -->
+
+
+    <div class="card research-card temperature-model">
+
+
+        <div class="research-header">
+
+
+            <h2>
+
+                🌡 Temperature Model
+
+            </h2>
+
+
+            <span class="algorithm-tag">
+
+                MultiOutput + LightGBM
+
+            </span>
+
+
+        </div>
+
+
+
+        <h4>
+
+            Objective
+
+        </h4>
+
+
+        <p>
+
+            Simultaneous prediction of maximum and minimum daily
+            temperature using a single multi-output regression model.
+            These outputs establish the thermodynamic foundation used
+            by higher inference tiers.
+
+        </p>
+
+
+
+
+        <h4>
+
+            Predicted Variables
+
+        </h4>
+
+
+        <ul>
+
+            <li>Temperature Maximum</li>
+
+            <li>Temperature Minimum</li>
+
+        </ul>
+
+
+
+
+        <h4>
+
+            Input Features
+
+        </h4>
+
+
+        <div class="feature-box">
+
+Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Encoding • Day Cyclic Encoding • Shortwave Radiation • Daylight Duration • Temperature Lag Features • Rolling Temperature Statistics
+
+        </div>
+
+
+
+
+        <h4>
+
+            Test Performance
+
+        </h4>
+
+
+
+        <table class="table">
+
+
+            <thead>
+
+
+                <tr>
+
+                    <th>Variable</th>
+
+                    <th>R²</th>
+
+                    <th>MAE</th>
+
+                    <th>RMSE</th>
+
+                </tr>
+
+
+            </thead>
+
+
+
+            <tbody>
+
+
+                <tr>
+
+                    <td>Temp Max</td>
+
+                    <td>0.954</td>
+
+                    <td>0.85°C</td>
+
+                    <td>1.17</td>
+
+                </tr>
+
+
+
+                <tr>
+
+                    <td>Temp Min</td>
+
+                    <td>0.960</td>
+
+                    <td>0.78°C</td>
+
+                    <td>1.07</td>
+
+                </tr>
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+
+
+
+    <!-- ========================================== -->
+    <!-- PRESSURE MODEL -->
+    <!-- ========================================== -->
+
+
+    <div class="card research-card pressure-model">
+
+
+        <div class="research-header">
+
+
+            <h2>
+
+                🌀 Pressure Model
+
+            </h2>
+
+
+            <span class="algorithm-tag">
+
+                MultiOutput + LightGBM
+
+            </span>
+
+
+        </div>
+
+
+
+
+        <h4>
+
+            Objective
+
+        </h4>
+
+
+
+        <p>
+
+            Joint prediction of maximum and minimum mean sea level
+            pressure. Pressure modelling captures large-scale atmospheric
+            tendencies and provides important information for downstream
+            weather components.
+
+        </p>
+
+
+
+
+        <h4>
+
+            Predicted Variables
+
+        </h4>
+
+
+
+        <ul>
+
+            <li>Pressure Maximum</li>
+
+            <li>Pressure Minimum</li>
+
+        </ul>
+
+
+
+
+        <h4>
+
+            Input Features
+
+        </h4>
+
+
+
+        <div class="feature-box">
+
+Latitude • Longitude • City ID • Year • Day of Week • Seasonal Encoding • Solar Radiation Features • Daylight Duration • Temperature History • Rolling Temperature Features
+
+        </div>
+
+
+
+
+
+        <h4>
+
+            Test Performance
+
+        </h4>
+
+
+
+        <table class="table">
+
+
+            <thead>
+
+
+                <tr>
+
+                    <th>Variable</th>
+
+                    <th>R²</th>
+
+                    <th>MAE</th>
+
+                    <th>RMSE</th>
+
+                </tr>
+
+
+            </thead>
+
+
+
+
+            <tbody>
+
+
+                <tr>
+
+                    <td>Pressure Max</td>
+
+                    <td>0.953</td>
+
+                    <td>0.947 hPa</td>
+
+                    <td>1.23</td>
+
+                </tr>
+
+
+
+
+                <tr>
+
+                    <td>Pressure Min</td>
+
+                    <td>0.943</td>
+
+                    <td>1.05 hPa</td>
+
+                    <td>1.36</td>
+
+                </tr>
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+</div>
+
         <!-- ========================================== -->
     <!-- MOISTURE & WIND -->
     <!-- ========================================== -->
@@ -660,7 +1007,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
             <h4>
 
-                Research Conclusions
+                Project Conclusions
 
             </h4>
 
@@ -885,7 +1232,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
             <h4>
 
-                Research Decision
+                Project Decision
 
             </h4>
 
@@ -995,7 +1342,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
             <h4>
 
-                Research Decision
+                Project Decision
 
             </h4>
 
@@ -1416,7 +1763,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
             <i class="bi bi-award-fill"></i>
 
-            Research Outcome
+            Project Outcome
 
         </h2>
 

@@ -10,17 +10,14 @@ Weather Engine | About
 
     <div>
 
-        <span class="badge mb-2">
-            <i class="bi bi-info-circle"></i>
-            Version 1.0
-        </span>
+
 
         <h1 id="about-title">About Weather Engine</h1>
 
         <p>
-            A production-oriented machine learning platform designed to forecast
-            tomorrow's atmospheric conditions through hierarchical inference,
-            feature engineering and automation.
+        An end-to-end machine learning engineering project built to combine
+        data science, full-stack development, automation and production-style
+        software architecture into one complete forecasting platform.
         </p>
 
     </div>
@@ -46,18 +43,29 @@ Weather Engine | About
         </p>
 
         <p>
-            Weather Engine was developed to explore whether structured historical
-            observations, engineered features and hierarchical machine learning
-            could be combined into a production-style forecasting platform
-            capable of generating explainable, automated and continuously
-            evaluated weather predictions.
-        </p>
+Weather Engine started as an attempt to build a complete end-to-end
+engineering project combining the technologies I had explored across
+software development, data engineering and machine learning.
+</p>
 
-        <p>
-            This project focuses equally on machine learning, software
-            engineering, automation and data engineering rather than treating
-            forecasting as a single regression problem.
-        </p>
+<p>
+Earlier projects like weather mailers helped me understand API integration,
+while basic temperature and rainfall predictors introduced the fundamentals
+of machine learning. The goal here was to move beyond individual scripts and
+build a complete forecasting platform.
+</p>
+
+<p>
+Weather was selected because it provides a wide range of machine learning
+challenges including regression, classification, temporal dependencies,
+feature engineering and uncertainty handling.
+</p>
+
+<p>
+Throughout development, the architecture evolved from a pure ML pipeline
+into a hybrid ML + Numerical Weather Prediction system after exploring the
+real-world limitations of predicting highly dynamic atmospheric variables.
+</p>
 
     </article>
 
@@ -75,11 +83,32 @@ Weather Engine | About
     </header>
 
     {% set goals = [
-        {'icon': 'diagram-3', 'title': 'Hierarchical Forecasting', 'description': 'Use atmospheric dependencies instead of isolated prediction.'},
-        {'icon': 'arrow-repeat', 'title': 'Automation', 'description': 'Build a fully automated daily forecasting pipeline.'},
-        {'icon': 'clipboard-data', 'title': 'Continuous Evaluation', 'description': 'Measure forecast quality against observed weather.'},
-        {'icon': 'puzzle', 'title': 'Engineering', 'description': 'Design a modular and maintainable forecasting platform.'}
-    ] %}
+
+{
+'icon':'layers',
+'title':'End-to-End Engineering',
+'description':'Integrate frontend, backend, databases, ML models and automation into one complete system.'
+},
+
+{
+'icon':'cpu',
+'title':'Machine Learning Depth',
+'description':'Explore regression, classification, feature engineering and real-world model limitations.'
+},
+
+{
+'icon':'diagram-3',
+'title':'Hybrid Forecasting',
+'description':'Combine ML predictions with physics-based NWP guidance for stronger reliability.'
+},
+
+{
+'icon':'rocket-takeoff',
+'title':'Production Thinking',
+'description':'Move beyond notebooks into maintainable software with evaluation and monitoring.'
+}
+
+] %}
 
     <div class="grid grid-4" role="list" aria-label="Project goals">
 
@@ -142,49 +171,9 @@ Weather Engine | About
 
     </article>
 
-</section>
 
-<section class="mt-4 mb-4" aria-labelledby="stack-title">
 
-    <header class="section-title">
-
-        <div>
-            <h2 id="stack-title">Technology Stack</h2>
-            <p>Technologies used across data, modeling, persistence and presentation.</p>
-        </div>
-
-    </header>
-
-    {% set technologies = [
-        {'icon': 'code-slash', 'name': 'Python', 'role': 'Core language for data processing, automation and inference.'},
-        {'icon': 'cpu', 'name': 'LightGBM', 'role': 'Regression and classification model training.'},
-        {'icon': 'window-sidebar', 'name': 'Flask', 'role': 'Presentation layer for engineering views.'},
-        {'icon': 'database', 'name': 'PostgreSQL', 'role': 'Relational storage for observations and forecasts.'},
-        {'icon': 'bootstrap', 'name': 'Bootstrap', 'role': 'Responsive interface primitives and icons.'},
-        {'icon': 'bar-chart-line', 'name': 'Plotly', 'role': 'Forecast analytics and performance visualization.'},
-        {'icon': 'box-seam', 'name': 'Joblib', 'role': 'Model artifact persistence and loading.'},
-        {'icon': 'cloud-download', 'name': 'Open-Meteo', 'role': 'Historical weather and numerical prediction source.'},
-        {'icon': 'table', 'name': 'Pandas', 'role': 'Tabular data transformation and feature construction.'},
-        {'icon': '123', 'name': 'NumPy', 'role': 'Numerical computation for engineered signals.'}
-    ] %}
-
-    <div class="metric-grid" role="list" aria-label="Technology stack">
-
-        {% for tech in technologies %}
-
-        <article class="metric-card glass" role="listitem">
-            <div class="metric-icon">
-                <i class="bi bi-{{ tech.icon }}"></i>
-            </div>
-            <h3 class="card-title">{{ tech.name }}</h3>
-            <p>{{ tech.role }}</p>
-        </article>
-
-        {% endfor %}
-
-    </div>
-
-</section>
+<section class="</section>
 
 <section class="mt-4 mb-4" aria-labelledby="highlights-title">
 
@@ -274,29 +263,60 @@ Weather Engine | About
         <header class="section-title">
 
             <div>
-                <h2 id="scope-title">Current Scope</h2>
-                <p>Operational boundary of the current implementation.</p>
+
+                <h2 id="scope-title">Current Limitations</h2>
+
+                <p>
+                    Present boundaries of the current research and engineering implementation.
+                </p>
+
             </div>
 
         </header>
 
-        <p>
-            Current implementation focuses on five representative Indian cities
-            selected to capture diverse climatic conditions including arid,
-            coastal, metropolitan and heat-belt environments.
-        </p>
 
         <p>
-            The forecasting pipeline operates at daily resolution using
-            approximately fifteen years of historical observations and integrates
-            Numerical Weather Prediction where atmospheric physics exceeds the
-            practical limits of tabular machine learning.
+            Weather Engine was designed as an engineering-focused forecasting
+            platform rather than a replacement for operational meteorological
+            systems. The current implementation has several practical boundaries.
         </p>
+
+
+        <ul class="arch-list">
+
+            <li>
+                <i class="bi bi-check2"></i>
+                Current training data focuses on selected Indian cities and does
+                not yet represent global climate diversity.
+            </li>
+
+
+            <li>
+                <i class="bi bi-check2"></i>
+                Rare extreme events remain challenging because machine learning
+                models depend heavily on available historical examples.
+            </li>
+
+
+            <li>
+                <i class="bi bi-check2"></i>
+                Highly chaotic atmospheric variables such as wind fields and
+                rainfall intensity require external NWP support.
+            </li>
+
+
+            <li>
+                <i class="bi bi-check2"></i>
+                The current system operates at daily forecast resolution rather
+                than high-frequency hourly forecasting.
+            </li>
+
+        </ul>
+
 
     </article>
 
 </section>
-
 <section class="mt-4 mb-4" aria-labelledby="roadmap-title">
 
     <header class="section-title">
@@ -309,15 +329,44 @@ Weather Engine | About
     </header>
 
     {% set roadmap = [
-        {'icon': 'buildings', 'title': 'Expand City Coverage', 'description': 'Increase monitored locations across additional climate regions.'},
 
+{
+'icon':'globe',
+'title':'Broader Weather Coverage',
+'description':'Extend the system across more cities, regions and climate patterns.'
+},
 
+{
+'icon':'arrow-repeat',
+'title':'Continuous Learning Pipeline',
+'description':'Introduce automated retraining as new verified weather observations become available.'
+},
 
-        {'icon': 'arrow-repeat', 'title': 'Continuous Retraining', 'description': 'Refresh models as new evaluated observations accumulate.'},
-        {'icon': 'boxes', 'title': 'Model Ensembles', 'description': 'Combine learners for stronger forecast stability.'},
+{
+'icon':'boxes',
+'title':'Advanced Hybrid Models',
+'description':'Experiment with stronger ensembles combining ML predictions and meteorological models.'
+},
 
+{
+'icon':'cloud-upload',
+'title':'Cloud Deployment',
+'description':'Host the complete forecasting platform with production infrastructure.'
+},
 
-    ] %}
+{
+'icon':'clock-history',
+'title':'Forecast Resolution Upgrade',
+'description':'Explore shorter forecast intervals beyond daily prediction windows.'
+},
+
+{
+'icon':'activity',
+'title':'Model Monitoring',
+'description':'Track long-term model drift, reliability changes and performance degradation.'
+}
+
+] %}
 
     <div class="metric-grid" role="list" aria-label="Future roadmap">
 
@@ -339,74 +388,26 @@ Weather Engine | About
 
 </section>
 
-<section class="mt-4 mb-4" aria-labelledby="statistics-title">
 
-    <header class="section-title">
-
-        <div>
-            <h2 id="statistics-title">Project Statistics</h2>
-            <p>Runtime counters and current operating state.</p>
-        </div>
-
-    </header>
-
-    <div class="kpi-row" role="list" aria-label="Project statistics">
-
-        <article class="kpi glass performance-kpi" role="listitem">
-            <div class="kpi-label">Historical Records</div>
-            <div class="kpi-value">{{ stats.historical_records }}</div>
-        </article>
-
-        <article class="kpi glass performance-kpi" role="listitem">
-            <div class="kpi-label">Predictions Generated</div>
-            <div class="kpi-value">{{ stats.predictions_generated }}</div>
-        </article>
-
-        <article class="kpi glass performance-kpi" role="listitem">
-            <div class="kpi-label">Forecast Accuracy</div>
-            <div class="kpi-value">{{ stats.forecast_accuracy }}</div>
-        </article>
-
-        <article class="kpi glass performance-kpi" role="listitem">
-            <div class="kpi-label">Pipeline Status</div>
-            <div class="kpi-value">Operational</div>
-            <span class="badge badge-success mt-2">Healthy</span>
-        </article>
-
-    </div>
-
-</section>
 
 <section class="mt-4 mb-4" aria-labelledby="closing-title">
 
     <article class="card glass text-center">
 
-        <h2 id="closing-title">Beyond Weather Prediction</h2>
+        <h2 id="closing-title">Beyond an ML Model</h2>
 
         <p>
-            Weather Engine demonstrates how machine learning, feature
-            engineering, relational databases, automation, hierarchical inference
-            and modern web technologies can be integrated into a single
-            production-style forecasting platform.
-        </p>
+Weather Engine represents the transition from building standalone machine
+learning models to designing complete AI-powered software systems.
+</p>
 
-        <p>
-            Rather than being designed as a standalone predictive model, the
-            platform was engineered as an end-to-end machine learning system
-            where every component contributes to reliable, explainable and
-            continuously evaluated forecasts.
-        </p>
+<p>
+The project focuses not only on prediction accuracy, but also on the
+engineering required around machine learning — reliable data pipelines,
+storage, evaluation, automation and user-facing applications.
+</p>
 
-        <div class="chips mt-3" aria-label="Technology pills">
-            <span class="chip">Python</span>
-            <span class="chip">Flask</span>
-            <span class="chip">PostgreSQL</span>
-            <span class="chip">LightGBM</span>
-            <span class="chip">Bootstrap</span>
-            <span class="chip">Plotly</span>
-            <span class="chip">Open-Meteo</span>
-            <span class="chip">Joblib</span>
-        </div>
+
 
     </article>
 

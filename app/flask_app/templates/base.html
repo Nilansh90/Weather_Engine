@@ -49,200 +49,217 @@
 
     <aside class="sidebar">
 
-        <div class="sidebar-logo">
 
-            <div class="logo-icon">
+    <!-- Logo -->
 
-                <i class="bi bi-hurricane"></i>
+    <div class="sidebar-logo">
 
-            </div>
+        <div class="logo-icon">
 
-            <div>
-
-                <h2>Weather Engine</h2>
-
-                <p>Hierarchical ML Forecasting</p>
-
-            </div>
+            <i class="bi bi-cloud-sun"></i>
 
         </div>
 
-        <!-- Navigation -->
 
-        <nav class="sidebar-nav">
+        <div>
 
-            <div class="nav-section">
+            <h2>Weather Engine</h2>
 
-                <span class="nav-title">
-                    HOME
-                </span>
-
-                <a href="{{ url_for('home') }}"
-                   class="nav-link">
-
-                    <i class="bi bi-house"></i>
-
-                    Home
-
-                </a>
-
-            </div>
-
-            <div class="nav-section">
-
-
-
-
-
-                <a href="{{ url_for('models') }}"
-                   class="nav-link">
-
-                    <i class="bi bi-box"></i>
-
-                    Models
-
-                </a>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-sliders"></i>
-
-                    Features
-
-                </a>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-database"></i>
-
-                    Data Sources
-
-                </a>
-
-            </div>
-
-            <div class="nav-section">
-
-                <span class="nav-title">
-
-                    MONITORING
-
-                </span>
-
-                <a href="{{ url_for('dashboard') }}"
-                   class="nav-link">
-
-                    <i class="bi bi-graph-up"></i>
-
-                    Prediction Metrics Dashboard
-
-                </a>
-
-
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-check2-circle"></i>
-
-                    Evaluations
-
-                </a>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-bell"></i>
-
-                    Alerts
-
-                </a>
-
-            </div>
-
-            <div class="nav-section">
-
-                <span class="nav-title">
-
-                    SYSTEM
-
-                </span>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-cpu"></i>
-
-                    Automation
-
-                </a>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-gear"></i>
-
-                    Settings
-
-                </a>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-file-earmark-text"></i>
-
-                    Logs
-
-                </a>
-
-                <a href="#"
-                   class="nav-link">
-
-                    <i class="bi bi-file-bar-graph"></i>
-
-                    Reports
-
-                </a>
-
-            </div>
-
-        </nav>
-
-        <!-- Engine Status -->
-
-        <div class="engine-status">
-
-            <h3>Engine Status</h3>
-
-            <div class="status-item">
-
-                <span>● Operational</span>
-
-            </div>
-
-            <div class="status-item">
-
-                Data Pipeline Healthy
-
-            </div>
-
-            <div class="status-item">
-
-                Models Loaded
-
-            </div>
-
-            <div class="status-item">
-
-                Last Inference
-
-            </div>
+            <p>Hybrid ML Forecasting System</p>
 
         </div>
 
-    </aside>
+    </div>
+
+
+
+    <!-- Navigation -->
+
+    <nav class="sidebar-nav">
+
+
+        <!-- HOME -->
+
+        <div class="nav-section">
+
+            <span class="nav-title">
+                HOME
+            </span>
+
+
+            <a href="{{ url_for('home') }}"
+               class="nav-link {% if request.endpoint == 'home' %}active-sidebar{% endif %}">
+
+                <i class="bi bi-house"></i>
+
+                Home
+
+            </a>
+
+
+        </div>
+
+
+
+
+        <!-- ANALYTICS -->
+
+        <div class="nav-section">
+
+
+            <span class="nav-title">
+                ANALYTICS
+            </span>
+
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-link {% if request.endpoint == 'dashboard' %}active-sidebar{% endif %}">
+
+                <i class="bi bi-graph-up-arrow"></i>
+
+                Prediction Metrics
+
+            </a>
+
+
+        </div>
+
+
+
+
+        <!-- ENGINEERING -->
+
+        <div class="nav-section">
+
+
+            <span class="nav-title">
+                ENGINEERING
+            </span>
+
+
+
+            <a href="{{ url_for('models') }}"
+               class="nav-link {% if request.endpoint == 'models' %}active-sidebar{% endif %}">
+
+                <i class="bi bi-cpu"></i>
+
+                Model Architecture
+
+            </a>
+
+
+
+
+            <a href="{{ url_for('architecture') }}"
+               class="nav-link {% if request.endpoint == 'architecture' %}active-sidebar{% endif %}">
+
+                <i class="bi bi-diagram-3"></i>
+
+                System Architecture
+
+            </a>
+
+
+        </div>
+
+
+
+
+
+        <!-- PROJECT -->
+
+        <div class="nav-section">
+
+
+            <span class="nav-title">
+                PROJECT
+            </span>
+
+
+
+            <a href="{{ url_for('about') }}"
+               class="nav-link {% if request.endpoint == 'about' %}active-sidebar{% endif %}">
+
+                <i class="bi bi-journal-text"></i>
+
+                Project Insights
+
+            </a>
+
+
+
+
+            <a href="{{ url_for('email_reports') }}"
+               class="nav-link {% if request.endpoint == 'email_reports' %}active-sidebar{% endif %}">
+
+                <i class="bi bi-envelope-paper"></i>
+
+                Email Reports
+
+            </a>
+
+
+        </div>
+
+
+
+
+        <!-- RESOURCES -->
+
+        <div class="nav-section">
+
+
+            <span class="nav-title">
+                RESOURCES
+            </span>
+
+
+            <a href="https://open-meteo.com/en/docs/historical-weather-api"
+               target="_blank"
+               class="nav-link">
+
+                <i class="bi bi-cloud-download"></i>
+
+                Open-Meteo API
+
+            </a>
+
+
+
+            <a href="https://github.com/Nilansh90/Weather_Engine"
+               target="_blank"
+               class="nav-link">
+
+                <i class="bi bi-github"></i>
+
+                Source Code
+
+            </a>
+
+
+        </div>
+
+
+    </nav>
+
+
+</aside>
+
+    <!-- Engine Status -->
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- ===================================================== -->
     <!-- Main -->
@@ -260,15 +277,15 @@
 
 
 
-                <a href="{{ url_for('dashboard') }}">Prediction Metrics Dashboard</a>
+                <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active-nav{% endif %}">Prediction Metrics Dashboard</a>
 
-                <a href="{{ url_for('models') }}">Model architecture</a>
+                <a href="{{ url_for('models') }}" class="{% if request.endpoint == 'models' %}active-nav{% endif %}">Model architecture</a>
 
 
-                <a href="{{ url_for('architecture') }}">System Architecture</a>
+                <a href="{{ url_for('architecture') }}" class="{% if request.endpoint == 'architecture' %}active-nav{% endif %}">System Architecture</a>
 
-                <a href="{{ url_for('about') }}">Project Insights</a>
-                <a href="{{ url_for('email_reports') }}">
+                <a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active-nav{% endif %}">Project Insights</a>
+                <a href="{{ url_for('email_reports') }}" class="{% if request.endpoint == 'email_reports' %}active-nav{% endif %}">
                     SignUp for mailed reports
                 </a>
             </div>
