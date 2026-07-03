@@ -46,7 +46,7 @@ Weather Engine | Home
                         <i class="bi bi-box"></i>
                     </div>
                 </div>
-                <div class="metric-number">5</div>
+                <div class="metric-number">{{ platform.model_count }}</div>
                 <div class="metric-label">Models</div>
             </li>
 
@@ -56,7 +56,7 @@ Weather Engine | Home
                         <i class="bi bi-sliders"></i>
                     </div>
                 </div>
-                <div class="metric-number">70+</div>
+                <div class="metric-number">{{ platform.feature_count_label }}</div>
                 <div class="metric-label">Features</div>
             </li>
 
@@ -66,7 +66,7 @@ Weather Engine | Home
                         <i class="bi bi-arrow-repeat"></i>
                     </div>
                 </div>
-                <div class="metric-number">Daily</div>
+                <div class="metric-number">{{ platform.automation_label }}</div>
                 <div class="metric-label">Automation</div>
             </li>
 
@@ -92,7 +92,7 @@ Weather Engine | Home
                     <div class="run-right">
                         <span class="badge badge-success">
                             <i class="bi bi-circle-fill"></i>
-                            Operational
+                            {{ platform.engine_status }}
                         </span>
                     </div>
                 </div>
@@ -111,7 +111,7 @@ Weather Engine | Home
                         <small>Models Loaded</small>
                     </div>
                     <div class="run-right">
-                        <strong>5 / 5</strong>
+                        <strong>{{ platform.models_loaded_label }}</strong>
                     </div>
                 </div>
 
@@ -138,7 +138,7 @@ Weather Engine | Home
                         <small>Database</small>
                     </div>
                     <div class="run-right">
-                        <span class="text-success">Connected</span>
+                        <span class="text-success">{{ platform.database_status }}</span>
                     </div>
                 </div>
 
@@ -257,7 +257,7 @@ Weather Engine | Home
                 <i class="bi bi-cpu"></i>
             </div>
 
-            <div class="metric-number">5</div>
+            <div class="metric-number">{{ platform.model_count }}</div>
 
             <div class="metric-label">Hierarchical Models</div>
 
@@ -273,13 +273,12 @@ Weather Engine | Home
                 <i class="bi bi-diagram-3"></i>
             </div>
 
-            <div class="metric-number">70+</div>
+            <div class="metric-number">{{ platform.feature_count_label }}</div>
+
+
 
             <div class="metric-label">Engineered Features</div>
-
-            <p>
-                Temporal, astronomical, lag and numerical weather prediction features.
-            </p>
+            <p> Temporal ,Lag,Rolling Averages,Monthly and daily sin-cos etc.</p>
 
         </article>
 
@@ -289,7 +288,7 @@ Weather Engine | Home
                 <i class="bi bi-database"></i>
             </div>
 
-            <div class="metric-number">15+</div>
+            <div class="metric-number">{{ platform.historical_years_label }}</div>
 
             <div class="metric-label">Historical Years</div>
 
@@ -305,7 +304,7 @@ Weather Engine | Home
                 <i class="bi bi-arrow-repeat"></i>
             </div>
 
-            <div class="metric-number">Daily</div>
+            <div class="metric-number">{{ platform.automation_label }}</div>
 
             <div class="metric-label">Automation</div>
 
@@ -376,9 +375,7 @@ Weather Engine | Home
                     <i class="bi bi-{{ prediction.weather_icon }} weather-icon"
                        aria-hidden="true"></i>
 
-                    <span class="badge badge-success confidence-badge">
-                        {{ prediction.confidence }}%
-                    </span>
+
 
                 </div>
 
@@ -392,115 +389,263 @@ Weather Engine | Home
 
             <div class="city-stats">
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-thermometer-high"></i>
-                        Maximum Temperature
-                    </small>
-                    <strong>{{ prediction.temp_max }}°</strong>
-                </div>
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-thermometer-low"></i>
-                        Minimum Temperature
-                    </small>
-                    <strong>{{ prediction.temp_min }}°</strong>
-                </div>
+    <!-- TEMPERATURE -->
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-droplet"></i>
-                        Humidity
-                    </small>
-                    <strong>{{ prediction.humidity }}%</strong>
-                </div>
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-thermometer-high"></i>
+            Maximum Temperature
+        </small>
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-cloud-rain"></i>
-                        Rain Probability
-                    </small>
-                    <strong>{{ prediction.rain_probability }}%</strong>
-                </div>
+        <strong>{{ prediction.temp_max }}°</strong>
+    </div>
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-wind"></i>
-                        Wind Speed
-                    </small>
-                    <strong>{{ prediction.wind_speed }} km/h</strong>
-                </div>
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-speedometer2"></i>
-                        Pressure
-                    </small>
-                    <strong>{{ prediction.pressure }} hPa</strong>
-                </div>
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-thermometer-low"></i>
+            Minimum Temperature
+        </small>
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-cloud"></i>
-                        Cloud Cover
-                    </small>
-                    <strong>{{ prediction.cloud_cover }}%</strong>
-                </div>
+        <strong>{{ prediction.temp_min }}°</strong>
+    </div>
 
-                <div class="city-stat">
-                    <small>
-                        <i class="bi bi-cloud-sun"></i>
-                        Weather Code
-                    </small>
-                    <strong>{{ prediction.weather_code }}</strong>
-                </div>
 
-            </div>
+
+
+    <!-- PRESSURE -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-speedometer2"></i>
+            Max Pressure
+        </small>
+
+        <strong>{{ prediction.pressure_max }} hPa</strong>
+    </div>
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-speedometer"></i>
+            Min Pressure
+        </small>
+
+        <strong>{{ prediction.pressure_min }} hPa</strong>
+    </div>
+
+
+
+
+
+    <!-- DEW POINT -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-droplet-half"></i>
+            Dew Point Max
+        </small>
+
+        <strong>{{ prediction.dew_max }}°</strong>
+    </div>
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-droplet-half"></i>
+            Dew Point Min
+        </small>
+
+        <strong>{{ prediction.dew_min }}°</strong>
+    </div>
+
+
+
+
+
+    <!-- HUMIDITY -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-moisture"></i>
+            Humidity Max
+        </small>
+
+        <strong>{{ prediction.humidity_max }}%</strong>
+    </div>
+
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-moisture"></i>
+            Humidity Min
+        </small>
+
+        <strong>{{ prediction.humidity_min }}%</strong>
+    </div>
+
+
+
+
+
+    <!-- RAIN -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-cloud-rain"></i>
+            Rain Probability
+        </small>
+
+        <strong>{{ prediction.rain_probability }}%</strong>
+    </div>
+
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-cloud-rain-heavy"></i>
+            Rain Prediction
+        </small>
+
+        <strong>
+
+            {% if prediction.rain_predicted %}
+
+                Yes
+
+            {% else %}
+
+                No
+
+            {% endif %}
+
+        </strong>
+
+    </div>
+
+
+
+
+
+    <!-- WIND -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-wind"></i>
+            Wind Speed
+        </small>
+
+        <strong>{{ prediction.wind_speed }} km/h</strong>
+    </div>
+
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-wind"></i>
+            Wind Gust
+        </small>
+
+        <strong>{{ prediction.wind_gust }} km/h</strong>
+    </div>
+
+
+
+
+
+    <!-- CLOUD -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-cloud"></i>
+            Cloud Cover
+        </small>
+
+        <strong>{{ prediction.cloud_cover }}%</strong>
+    </div>
+
+
+
+
+
+    <!-- WEATHER -->
+
+
+    <div class="city-stat">
+        <small>
+            <i class="bi bi-cloud-sun"></i>
+            Weather Code
+        </small>
+
+        <strong>{{ prediction.weather_code }}</strong>
+    </div>
+
+
+
+</div>
 
             <div class="hr"></div>
 
             <div class="city-performance">
 
                 <h4 class="card-subtitle">
-                    Yesterday Model Performance
+                    Latest Forecast Evaluation
                 </h4>
 
-                <div class="city-stats">
+                <div class="city-stat">
+<small>Temperature MAE</small>
+<strong class="{{ performance.temp_mae_class }}">
+{{ performance.temp_mae }}°
+</strong>
+</div>
 
-                    <div class="city-stat">
-                        <small>Temperature MAE</small>
-                        <strong class="{{ performance.temp_mae_class }}">
-                            <i class="bi bi-circle-fill"></i>
-                            {{ performance.temp_mae }}°
-                        </strong>
-                    </div>
 
-                    <div class="city-stat">
-                        <small>Pressure MAE</small>
-                        <strong class="{{ performance.pressure_mae_class }}">
-                            <i class="bi bi-circle-fill"></i>
-                            {{ performance.pressure_mae }} hPa
-                        </strong>
-                    </div>
+<div class="city-stat">
+<small>Pressure MAE</small>
+<strong class="{{ performance.pressure_mae_class }}">
+{{ performance.pressure_mae }} hPa
+</strong>
+</div>
 
-                    <div class="city-stat">
-                        <small>Weather Accuracy</small>
-                        <strong class="{{ performance.weather_accuracy_class }}">
-                            <i class="bi bi-circle-fill"></i>
-                            {{ performance.weather_accuracy }}%
-                        </strong>
-                    </div>
 
-                    <div class="city-stat">
-                        <small>Rain Correct</small>
-                        <strong class="{{ performance.rain_correct_class }}">
-                            <i class="bi bi-circle-fill"></i>
-                            {{ performance.rain_correct }}
-                        </strong>
-                    </div>
+<div class="city-stat">
+<small>Dew Point MAE</small>
+<strong class="{{ performance.dew_mae_class }}">
+{{ performance.dew_mae }}°
+</strong>
+</div>
 
-                </div>
+
+<div class="city-stat">
+<small>Humidity MAE</small>
+<strong class="{{ performance.humidity_mae_class }}">
+{{ performance.humidity_mae }}%
+</strong>
+</div>
+
+
+<div class="city-stat">
+<small>Rain Correct</small>
+<strong class="{{ performance.rain_correct_class }}">
+{{ performance.rain_correct }}
+</strong>
+</div>
+
+
+<div class="city-stat">
+<small>Weather Code Correct</small>
+<strong class="{{ performance.weather_correct_class }}">
+{{ performance.weather_correct }}
+</strong>
+</div>
 
             </div>
 
@@ -874,49 +1019,54 @@ Weather Engine | Home
     </header>
 
     {% set performance_kpis = [
-        {
-            'icon': 'thermometer-half',
-            'metric': metrics.temperature_mae,
-            'label': 'Temperature MAE',
-            'trend': metrics.temperature_trend,
-            'trend_class': metrics.temperature_trend_class
-        },
-        {
-            'icon': 'speedometer2',
-            'metric': metrics.pressure_mae,
-            'label': 'Pressure MAE',
-            'trend': metrics.pressure_trend,
-            'trend_class': metrics.pressure_trend_class
-        },
-        {
-            'icon': 'droplet',
-            'metric': metrics.moisture_mae,
-            'label': 'Moisture MAE',
-            'trend': metrics.moisture_trend,
-            'trend_class': metrics.moisture_trend_class
-        },
-        {
-            'icon': 'cloud-rain',
-            'metric': metrics.rain_accuracy ~ '%',
-            'label': 'Rain Accuracy',
-            'trend': metrics.rain_trend,
-            'trend_class': metrics.rain_trend_class
-        },
-        {
-            'icon': 'cloud-sun',
-            'metric': metrics.weather_accuracy ~ '%',
-            'label': 'Weather Code Accuracy',
-            'trend': metrics.weather_trend,
-            'trend_class': metrics.weather_trend_class
-        },
-        {
-            'icon': 'cpu',
-            'metric': metrics.pipeline_success ~ '%',
-            'label': 'Pipeline Reliability',
-            'trend': metrics.pipeline_trend,
-            'trend_class': metrics.pipeline_trend_class
-        }
-    ] %}
+
+    {
+        'icon': 'thermometer-half',
+        'metric': metrics.temperature_mae ~ '°',
+        'label': 'Temperature MAE',
+        'trend': metrics.temperature_trend,
+        'trend_class': metrics.temperature_trend_class
+    },
+
+    {
+        'icon': 'speedometer2',
+        'metric': metrics.pressure_mae ~ ' hPa',
+        'label': 'Pressure MAE',
+        'trend': metrics.pressure_trend,
+        'trend_class': metrics.pressure_trend_class
+    },
+
+
+    {
+        'icon': 'droplet-half',
+        'metric': metrics.moisture_mae ~ '°',
+        'label': 'Dew Point MAE',
+        'trend': metrics.moisture_trend,
+        'trend_class': metrics.moisture_trend_class
+    },
+
+
+    {
+        'icon': 'moisture',
+        'metric': metrics.humidity_mae ~ '%',
+        'label': 'Humidity MAE',
+        'trend': metrics.humidity_trend,
+        'trend_class': metrics.humidity_trend_class
+    },
+
+
+    {
+        'icon': 'cloud-rain',
+        'metric': metrics.rain_accuracy ~ '%',
+        'label': 'Rain Classification Accuracy',
+        'trend': metrics.rain_trend,
+        'trend_class': metrics.rain_trend_class
+    },
+
+
+
+
+] %}
 
     <div class="kpi-row kpi-row-6">
 
@@ -955,7 +1105,12 @@ Weather Engine | Home
         {'name': 'Pressure', 'icon': 'speedometer2', 'value': quality.pressure},
         {'name': 'Moisture', 'icon': 'droplet', 'value': quality.moisture},
         {'name': 'Rain', 'icon': 'cloud-rain', 'value': quality.rain},
-        {'name': 'Weather Code', 'icon': 'cloud-sun', 'value': quality.weather}
+
+    {
+'name': 'Humidity',
+'icon': 'moisture',
+'value': quality.humidity
+},
     ] %}
 
     {% set health_items = [
@@ -1069,25 +1224,25 @@ Weather Engine | Home
             'icon': 'database',
             'title': 'Historical Data',
             'description': 'Historical observations stored in PostgreSQL powering every model.',
-            'footer': '15+ Years'
+            'footer': platform.historical_years_label ~ ' Years'
         },
         {
             'icon': 'gear',
             'title': 'Automation Layer',
             'description': 'Recharge scripts, NWP cache, prediction engine, evaluation and email reporting.',
-            'footer': 'Daily Execution'
+            'footer': platform.automation_label ~ ' Execution'
         },
         {
             'icon': 'cpu',
             'title': 'ML Engine',
             'description': 'Hierarchical LightGBM models connected through dependency-aware inference.',
-            'footer': '5 Models'
+            'footer': platform.model_count ~ ' Models'
         },
         {
             'icon': 'diagram-3',
             'title': 'Feature Engineering',
             'description': 'Temporal, astronomical, lag and NWP-derived features generated dynamically.',
-            'footer': '70+ Features'
+            'footer': platform.feature_count_label ~ ' Features'
         },
         {
             'icon': 'bar-chart',
@@ -1368,10 +1523,7 @@ Weather Engine | Home
     <p>Machine Learning Models</p>
   </article>
 
-  <article class="metric-card glass">
-    <div class="kpi">70+</div>
-    <p>Engineered Features</p>
-  </article>
+
 
   <article class="metric-card glass">
     <div class="kpi">Daily</div>

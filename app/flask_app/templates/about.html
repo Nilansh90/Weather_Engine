@@ -187,11 +187,11 @@ real-world limitations of predicting highly dynamic atmospheric variables.
     </header>
 
     {% set highlights = [
-        {'icon': 'database', 'value': '15+', 'label': 'Years of Historical Weather'},
-        {'icon': 'cpu', 'value': '5', 'label': 'Machine Learning Models'},
-        {'icon': 'sliders', 'value': '70+', 'label': 'Engineered Features'},
-        {'icon': 'geo-alt', 'value': '5', 'label': 'Indian Cities'},
-        {'icon': 'arrow-repeat', 'value': 'Daily', 'label': 'Automated Forecast Pipeline'},
+        {'icon': 'database', 'value': platform.historical_years_label, 'label': 'Years of Historical Weather'},
+        {'icon': 'cpu', 'value': platform.model_count, 'label': 'Machine Learning Models'},
+        {'icon': 'sliders', 'value': platform.feature_count_label, 'label': 'Engineered Features'},
+        {'icon': 'geo-alt', 'value': platform.cities_label, 'label': 'Indian Cities'},
+        {'icon': 'arrow-repeat', 'value': platform.automation_label, 'label': 'Automated Forecast Pipeline'},
         {'icon': 'puzzle', 'value': 'Production', 'label': 'Modular Architecture'}
     ] %}
 

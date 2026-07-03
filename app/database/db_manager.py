@@ -1195,6 +1195,7 @@ class DatabaseManager:
             "forecast_date": forecast_date,
             "cities": self._get_home_city_forecasts(forecast_date),
             "pipeline": self._get_home_pipeline(forecast_date),
+            "platform": self.get_platform_statistics(),
             "engine": self._get_home_engine(),
             "metrics": self._get_home_metrics(),
             "quality": self._get_home_quality(),
@@ -1222,26 +1223,71 @@ class DatabaseManager:
 
         rows = self._rows("""
             SELECT
-                p.city_id,
-                COALESCE(c.city_name, 'City ' || p.city_id) AS city_name,
-                p.forecast_date,
-                p.temp_max_c,
-                p.temp_min_c,
-                p.pressure_msl_max_hpa,
-                p.pressure_msl_min_hpa,
-                p.relative_humidity_max_pct,
-                p.relative_humidity_min_pct,
-                p.wind_speed_max_kmh,
-                p.cloud_cover_mean_pct,
-                p.rain_probability,
-                p.weather_code,
-                p.precipitation_sum_mm,
-                e.temp_max_error,
-                e.temp_min_error,
-                e.pressure_max_error,
-                e.pressure_min_error,
-                e.rain_correct,
-                e.weather_code_correct
+    p.city_id,
+    COALESCE(c.city_name, 'City ' || p.city_id) AS city_name,
+
+    p.forecast_date,
+
+
+    -- Temperature
+    p.temp_max_c,
+    p.temp_min_c,
+
+
+    -- Pressure
+    p.pressure_msl_max_hpa,
+    p.pressure_msl_min_hpa,
+
+
+    -- Moisture
+    p.dew_point_max_c,
+    p.dew_point_min_c,
+
+    p.relative_humidity_max_pct,
+    p.relative_humidity_min_pct,
+
+
+    -- Wind
+    p.wind_speed_max_kmh,
+    p.wind_gusts_max_kmh,
+
+
+    -- Cloud / Rain / Weather
+    -- Cloud / Rain / Weather
+
+p.cloud_cover_mean_pct,
+
+p.precipitation_sum_mm,
+
+p.rain_probability,
+
+CASE
+    WHEN p.rain_probability >= 0.30
+    THEN true
+    ELSE false
+END AS rain_predicted,
+
+p.weather_code,
+
+
+
+    -- Errors
+
+    e.temp_max_error,
+    e.temp_min_error,
+
+    e.pressure_max_error,
+    e.pressure_min_error,
+
+    e.dew_point_max_error,
+    e.dew_point_min_error,
+
+    e.humidity_max_error,
+    e.humidity_min_error,
+
+    e.rain_correct,
+
+    e.weather_code_correct
             FROM predictions p
             LEFT JOIN (
                 SELECT
@@ -1250,12 +1296,31 @@ class DatabaseManager:
                 FROM weather_data
                 GROUP BY city_id
             ) c ON c.city_id = p.city_id
-            LEFT JOIN errors e
-                ON e.city_id = p.city_id
-               AND e.forecast_date = p.forecast_date - INTERVAL '1 day'
+           LEFT JOIN errors e
+
+    ON e.city_id = p.city_id
+
+    AND e.forecast_date =
+    (
+        SELECT MAX(forecast_date)
+        FROM errors
+    )
             WHERE p.forecast_date = :forecast_date
             ORDER BY p.city_id
         """, {"forecast_date": forecast_date})
+        print("================")
+        print("HOME FORECAST DATE:", forecast_date)
+        print("ROWS FOUND:", len(rows))
+
+        for r in rows:
+            print(
+                r["city_name"],
+                r["temp_max_c"],
+                r["temp_min_c"],
+                r["weather_code"]
+            )
+
+        print("================")
 
         return [
             {
@@ -1268,28 +1333,100 @@ class DatabaseManager:
 
     def _format_home_prediction(self, row):
 
-        temp_max = self._round(row["temp_max_c"])
-        temp_min = self._round(row["temp_min_c"])
-        humidity_max = self._round(row["relative_humidity_max_pct"])
-        humidity_min = self._round(row["relative_humidity_min_pct"])
-        pressure_max = self._round(row["pressure_msl_max_hpa"])
-        pressure_min = self._round(row["pressure_msl_min_hpa"])
-        weather_code = row["weather_code"]
-
         return {
-            "weather_icon": self._weather_icon(weather_code),
+
+            # Header values
+            "temperature": self._round(
+                (
+                        row["temp_max_c"]
+                        +
+                        row["temp_min_c"]
+                ) / 2
+            ),
+
+            "temp_mean": self._round(
+                (
+                        (row["temp_max_c"] or 0)
+                        +
+                        (row["temp_min_c"] or 0)
+                ) / 2
+            ),
+
+            "condition": self._weather_icon(
+                row["weather_code"]
+            ),
+
             "confidence": self._forecast_confidence(row),
-            "temperature": self._average(temp_max, temp_min),
-            "weather_summary": self._weather_summary(weather_code),
-            "temp_max": temp_max,
-            "temp_min": temp_min,
-            "humidity": self._average(humidity_max, humidity_min),
-            "rain_probability": self._round(row["rain_probability"]),
-            "wind_speed": self._round(row["wind_speed_max_kmh"]),
-            "pressure": self._average(pressure_max, pressure_min),
-            "cloud_cover": self._round(row["cloud_cover_mean_pct"]),
-            "weather_code": weather_code,
-            "generated_time": self._format_date(row["forecast_date"])
+
+            # Temperature
+
+            "temp_max": self._round(
+                row["temp_max_c"]
+            ),
+
+            "temp_min": self._round(
+                row["temp_min_c"]
+            ),
+
+            # Pressure
+
+            "pressure_max": self._round(
+                row["pressure_msl_max_hpa"]
+            ),
+
+            "pressure_min": self._round(
+                row["pressure_msl_min_hpa"]
+            ),
+
+            # Moisture
+
+            "dew_max": self._round(
+                row["dew_point_max_c"]
+            ),
+
+            "dew_min": self._round(
+                row["dew_point_min_c"]
+            ),
+
+            "humidity_max": self._round(
+                row["relative_humidity_max_pct"]
+            ),
+
+            "humidity_min": self._round(
+                row["relative_humidity_min_pct"]
+            ),
+
+            # Rain
+
+            "rain_probability": self._round(
+                (row["rain_probability"] or 0) * 100
+            ),
+
+            "rain_predicted":
+                True if (row["rain_probability"] or 0) >= 0.30 else False,
+
+            # Wind
+
+            "wind_speed": self._round(
+                row["wind_speed_max_kmh"]
+            ),
+
+            "wind_gust": self._round(
+                row["wind_gusts_max_kmh"]
+            ),
+
+            # Cloud
+
+            "cloud_cover": self._round(
+                row["cloud_cover_mean_pct"]
+            ),
+
+            # Weather
+
+            "weather_code": row["weather_code"],
+
+            "forecast_date": row["forecast_date"]
+
         }
 
     def _format_home_performance(self, row):
@@ -1298,21 +1435,50 @@ class DatabaseManager:
             row["temp_max_error"],
             row["temp_min_error"]
         )
+
         pressure_mae = self._average_abs(
             row["pressure_max_error"],
             row["pressure_min_error"]
         )
-        weather_accuracy = 100 if row["weather_code_correct"] else 0
+
+        dew_mae = self._average_abs(
+            row["dew_point_max_error"],
+            row["dew_point_min_error"]
+        )
+
+        humidity_mae = self._average_abs(
+            row["humidity_max_error"],
+            row["humidity_min_error"]
+        )
 
         return {
+
             "temp_mae": temp_mae,
             "temp_mae_class": self._mae_class(temp_mae, 2),
+
             "pressure_mae": pressure_mae,
             "pressure_mae_class": self._mae_class(pressure_mae, 3),
-            "weather_accuracy": weather_accuracy,
-            "weather_accuracy_class": self._accuracy_class(weather_accuracy),
-            "rain_correct": "Yes" if row["rain_correct"] else "No",
-            "rain_correct_class": "text-success" if row["rain_correct"] else "text-danger"
+
+            "dew_mae": dew_mae,
+            "dew_mae_class": self._mae_class(dew_mae, 3),
+
+            "humidity_mae": humidity_mae,
+            "humidity_mae_class": self._mae_class(humidity_mae, 10),
+
+            "rain_correct":
+                "Yes" if row["rain_correct"] else "No",
+
+            "rain_correct_class":
+                "text-success" if row["rain_correct"]
+                else "text-danger",
+
+            "weather_correct":
+                "Yes" if row["weather_code_correct"] else "No",
+
+            "weather_correct_class":
+                "text-success" if row["weather_code_correct"]
+                else "text-danger"
+
         }
 
     def _get_home_pipeline(self, forecast_date):
@@ -1361,55 +1527,192 @@ class DatabaseManager:
 
         row = self._row("""
             SELECT
-                AVG(ABS(temp_max_error) + ABS(temp_min_error)) / 2 AS temperature_mae,
-                AVG(ABS(pressure_max_error) + ABS(pressure_min_error)) / 2 AS pressure_mae,
-                AVG(ABS(dew_point_max_error) + ABS(dew_point_min_error)) / 2 AS moisture_mae,
-                AVG(CASE WHEN rain_correct THEN 1.0 ELSE 0.0 END) * 100 AS rain_accuracy,
-                AVG(CASE WHEN weather_code_correct THEN 1.0 ELSE 0.0 END) * 100 AS weather_accuracy
+
+                AVG(
+                    (ABS(temp_max_error) + ABS(temp_min_error)) / 2
+                ) AS temperature_mae,
+
+
+                AVG(
+                    (ABS(pressure_max_error) + ABS(pressure_min_error)) / 2
+                ) AS pressure_mae,
+
+
+                AVG(
+                    (ABS(dew_point_max_error) + ABS(dew_point_min_error)) / 2
+                ) AS dew_mae,
+
+
+                AVG(
+                    (ABS(humidity_max_error) + ABS(humidity_min_error)) / 2
+                ) AS humidity_mae,
+
+
+                AVG(
+                    CASE 
+                        WHEN rain_correct 
+                        THEN 1.0 
+                        ELSE 0.0 
+                    END
+                ) * 100 AS rain_accuracy,
+
+
+                AVG(
+                    CASE 
+                        WHEN weather_code_correct 
+                        THEN 1.0 
+                        ELSE 0.0 
+                    END
+                ) * 100 AS weather_accuracy
+
+
             FROM errors
         """)
 
-        prediction_count = self._scalar("SELECT COUNT(*) FROM predictions")
-        error_count = self._scalar("SELECT COUNT(*) FROM errors")
+        temperature_mae = self._round(
+            row["temperature_mae"]
+        )
 
-        temperature_mae = self._round(row["temperature_mae"])
-        pressure_mae = self._round(row["pressure_mae"])
-        moisture_mae = self._round(row["moisture_mae"])
-        rain_accuracy = self._round(row["rain_accuracy"])
-        weather_accuracy = self._round(row["weather_accuracy"])
-        pipeline_success = self._percent(error_count, prediction_count)
+        pressure_mae = self._round(
+            row["pressure_mae"]
+        )
+
+        dew_mae = self._round(
+            row["dew_mae"]
+        )
+
+        humidity_mae = self._round(
+            row["humidity_mae"]
+        )
+
+        rain_accuracy = self._round(
+            row["rain_accuracy"]
+        )
+
+        weather_accuracy = self._round(
+            row["weather_accuracy"]
+        )
 
         return {
+
+            # Temperature Model
+
             "temperature_mae": temperature_mae,
+
             "temperature_trend": "Live",
-            "temperature_trend_class": self._mae_class(temperature_mae, 2),
+
+            "temperature_trend_class":
+                self._mae_class(
+                    temperature_mae,
+                    2
+                ),
+
+            # Pressure Model
+
             "pressure_mae": pressure_mae,
+
             "pressure_trend": "Live",
-            "pressure_trend_class": self._mae_class(pressure_mae, 3),
-            "moisture_mae": moisture_mae,
+
+            "pressure_trend_class":
+                self._mae_class(
+                    pressure_mae,
+                    3
+                ),
+
+            # Dew Point / Moisture Model
+
+            "moisture_mae": dew_mae,
+
             "moisture_trend": "Live",
-            "moisture_trend_class": self._mae_class(moisture_mae, 5),
+
+            "moisture_trend_class":
+                self._mae_class(
+                    dew_mae,
+                    3
+                ),
+
+            # Humidity Model
+
+            "humidity_mae": humidity_mae,
+
+            "humidity_trend": "Live",
+
+            "humidity_trend_class":
+                self._mae_class(
+                    humidity_mae,
+                    10
+                ),
+
+            # Rain Classifier
+
             "rain_accuracy": rain_accuracy,
+
             "rain_trend": "Live",
-            "rain_trend_class": self._accuracy_class(rain_accuracy),
+
+            "rain_trend_class":
+                self._accuracy_class(
+                    rain_accuracy
+                ),
+
+            # Weather Code Inference
+
             "weather_accuracy": weather_accuracy,
+
             "weather_trend": "Live",
-            "weather_trend_class": self._accuracy_class(weather_accuracy),
-            "pipeline_success": pipeline_success,
-            "pipeline_trend": "Live",
-            "pipeline_trend_class": self._accuracy_class(pipeline_success)
+
+            "weather_trend_class":
+                self._accuracy_class(
+                    weather_accuracy
+                )
+
         }
 
     def _get_home_quality(self):
 
         metrics = self._get_home_metrics()
 
+        temperature_quality = max(
+            0,
+            100 - (metrics["temperature_mae"] / 10 * 100)
+        )
+
+        pressure_quality = max(
+            0,
+            100 - (metrics["pressure_mae"] / 10 * 100)
+        )
+
+        moisture_quality = max(
+            0,
+            100 - (metrics["moisture_mae"] / 10 * 100)
+        )
+
+        humidity_quality = max(
+            0,
+            100 - (metrics["humidity_mae"] / 100 * 100)
+        )
+
         return {
-            "temperature": self._quality_from_mae(metrics["temperature_mae"], 10),
-            "pressure": self._quality_from_mae(metrics["pressure_mae"], 10),
-            "moisture": self._quality_from_mae(metrics["moisture_mae"], 20),
+
+            "temperature": self._round(
+                temperature_quality
+            ),
+
+            "pressure": self._round(
+                pressure_quality
+            ),
+
+            "moisture": self._round(
+                moisture_quality
+            ),
+
+            "humidity": self._round(
+                humidity_quality
+            ),
+
             "rain": metrics["rain_accuracy"],
+
             "weather": metrics["weather_accuracy"]
+
         }
 
     def _get_home_health(self, forecast_date):
@@ -2344,7 +2647,25 @@ class DatabaseManager:
 
     def get_models_context(self):
 
+        performance = self._get_home_metrics()
+
         return {
+
+            "model_metrics": {
+
+                "temp_max_mae": self._round(self._scalar("SELECT AVG(ABS(temp_max_error)) FROM errors"), 2),
+
+                "temp_min_mae": self._round(self._scalar("SELECT AVG(ABS(temp_min_error)) FROM errors"), 2),
+
+                "pressure_max_mae": self._round(self._scalar("SELECT AVG(ABS(pressure_max_error)) FROM errors"), 2),
+
+                "pressure_min_mae": self._round(self._scalar("SELECT AVG(ABS(pressure_min_error)) FROM errors"), 2),
+
+                "weather_accuracy": performance["weather_accuracy"],
+
+                "rain_accuracy": performance["rain_accuracy"]
+
+            },
 
             "weather_metrics": {
 
@@ -2418,17 +2739,21 @@ class DatabaseManager:
 
     def get_about_context(self):
 
+        stats = self.get_platform_statistics()
+
         return {
 
             "stats": {
 
-                "historical_records": self.get_historical_record_count(),
+                "historical_records": stats["historical_records"],
 
-                "predictions_generated": self.get_prediction_count(),
+                "predictions_generated": stats["prediction_records"],
 
-                "forecast_accuracy": "74%"
+                "forecast_accuracy": stats["weather_accuracy_label"]
 
-            }
+            },
+
+            "platform": stats
 
         }
 
@@ -2462,6 +2787,77 @@ class DatabaseManager:
         with self.engine.connect() as conn:
             return conn.execute(query).scalar()
 
+    def get_platform_statistics(self):
+
+        row = self._row("""
+            SELECT
+                COUNT(*) AS historical_records,
+                COUNT(DISTINCT city_id) AS cities,
+                MIN(date) AS first_date,
+                MAX(date) AS last_date
+            FROM weather_data
+        """)
+
+        prediction_records = self._scalar("SELECT COUNT(*) FROM predictions") or 0
+        error_records = self._scalar("SELECT COUNT(*) FROM errors") or 0
+        nwp_records = self._scalar("SELECT COUNT(*) FROM nwp_cache") or 0
+        active_subscribers = self._scalar("""
+            SELECT COUNT(*)
+            FROM email_subscriptions
+            WHERE is_active = TRUE
+        """) or 0
+        pending_subscribers = self._scalar("""
+            SELECT COUNT(*)
+            FROM email_subscriptions
+            WHERE status = 'Pending'
+        """) or 0
+
+        accuracy = self._scalar("""
+            SELECT AVG(CASE WHEN weather_code_correct THEN 1.0 ELSE 0.0 END) * 100
+            FROM errors
+        """)
+        rain_accuracy = self._scalar("""
+            SELECT AVG(CASE WHEN rain_correct THEN 1.0 ELSE 0.0 END) * 100
+            FROM errors
+        """)
+
+        historical_records = row.get("historical_records") or 0
+        cities = row.get("cities") or 0
+        first_date = row.get("first_date")
+        last_date = row.get("last_date")
+        years = 0
+
+        if first_date and last_date:
+            years = max(1, round((last_date - first_date).days / 365.25))
+
+        return {
+            "historical_records": historical_records,
+            "historical_records_label": f"{historical_records:,}",
+            "prediction_records": prediction_records,
+            "prediction_records_label": f"{prediction_records:,}",
+            "error_records": error_records,
+            "nwp_records": nwp_records,
+            "active_subscribers": active_subscribers,
+            "pending_subscribers": pending_subscribers,
+            "cities": cities,
+            "cities_label": f"{cities:,}",
+            "historical_years": years,
+            "historical_years_label": f"{years}+",
+            "first_date": self._format_date(first_date),
+            "last_date": self._format_date(last_date),
+            "weather_accuracy": self._round(accuracy, 2),
+            "weather_accuracy_label": f"{self._round(accuracy, 2)}%",
+            "rain_accuracy": self._round(rain_accuracy, 2),
+            "rain_accuracy_label": f"{self._round(rain_accuracy, 2)}%",
+            "model_count": 5,
+            "feature_count_label": "70+",
+            "automation_label": "Daily" if prediction_records else "N/A",
+            "engine_status": "Operational" if historical_records else "N/A",
+            "database_status": "Connected" if historical_records else "N/A",
+            "pipeline_status": "Operational" if prediction_records else "N/A",
+            "models_loaded_label": "5 / 5"
+        }
+
     def get_engine_context(self):
 
         latest_prediction = self.get_latest_prediction_summary()
@@ -2476,12 +2872,13 @@ class DatabaseManager:
 
     def get_pipeline_statistics(self):
 
-        historical_records = self.get_historical_record_count()
-        prediction_records = self.get_prediction_count()
+        stats = self.get_platform_statistics()
+        historical_records = stats["historical_records"]
+        prediction_records = stats["prediction_records"]
         cities = self.get_all_cities()
         latest_prediction = self.get_latest_prediction_summary()
 
-        return {
+        pipeline_stats = {
 
             "historical_records": historical_records,
 
@@ -2491,9 +2888,13 @@ class DatabaseManager:
 
             "latest_prediction": latest_prediction,
 
-            "pipeline_status": "Operational"
+            "pipeline_status": stats["pipeline_status"]
 
         }
+
+        pipeline_stats.update(stats)
+
+        return pipeline_stats
 
     def get_latest_prediction_summary(self):
 
@@ -2512,6 +2913,7 @@ class DatabaseManager:
     def get_email_reports_context(self):
 
         subscribers = self.get_active_subscriptions()
+        pending_subscribers = self.get_pending_subscriptions()
 
         if subscribers:
 
@@ -2532,6 +2934,10 @@ class DatabaseManager:
         return {
 
             "subscription": subscription,
+
+            "active_subscriber_count": len(subscribers),
+
+            "pending_subscriber_count": len(pending_subscribers),
 
             "history": []
 
@@ -3711,4 +4117,3 @@ class DatabaseManager:
             ).mappings().all()
 
         return rows
-

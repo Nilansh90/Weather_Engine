@@ -622,7 +622,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
                     <td>0.954</td>
 
-                    <td>0.85°C</td>
+                    <td>{{ model_metrics.temp_max_mae }}°C</td>
 
                     <td>1.17</td>
 
@@ -636,7 +636,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
                     <td>0.960</td>
 
-                    <td>0.78°C</td>
+                    <td>{{ model_metrics.temp_min_mae }}°C</td>
 
                     <td>1.07</td>
 
@@ -783,7 +783,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Seasonal Encodin
 
                     <td>0.953</td>
 
-                    <td>0.947 hPa</td>
+                    <td>{{ model_metrics.pressure_max_mae }} hPa</td>
 
                     <td>1.23</td>
 
@@ -798,7 +798,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Seasonal Encodin
 
                     <td>0.943</td>
 
-                    <td>1.05 hPa</td>
+                    <td>{{ model_metrics.pressure_min_mae }} hPa</td>
 
                     <td>1.36</td>
 
@@ -1418,7 +1418,7 @@ Latitude • Longitude • City ID • Year • Day of Week • Month Cyclic Enc
 
                 <strong>
 
-                    73.58%
+                    {{ model_metrics.weather_accuracy }}%
 
                 </strong>
 

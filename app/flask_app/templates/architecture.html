@@ -254,7 +254,7 @@ Weather Engine | System Architecture
             'database',
             'weather_data',
             'Historical observations and actual weather records.',
-            '15 years data'
+            stats.historical_records ~ ' records'
             ) }}
 
             <i class="bi bi-arrow-right arch-connector"></i>
@@ -263,7 +263,7 @@ Weather Engine | System Architecture
             'cloud-download',
             'nwp_cache',
             'External forecast values from NWP.',
-            'External data'
+            stats.nwp_records ~ ' cached'
             ) }}
 
             <i class="bi bi-arrow-right arch-connector"></i>
@@ -272,7 +272,7 @@ Weather Engine | System Architecture
             'database-check',
             'predictions',
             'Generated forecast outputs.',
-            'Forecast storage'
+            stats.prediction_records ~ ' forecasts'
             ) }}
 
             </div>
@@ -284,7 +284,7 @@ Weather Engine | System Architecture
             'clipboard-data',
             'errors',
             'Prediction vs actual evaluation.',
-            'MAE / Accuracy'
+            stats.error_records ~ ' evaluations'
             ) }}
 
             <i class="bi bi-arrow-right arch-connector"></i>
@@ -294,7 +294,7 @@ Weather Engine | System Architecture
             'bar-chart',
             'metrics',
             'Dashboard aggregated statistics.',
-            'Performance'
+            stats.weather_accuracy_label ~ ' accuracy'
             ) }}
 
             <i class="bi bi-arrow-right arch-connector"></i>
@@ -304,7 +304,7 @@ Weather Engine | System Architecture
                 'envelope',
                 'email_subscriptions',
                 'Subscriber approval and report delivery.',
-                'Email system'
+                stats.active_subscribers ~ ' active'
             ) }}
 
         </div>
