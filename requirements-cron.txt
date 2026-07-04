@@ -1,0 +1,42 @@
+# ==========================
+# Core numerical stack
+# ==========================
+
+numpy
+pandas
+
+
+# ==========================
+# Machine Learning
+# ==========================
+
+scikit-learn
+lightgbm
+joblib
+
+
+# ==========================
+# Database
+# ==========================
+
+SQLAlchemy
+psycopg2-binary
+python-dotenv
+
+
+# ==========================
+# Weather API
+# ==========================
+
+requests
+openmeteo-requests
+requests-cache
+retry-requests
+
+
+# ==========================
+# Utilities
+# ==========================
+
+python-dateutil
+pytz
