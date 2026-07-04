@@ -29,6 +29,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-cron.txt
 
+      - name: Check Environment
+        env:
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          echo "EMAIL_ADDRESS exists"
+          test -n "$EMAIL_ADDRESS"
+          test -n "$EMAIL_PASSWORD"
+          
 
       - name: Run Weather Engine Pipeline
         env:
