@@ -12,10 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Production Branch
+      - name: Checkout Main Branch
         uses: actions/checkout@v4
-        with:
-          ref: production
 
 
       - name: Setup Python
@@ -29,15 +27,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-cron.txt
 
+
       - name: Check Environment
         env:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
         run: |
-          echo "EMAIL_ADDRESS exists"
+          echo "Checking environment variables"
           test -n "$EMAIL_ADDRESS"
           test -n "$EMAIL_PASSWORD"
-          
+          test -n "$DATABASE_URL"
+          echo "Environment OK"
+
 
       - name: Run Weather Engine Pipeline
         env:
