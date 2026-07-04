@@ -35,6 +35,14 @@ retry-requests
 
 
 # ==========================
+# Dashboard dependency
+# Required because db_manager imports Plotly
+# ==========================
+
+plotly
+
+
+# ==========================
 # Utilities
 # ==========================
 
