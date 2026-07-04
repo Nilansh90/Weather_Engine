@@ -15,5 +15,3 @@ openmeteo-requests
 requests-cache
 retry-requests
 
-smtplib
-email
