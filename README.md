@@ -706,6 +706,43 @@ Neon PostgreSQL
 Render Flask Dashboard
 
 ```
+---
+
+# 🌿 Branching & Production Strategy
+
+
+Weather Engine follows a two-branch deployment workflow separating the web application lifecycle from automated machine learning execution.
+
+
+## Branch Structure
+
+
+| Branch | Responsibility |
+|-|-|
+| main | Automated ML pipeline execution |
+| production | Live Flask web deployment |
+
+
+---
+
+
+## main Branch — ML Automation Layer
+
+
+The `main` branch controls the scheduled forecasting engine.
+
+
+Responsibilities:
+
+- Daily data refresh
+- Feature generation
+- ML inference execution
+- Forecast evaluation
+- Email report generation
+
+
+Execution:
+
 
 
 ---
