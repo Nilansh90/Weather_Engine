@@ -1,4 +1,0 @@
-DAY 14
-
-Completed about.html,architecture.html,sidebar and minor improvements.
-Adding real values than dummy values.
