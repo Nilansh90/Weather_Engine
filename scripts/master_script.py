@@ -9,6 +9,7 @@ LOG_DIR.mkdir(exist_ok=True)
 
 log_file = LOG_DIR / "daily_pipeline.log"
 
+
 scripts = [
     "recharge_actual_data.py",
     "fetch_weather.py",
@@ -18,36 +19,49 @@ scripts = [
 ]
 
 
-
 with open(log_file, "a", encoding="utf-8") as log:
 
     for script in scripts:
 
-        # print(f"\nRunning {script}")
+        print(f"\n========== Running {script} ==========")
 
         log.write(f"\n\n{'=' * 60}\n")
         log.write(f"Running {script}\n")
         log.write(f"{'=' * 60}\n")
 
+
         try:
 
-            subprocess.run(
+            result = subprocess.run(
                 [
                     sys.executable,
                     str(ROOT / "scripts" / script)
                 ],
-                stdout=log,
-                stderr=log,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
                 check=True
             )
 
-            # print(f"✓ {script} completed")
 
-        except subprocess.CalledProcessError:
+            print(result.stdout)
 
-            # print(f"✗ {script} failed")
-            # print(f"Check log: {log_file}")
+            log.write(result.stdout)
 
-            break
 
-# print("\nPipeline finished.")
+            print(f"✓ {script} completed")
+
+
+        except subprocess.CalledProcessError as e:
+
+            print(e.stdout)
+
+            log.write(e.stdout)
+
+
+            print(f"✗ {script} failed")
+
+            raise e
+
+
+print("\nPipeline finished successfully.")
