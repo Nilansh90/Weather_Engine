@@ -381,8 +381,8 @@ def main():
             total_skipped += sk
 
         except Exception as e:
-            # print(f"  !! Error processing {city_name}: {e}")
-            continue
+            print(f"  !! Error processing {city_name}: {e}")
+            raise
 
     conn.close()
     # print(f"\nAll done! Total rows inserted: {total_inserted}, Total skipped: {total_skipped}.")
