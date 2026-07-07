@@ -123,29 +123,77 @@ def ensure_table(conn):
     conn.commit()
 
 
-def fetch_for_city(lat: float, lon: float, start_date: str, end_date: str) -> Dict[str, Any]:
-    # print(f"  -> Fetching API data for ({lat}, {lon}) from {start_date} to {end_date}...")
+def fetch_for_city(
+    lat: float,
+    lon: float,
+    start_date: str,
+    end_date: str
+) -> Dict[str, Any]:
+
     params = {
         "latitude": lat,
         "longitude": lon,
         "start_date": start_date,
         "end_date": end_date,
+
         "hourly": ",".join([
-            "temperature_2m", "dewpoint_2m", "relativehumidity_2m", "pressure_msl",
-            "cloudcover", "shortwave_radiation", "precipitation", "windspeed_10m",
-            "windgusts_10m", "winddirection_10m", "weathercode"
+            "temperature_2m",
+            "dewpoint_2m",
+            "relativehumidity_2m",
+            "pressure_msl",
+            "cloudcover",
+            "shortwave_radiation",
+            "precipitation",
+            "windspeed_10m",
+            "windgusts_10m",
+            "winddirection_10m",
+            "weathercode"
         ]),
+
         "daily": ",".join([
-            "weathercode", "shortwave_radiation_sum", "precipitation_sum",
-            "windspeed_10m_max", "windgusts_10m_max", "winddirection_10m_dominant",
-            "sunrise", "sunset"
+            "weathercode",
+            "shortwave_radiation_sum",
+            "precipitation_sum",
+            "windspeed_10m_max",
+            "windgusts_10m_max",
+            "winddirection_10m_dominant",
+            "sunrise",
+            "sunset"
         ]),
+
         "timezone": TIMEZONE,
         "windspeed_unit": "kmh",
     }
-    r = requests.get(API_URL, params=params, timeout=30)
-    r.raise_for_status()
-    return r.json()
+
+
+    for attempt in range(3):
+
+        try:
+
+            response = requests.get(
+                API_URL,
+                params=params,
+                timeout=60
+            )
+
+            response.raise_for_status()
+
+            return response.json()
+
+
+        except requests.exceptions.RequestException as e:
+
+            print(
+                f"API attempt {attempt + 1}/3 failed: {e}"
+            )
+
+            if attempt < 2:
+                time.sleep(10)
+
+
+    raise RuntimeError(
+        "Open-Meteo failed after 3 retries"
+    )
 
 
 def aggregate_for_dates(response: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
@@ -350,7 +398,7 @@ def main():
         print(f"\n--- Processing: {city_name} ---")
         try:
             # Added 1-second delay to protect against API rate limits
-            time.sleep(1.0)
+            time.sleep(5.0)
             resp = fetch_for_city(lat, lon, start_date, end_date)
 
             # Aggregate the data
