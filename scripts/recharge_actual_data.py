@@ -169,7 +169,7 @@ def fetch_for_city(
     for attempt in range(3):
 
         try:
-
+            time.sleep(5);# To avoid hitting rate limits
             response = requests.get(
                 API_URL,
                 params=params,
