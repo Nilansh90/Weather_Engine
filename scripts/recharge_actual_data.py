@@ -398,7 +398,7 @@ def main():
         print(f"\n--- Processing: {city_name} ---")
         try:
             # Added 1-second delay to protect against API rate limits
-            time.sleep(5.0)
+            time.sleep(15.0)
             resp = fetch_for_city(lat, lon, start_date, end_date)
 
             # Aggregate the data
