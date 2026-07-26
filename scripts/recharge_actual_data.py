@@ -13,6 +13,13 @@ from typing import Any, Dict, List, Optional
 
 from pathlib import Path
 
+import requests
+
+session = requests.Session()
+
+session.headers.update({
+    "User-Agent": "WeatherEngine/1.0"
+})
 
 def parse_args():
 
@@ -123,19 +130,13 @@ def ensure_table(conn):
     conn.commit()
 
 
-def fetch_for_city(
-    lat: float,
-    lon: float,
-    start_date: str,
-    end_date: str
-) -> Dict[str, Any]:
+def fetch_for_city(lat, lon, start_date, end_date):
 
     params = {
         "latitude": lat,
         "longitude": lon,
         "start_date": start_date,
         "end_date": end_date,
-
         "hourly": ",".join([
             "temperature_2m",
             "dewpoint_2m",
@@ -147,9 +148,8 @@ def fetch_for_city(
             "windspeed_10m",
             "windgusts_10m",
             "winddirection_10m",
-            "weathercode"
+            "weathercode",
         ]),
-
         "daily": ",".join([
             "weathercode",
             "shortwave_radiation_sum",
@@ -158,41 +158,49 @@ def fetch_for_city(
             "windgusts_10m_max",
             "winddirection_10m_dominant",
             "sunrise",
-            "sunset"
+            "sunset",
         ]),
-
         "timezone": TIMEZONE,
         "windspeed_unit": "kmh",
     }
 
-
     for attempt in range(3):
 
         try:
-            time.sleep(5);# To avoid hitting rate limits
-            response = requests.get(
+
+            response = session.get(
                 API_URL,
                 params=params,
-                timeout=60
+                timeout=(10, 60),      # connect, read
             )
 
             response.raise_for_status()
 
             return response.json()
 
+        except requests.exceptions.HTTPError as e:
 
-        except requests.exceptions.RequestException as e:
+            print(response.url)
+            print(response.status_code)
+            print(response.text)
+
+            raise
+
+        except (
+            requests.exceptions.ReadTimeout,
+            requests.exceptions.ConnectTimeout,
+            requests.exceptions.ConnectionError,
+        ) as e:
 
             print(
-                f"API attempt {attempt + 1}/3 failed: {e}"
+                f"Attempt {attempt+1}/3 failed ({type(e).__name__})"
             )
 
             if attempt < 2:
-                time.sleep(10)
-
+                time.sleep(2 ** attempt)
 
     raise RuntimeError(
-        "Open-Meteo failed after 3 retries"
+        "Open-Meteo unreachable after 3 retries."
     )
 
 
